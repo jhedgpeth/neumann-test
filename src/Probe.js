@@ -25,8 +25,8 @@ export default class Probe extends React.Component {
 
             rows.push(
                 <div key={n + "cost-wrapper"} className="cost-wrapper">
-                    <div key={n + "cost-money"} className="probe-cost-money">{HelperConst.moneySymbolSpan()}{this.numberformat.format(ComputeFunc.getCost(item).money)}</div>
-                    <div key={n + "cost-knowledge"} className="probe-cost-knowledge">{HelperConst.knowledgeSymbolSpan()}{this.numberformat.format(ComputeFunc.computeEarning(item).revenue)}</div>
+                    <div key={n + "cost-money"} className="probe-cost-money">{HelperConst.moneySymbolSpan()}{this.numberformat.format(ComputeFunc.getCost(item).cost)}</div>
+                    <div key={n + "cost-knowledge"} className="probe-cost-knowledge">{HelperConst.knowledgeSymbolSpan()}{this.numberformat.format(ComputeFunc.computeEarning(item))}</div>
                 </div>
             );
 

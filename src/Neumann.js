@@ -30,7 +30,6 @@ export default class Neumann extends React.Component {
         // this._business = React.createRef();
         this.updateGame = this.updateGame.bind(this);
         this.clickBusiness = this.clickBusiness.bind(this);
-        this.clickProbe = this.clickProbe.bind(this);
 
     }
 
@@ -59,12 +58,12 @@ export default class Neumann extends React.Component {
 
         let revenue = new Decimal(0);
         this.state.businesses.forEach((bus) => {
-            revenue = revenue.plus(ComputeFunc.computeEarning(bus).revenue);
+            revenue = revenue.plus(ComputeFunc.computeEarning(bus));
         });
 
         let learning = new Decimal(0);
         this.state.probes.forEach((probe) => {
-            learning = learning.plus(ComputeFunc.computeEarning(probe).learning);
+            learning = learning.plus(ComputeFunc.computeEarning(probe));
         })
 
         this.setState({
@@ -76,11 +75,11 @@ export default class Neumann extends React.Component {
     clickBusiness(bus) {
         console.log("business click ", bus.name);
         const busCost = ComputeFunc.getCost(bus);
-        if (this.state.money.gte(busCost.money)) {
+        if (this.state.money.gte(busCost.cost)) {
 
             let updatedBus = { ...bus };
             updatedBus.owned = (updatedBus.owned + busCost.num);
-            const newMoney = this.state.money.minus(busCost.money);
+            const newMoney = this.state.money.minus(busCost.cost);
 
             let busList = this.state.businesses.map((b) => {
                 return (b.name === bus.name) ? updatedBus : b;
@@ -88,25 +87,6 @@ export default class Neumann extends React.Component {
             this.setState({
                 businesses: busList,
                 money: newMoney,
-            })
-        }
-    }
-
-    clickProbe(probe) {
-        console.log("probe click ", probe.name);
-        const probeCost = ComputeFunc.getCost(probe);
-        if (this.state.knowledge.gte(probeCost.knowledge)) {
-
-            let updatedProbe = { ...probe };
-            updatedProbe.owned = (updatedProbe.owned + probeCost.num);
-            const newKnowledge = this.state.knowledge.minus(probeCost.knowledge);
-
-            let probeList = this.state.probes.map((p) => {
-                return (p.name === probe.name) ? updatedProbe : p;
-            })
-            this.setState({
-                probes: probeList,
-                knowledge: newKnowledge,
             })
         }
     }

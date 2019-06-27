@@ -12,12 +12,12 @@ export default class Income extends React.Component {
                 <div className="income-money">
                     Money: <span className="moneySymbol">{HelperConst.moneySymbol}</span>{this.numberformat.format(this.props.money)}
                     <br />
-                    Revenue: <span className="moneySymbol">{HelperConst.moneySymbol}</span>{this.numberformat.format(ComputeFunc.totalEarning(this.props.businesses).revenue)}/s
+                    Revenue: <span className="moneySymbol">{HelperConst.moneySymbol}</span>{this.numberformat.format(ComputeFunc.totalEarning(this.props.businesses))}/s
                 </div>
                 <div className="income-knowledge">
                     Knowledge: <span className="knowledgeSymbol">{HelperConst.knowledgeSymbol}</span>{this.numberformat.format(this.props.knowledge)}
                     <br />
-                    Learning: <span className="knowledgeSymbol">{HelperConst.knowledgeSymbol}</span>{this.numberformat.format(ComputeFunc.totalEarning(this.props.probes).learning)}/s
+                    Learning: <span className="knowledgeSymbol">{HelperConst.knowledgeSymbol}</span>{this.numberformat.format(ComputeFunc.totalEarning(this.props.probes))}/s
                 </div>
             </div>
 

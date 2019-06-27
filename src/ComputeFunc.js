@@ -4,45 +4,26 @@ export default class ComputeFunc {
 
     static computeEarning(item) {
         let revenue = new Decimal(
-            item.baseIncome
+            item.incomeBase
                 .times(item.owned)
         );
-        let learning = new Decimal(
-            item.baseLearning
-                .times(item.owned)
-        );
-        return ({
-            revenue: revenue,
-            learning: learning,
-        });
+        return revenue;
     }
 
     static totalEarning(items) {
         let revenue = new Decimal(0);
-        let learning = new Decimal(0);
 
         items.forEach((item) => {
-            const earning = ComputeFunc.computeEarning(item);
-            revenue = revenue.plus(earning.revenue);
-            learning = learning.plus(earning.learning);
+            revenue = revenue.plus(ComputeFunc.computeEarning(item));
         });
-        return ({
-            revenue: revenue,
-            learning: learning,
-        });
+        return revenue;
     }
 
     static getCost(item) {
 
         return {
             num: 1,
-            money: item.baseCostMoney
-                .times(
-                    Math.pow(item.costCoef, item.owned)
-                    * (Math.pow(item.costCoef, 1) - 1)
-                )
-                .div(item.costCoef - 1),
-            knowledge: item.baseCostKnowledge
+            cost: item.costBase
                 .times(
                     Math.pow(item.costCoef, item.owned)
                     * (Math.pow(item.costCoef, 1) - 1)
