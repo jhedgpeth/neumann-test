@@ -1,0 +1,108 @@
+/* Misc
+-----------------------------------------------------------------------------*/
+body {
+  font: 15px "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  margin: 10px;
+  color: #ccc;
+  background: #000;
+}
+
+:focus {
+  outline: none;
+}
+::-moz-focus-inner {
+  border: 0;
+}
+
+.moneySymbol {
+  color: green;
+}
+
+.knowledgeSymbol {
+  color: orange;
+}
+
+/* Misc
+-----------------------------------------------------------------------------*/
+
+#header {
+  height: 100px;
+  grid-area: header;
+  background-color: #111;
+  padding: 5px;
+}
+
+.income {
+    width: 300px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 90px;
+    align-items: top;
+}
+.income-money {
+    grid-column: 1;
+    grid-row: 1;
+}
+.income-knowledge {
+    grid-column: 2;
+    grid-row: 1;
+}
+
+
+#footer {
+  height: 50px;
+  grid-area: footer;
+  background-color: #4f5f76;
+  padding: 5px;
+}
+
+#right-sidebar {
+  grid-area: rsidebar;
+  background-color: #0f2862;
+  padding: 5px;
+}
+
+#left-sidebar {
+  background-color: #091f36;
+  grid-area: lsidebar;
+  padding: 5px;
+}
+
+#content {
+  background-color: #333;
+  grid-area: content;
+  position: relative;
+  min-width: 500px;
+  min-height: 400px;
+  padding: 5px;
+}
+
+#wrapper {
+  display: grid;
+  grid-template-columns: 200px auto 200px;
+  grid-template-areas: "header header header " "lsidebar content rsidebar" "footer footer footer ";
+}
+
+.business {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-auto-rows: 20px;
+}
+
+.button-wrapper {
+  width: 100%;
+  grid-column: span 2;
+  display: grid;
+  grid-template-columns: 3fr 1fr;
+}
+
+.cost-wrapper {
+  grid-column: 1;
+  grid-row: span 2;
+}
+
+.earning-wrapper {
+  grid-column: 2;
+  grid-row: span 2;
+}

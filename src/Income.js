@@ -1,24 +1,23 @@
 import React from 'react';
 import ComputeFunc from './ComputeFunc';
+import HelperConst from './HelperConst';
 
 export default class Income extends React.Component {
 
     render() {
-        const Decimal = require('decimal.js');
-        const numberformat = require('swarm-numberformat');
-        this.numberformat = new numberformat.Formatter({ backend: 'decimal.js', sigfigs: 4, format: 'engineering', Decimal: Decimal });
-        
+        this.numberformat = HelperConst.myFormatter();
+
         return (
             <div className="income">
                 <div className="income-money">
-                    Money: ${this.numberformat.format(this.props.money)}
-                    <br/>
-                    Revenue: ${this.numberformat.format(ComputeFunc.totalEarning(this.props.businesses).revenue)}/s
+                    Money: <span className="moneySymbol">{HelperConst.moneySymbol}</span>{this.numberformat.format(this.props.money)}
+                    <br />
+                    Revenue: <span className="moneySymbol">{HelperConst.moneySymbol}</span>{this.numberformat.format(ComputeFunc.totalEarning(this.props.businesses).revenue)}/s
                 </div>
                 <div className="income-knowledge">
-                    Knowledge: {this.numberformat.format(this.props.knowledge)}
-                    <br/>
-                    Learning: ${this.numberformat.format(ComputeFunc.totalEarning(this.props.probes).learning)}/s
+                    Knowledge: <span className="knowledgeSymbol">{HelperConst.knowledgeSymbol}</span>{this.numberformat.format(this.props.knowledge)}
+                    <br />
+                    Learning: <span className="knowledgeSymbol">{HelperConst.knowledgeSymbol}</span>{this.numberformat.format(ComputeFunc.totalEarning(this.props.probes).learning)}/s
                 </div>
             </div>
 

@@ -1,7 +1,8 @@
+import { Decimal } from 'decimal.js';
+
 export default class ComputeFunc {
 
     static computeEarning(item) {
-        const Decimal = require('decimal.js');
         let revenue = new Decimal(
             item.baseIncome
                 .times(item.owned)
@@ -17,7 +18,6 @@ export default class ComputeFunc {
     }
 
     static totalEarning(items) {
-        const Decimal = require('decimal.js');
         let revenue = new Decimal(0);
         let learning = new Decimal(0);
 
@@ -36,7 +36,13 @@ export default class ComputeFunc {
 
         return {
             num: 1,
-            cost: item.baseCost
+            money: item.baseCostMoney
+                .times(
+                    Math.pow(item.costCoef, item.owned)
+                    * (Math.pow(item.costCoef, 1) - 1)
+                )
+                .div(item.costCoef - 1),
+            knowledge: item.baseCostKnowledge
                 .times(
                     Math.pow(item.costCoef, item.owned)
                     * (Math.pow(item.costCoef, 1) - 1)
@@ -46,7 +52,6 @@ export default class ComputeFunc {
     }
 
     static maxBuy(item, resource) {
-        const Decimal = require('decimal.js');
         const max = new Decimal(
             resource
                 .times(item.costCoef - 1)

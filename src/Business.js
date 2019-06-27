@@ -1,29 +1,47 @@
 import React from 'react';
 import ComputeFunc from './ComputeFunc';
+import HelperConst from './HelperConst';
+
 
 export default class Business extends React.Component {
 
 
     render() {
-        const Decimal = require('decimal.js');
-        const numberformat = require('swarm-numberformat');
-        this.numberformat = new numberformat.Formatter({ backend: 'decimal.js', sigfigs: 4, format: 'engineering', Decimal: Decimal });
+        this.numberformat = HelperConst.myFormatter();
+        let rows = [];
+        this.props.businesses.forEach((item) => {
+            const n = item.name;
+            rows.push(
+                <div key={n + "button-wrapper"} className="button-wrapper">
+                    <button
+                        key={n + "button"}
+                        className="business-buy"
+                        onClick={() => this.props.onClick(item)}>
+                        1x {n}
+                    </button>
+                    <div key={n + "owned"} className="business-owned">{this.numberformat.format(item.owned)}</div>
+                </div>
+            );
+
+            rows.push(
+                <div key={n + "cost-wrapper"} className="cost-wrapper">
+                    <div key={n + "cost-money"} className="business-cost-money">{HelperConst.moneySymbolSpan()}{this.numberformat.format(ComputeFunc.getCost(item).money)}</div>
+                    <div key={n + "cost-knowledge"} className="business-cost-knowledge">{HelperConst.knowledgeSymbolSpan()}{this.numberformat.format(ComputeFunc.computeEarning(item).revenue)}</div>
+                </div>
+            );
+
+            rows.push(
+                <div key={n + "earning-wrapper"} className="earning-wrapper">
+                    <div key={n + "revenue-total"} className="probe-revenue-total">{HelperConst.moneySymbolSpan()}0/s</div>
+                    <div key={n + "learning-total"} className="probe-learning-total">{HelperConst.knowledgeSymbolSpan()}0/s</div>
+                </div>
+            );
+        });
+
 
         return (
             <div className="business">
-
-                {this.props.businesses.map((bus) => {
-                    return (
-                        <button
-                            key={bus.name}
-                            className="business-buy"
-                            onClick={() => this.props.onClick(bus)}
-                        >
-                            {bus.owned}x {bus.name}: ${this.numberformat.format(ComputeFunc.getCost(bus).cost)} : ${this.numberformat.format(ComputeFunc.computeEarning(bus).revenue)}/s
-                        </button>);
-
-                })}
-
+                {rows}
             </div>
         )
     };

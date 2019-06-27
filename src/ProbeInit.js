@@ -1,4 +1,4 @@
-import Decimal from 'decimal.js';
+import {Decimal} from 'decimal.js';
 
 export default function ProbeInit() {
 
@@ -9,7 +9,8 @@ export default function ProbeInit() {
             owned: 1,
             baseIncome: new Decimal(0.01),
             baseLearning: new Decimal(0.05),
-            baseCost: new Decimal(1),
+            baseCostMoney: new Decimal(1),
+            baseCostKnowledge: new Decimal(1),
             baseTime: 1,
             initialVisible: 1,
             costCoef: 1.07,
@@ -24,7 +25,8 @@ export default function ProbeInit() {
             owned: 0,
             baseIncome: new Decimal(0.01),
             baseLearning: new Decimal(0.25),
-            baseCost: new Decimal(60),
+            baseCostMoney: new Decimal(1),
+            baseCostKnowledge: new Decimal(60),
             baseTime: 3,
             initialVisible: 60,
             costCoef: 1.15,
