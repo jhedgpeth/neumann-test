@@ -6,7 +6,10 @@ import Business from './Business.js';
 // import Probe from './Probe.js';
 import BusinessInit from './BusinessInit';
 import ProbeInit from './ProbeInit';
+import UpgradeInit from './UpgradeInit';
 import ComputeFunc from './ComputeFunc';
+import HelperConst from './HelperConst';
+import Upgrades from './Upgrades';
 // import HelperConst from './HelperConst';
 
 
@@ -22,6 +25,8 @@ export default class Neumann extends React.Component {
             knowledge: new Decimal(0),
             businesses: [],
             probes: [],
+            upgrades: [],
+            purchaseAmt: "1",
         };
 
         this.timeInterval = 100;
@@ -30,6 +35,7 @@ export default class Neumann extends React.Component {
         // this._business = React.createRef();
         this.updateGame = this.updateGame.bind(this);
         this.clickBusiness = this.clickBusiness.bind(this);
+        this.clickUpgrade = this.clickUpgrade.bind(this);
 
     }
 
@@ -38,8 +44,11 @@ export default class Neumann extends React.Component {
         this.setState({
             businesses: BusinessInit(),
             probes: ProbeInit(),
+            upgrades: UpgradeInit(),
+            money: new Decimal(0),
         })
         this.gameIntervalId = setInterval(this.updateGame, this.timeInterval);
+
     }
 
     componentWillUnmount() {
@@ -52,29 +61,36 @@ export default class Neumann extends React.Component {
 
     }
 
+    updatePurchaseAmt(amt) {
+        if (HelperConst.purchaseOpts.indexOf(amt) !== -1 && this.state.purchaseAmt !== amt) {
+            this.setState({
+                purchaseAmt: amt,
+            })
+        }
+        console.log(this.state.businesses);
+        console.log(this.state.businesses[0]);
+        console.log(ComputeFunc.maxBuy(this.state.businesses[0], this.state.money).max25);
+    }
+
     updateGame() {
         // console.log("updateGame()");
         const Decimal = require('decimal.js');
 
-        let revenue = new Decimal(0);
-        this.state.businesses.forEach((bus) => {
-            revenue = revenue.plus(ComputeFunc.computeEarning(bus));
-        });
-
-        let learning = new Decimal(0);
-        this.state.probes.forEach((probe) => {
-            learning = learning.plus(ComputeFunc.computeEarning(probe));
-        })
+        const revenuePerSec = ComputeFunc.totalEarning(this.state.businesses);
+        const revenuePerTick = ComputeFunc.getEarningPerTick(revenuePerSec, this.timeInterval);
+        
+        const learningPerSec = ComputeFunc.totalEarning(this.state.probes);
+        const learningPerTick = ComputeFunc.getEarningPerTick(revenuePerSec, this.timeInterval);
 
         this.setState({
-            money: this.state.money.plus(revenue),
-            knowledge: this.state.knowledge.plus(learning),
+            money: this.state.money.plus(revenuePerTick),
+            knowledge: this.state.knowledge.plus(learningPerTick),
         });
     }
 
     clickBusiness(bus) {
         console.log("business click ", bus.name);
-        const busCost = ComputeFunc.getCost(bus);
+        const busCost = ComputeFunc.getCost(bus, this.state.purchaseAmt, this.state.money);
         if (this.state.money.gte(busCost.cost)) {
 
             let updatedBus = { ...bus };
@@ -84,11 +100,27 @@ export default class Neumann extends React.Component {
             let busList = this.state.businesses.map((b) => {
                 return (b.name === bus.name) ? updatedBus : b;
             })
-            this.setState({
+            this.setState((state, props) => ({
                 businesses: busList,
                 money: newMoney,
-            })
+            }))
         }
+    }
+
+    clickUpgrade(upg) {
+        console.log("upgrade click ",upg.name);
+
+        let updatedUpgrade = {...upg};
+        updatedUpgrade.purchased = true;
+        const newMoney = this.state.money.minus(upg.costValue);
+        let UpgList = this.state.upgrades.map((u) => {
+            return (u.name === upg.name) ? updatedUpgrade : u;
+        });
+        this.setState((state, props) => ({
+            upgrades: UpgList,
+            money: newMoney,
+        }))
+
     }
 
     render() {
@@ -109,20 +141,43 @@ export default class Neumann extends React.Component {
 
                     <Business
                         businesses={this.state.businesses}
+                        purchaseAmt={this.state.purchaseAmt}
+                        money={this.state.money}
                         onClick={this.clickBusiness}
                     />
-                    
+
                 </div>
                 <div id="right-sidebar">
 
-                    right side
+                    <div className="purchaseAmts">
+                        {HelperConst.purchaseOpts.map((amt) => {
+                            let amtClass = "purchase-amount"
+                            if (amt === this.state.purchaseAmt) {
+                                amtClass = "purchase-amount amt-selected";
+                            }
+                            return (
+                                <button
+                                    key={amt + "purchaseAmt"}
+                                    className={amtClass}
+                                    onClick={() => { this.updatePurchaseAmt(amt) }}>
+                                    {amt}
+                                </button>
+                            )
+                        })}
+                    </div>
 
                 </div>
 
                 <div id="content">
                     <div className="container">
 
-                        main stuff
+                        <Upgrades
+                            upgrades={this.state.upgrades}
+                            businesses={this.state.businesses}
+                            money={this.state.money}
+                            knowledge={this.state.knowledge}
+                            onClick={this.clickUpgrade}
+                        />
 
                     </div>
 

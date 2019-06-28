@@ -7,6 +7,9 @@ body {
   background: #000;
 }
 
+/* Misc
+-----------------------------------------------------------------------------*/
+
 :focus {
   outline: none;
 }
@@ -22,11 +25,11 @@ body {
   color: orange;
 }
 
-/* Misc
+/* Header
 -----------------------------------------------------------------------------*/
 
 #header {
-  height: 100px;
+  height: 45px;
   grid-area: header;
   background-color: #111;
   padding: 5px;
@@ -48,6 +51,9 @@ body {
   grid-row: 1;
 }
 
+/* footer
+-----------------------------------------------------------------------------*/
+
 #footer {
   height: 50px;
   grid-area: footer;
@@ -55,17 +61,113 @@ body {
   padding: 5px;
 }
 
+/* left sidebar
+-----------------------------------------------------------------------------*/
+
+#left-sidebar {
+  background-color: #303;
+  grid-area: lsidebar;
+  padding: 10px;
+}
+
+.business-container {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-auto-rows: 60px;
+  grid-row-gap: 20px;
+}
+
+.button-wrapper {
+  width: 100%;
+  grid-column: span 2;
+  display: grid;
+  grid-template-columns: 3fr 1fr;
+  grid-row: span 2;
+}
+
+.business-buy {
+  background: #044;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  color: #ddd;
+  height: 35px;
+  border-radius: 5px 0 0 0;
+  padding: 0px;
+  border: 0px;
+  margin: 0px;
+  outline: none;
+  width: 100%;
+}
+
+.cannotAfford {
+  background: #020;
+  color: #555;
+}
+.business-buy.canAfford {
+  background: #050;
+}
+.business-buy.canAfford:hover {
+  background-color: #090;
+}
+.business-buy:active {
+  background-color: #050 !important;
+  transform: translateY(2px);
+}
+
+.business-owned {
+  text-align: center;
+  text-justify: center;
+  text-decoration: none;
+  display: inline-block;
+  background: #ddd;
+  color: #000;
+  height: 100%;
+  border-radius: 0 5px 0 0;
+  padding: 0px;
+  border: 0px;
+  margin: 0px;
+  width: 100%;
+}
+
+.cost-wrapper {
+  width: 50%;
+  float: left;
+  padding: 5px 0 0 0;
+  border-radius: 0 0 0 5px;
+}
+.cost-wrapper.canAfford {
+  background: #020;
+}
+.cost-wrapper.cannotAfford {
+  background: #000;
+}
+
+.earning-wrapper {
+  width: 50%;
+  float: right;
+  padding: 5px 0 0 0;
+  background: #444;
+  border-radius: 0 0 5px 0;
+}
+
+/* right sidebar
+-----------------------------------------------------------------------------*/
+
 #right-sidebar {
   grid-area: rsidebar;
   background-color: #0f2862;
-  padding: 5px;
+  padding: 10px;
 }
 
-#left-sidebar {
-  background-color: #091f36;
-  grid-area: lsidebar;
-  padding: 5px;
+.purchase-amount.amt-selected {
+  color: #ccc;
+  background: #404;
 }
+
+/* Main content
+-----------------------------------------------------------------------------*/
 
 #content {
   background-color: #333;
@@ -82,40 +184,45 @@ body {
   grid-template-areas: "header header header " "lsidebar content rsidebar" "footer footer footer ";
 }
 
-.business-container {
+.upgrade-container {
   width: 100%;
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(5, 1fr);
   grid-auto-rows: 60px;
+  grid-row-gap: 20px;
 }
-
-.button-wrapper {
-  width: 100%;
-  grid-column: span 2;
-  display: grid;
-  grid-template-columns: 3fr 1fr;
-  grid-row: span 2;
-}
-
-.business-buy {
-    color: #ccc;
-    background: #044;
-}
-
-.business-owned {
+.upgrade-buy {
   background: #044;
-  justify-self: center;
-  align-self: center;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  color: #ddd;
+  height: 60%;
+  border-radius: 5px 5px 0 0;
+  padding: 0px;
+  border: 0px;
+  margin: 0px;
+  outline: none;
+  width: 100%;
 }
-
-.cost-wrapper {
-    width: 50%;
-    float: left;
-    margin: 5px 0 0 0;
+.upgrade-buy.canAfford {
+  background: #050;
 }
-
-.earning-wrapper {
-    width: 50%;
-    float: right;
-    margin: 5px 0 0 0;
+.upgrade-buy.canAfford:hover {
+  background-color: #090;
+}
+.upgrade-buy:active {
+  background-color: #050 !important;
+  transform: translateY(2px);
+}
+.upgrade-cost-wrapper {
+  width: 100%;
+  height: 40%;
+  border-radius: 0 0 5px 5px;
+}
+.upgrade-cost-wrapper.canAfford {
+  background: #020;
+}
+.upgrade-cost-wrapper.cannotAfford {
+  background: #000;
 }
