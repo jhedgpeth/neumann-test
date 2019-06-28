@@ -74,13 +74,13 @@ export default class Neumann extends React.Component {
 
     updateGame() {
         // console.log("updateGame()");
-        const Decimal = require('decimal.js');
+        // const Decimal = require('decimal.js');
 
         const revenuePerSec = ComputeFunc.totalEarning(this.state.businesses);
         const revenuePerTick = ComputeFunc.getEarningPerTick(revenuePerSec, this.timeInterval);
         
         const learningPerSec = ComputeFunc.totalEarning(this.state.probes);
-        const learningPerTick = ComputeFunc.getEarningPerTick(revenuePerSec, this.timeInterval);
+        const learningPerTick = ComputeFunc.getEarningPerTick(learningPerSec, this.timeInterval);
 
         this.setState({
             money: this.state.money.plus(revenuePerTick),

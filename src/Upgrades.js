@@ -1,5 +1,5 @@
 import React from 'react';
-import ComputeFunc from './ComputeFunc';
+// import ComputeFunc from './ComputeFunc';
 import HelperConst from './HelperConst';
 
 
@@ -8,7 +8,6 @@ export default class Upgrades extends React.Component {
 
 
     render() {
-        this.numberformat = HelperConst.myFormatter();
         let rows = [];
 
         this.props.upgrades.forEach((item) => {
@@ -47,7 +46,7 @@ export default class Upgrades extends React.Component {
                         {n}
                     </button>
                     <div key={n + "upgrade-cost-wrapper"} className="upgrade-cost-wrapper canAfford">
-                        {HelperConst.moneySymbolSpan()}{this.numberformat.format(item.costValue)}
+                        {HelperConst.moneySymbolSpan()}{HelperConst.showNum(item.costValue)}
                     </div>
                 </div>
             )

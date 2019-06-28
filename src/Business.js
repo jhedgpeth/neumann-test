@@ -7,7 +7,6 @@ export default class Business extends React.Component {
 
 
     render() {
-        this.numberformat = HelperConst.myFormatter();
         let rows = [];
         this.props.businesses.forEach((item) => {
             const n = item.name;
@@ -38,15 +37,15 @@ export default class Business extends React.Component {
                             disabled={buttonDisabled}>
                             {myCost.num}x {n}
                         </button>
-                        <div key={n + "owned"} className="business-owned">{this.numberformat.format(item.owned)}</div>
+                        <div key={n + "owned"} className="business-owned">{HelperConst.showNum(item.owned)}</div>
                     </div>
 
                     <div key={n + "cost-wrapper"} className={costClass}>
-                        <div key={n + "cost-money"} className="business-cost-money">{HelperConst.moneySymbolSpan()}{this.numberformat.format(myCost.cost)}</div>
+                        <div key={n + "cost-money"} className="business-cost-money">{HelperConst.moneySymbolSpan()}{HelperConst.showNum(myCost.cost)}</div>
                     </div>
 
                     <div key={n + "earning-wrapper"} className="earning-wrapper">
-                        <div key={n + "revenue-total"} className="business-revenue-total">+ {HelperConst.moneySymbolSpan()}{this.numberformat.format(myEarning)}/s</div>
+                        <div key={n + "revenue-total"} className="business-revenue-total">+ {HelperConst.moneySymbolSpan()}{HelperConst.showNum(myEarning)}/s</div>
                     </div>
                 </div>
             );

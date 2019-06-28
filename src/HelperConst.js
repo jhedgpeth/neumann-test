@@ -23,6 +23,10 @@ export default class HelperConst {
         });
     };
 
+    static showNum(num) {
+        return HelperConst.myFormatter().format(num);
+    }
+
     static myFormatter() {
         const numberformat = require('swarm-numberformat');
         if (!this.numberformat) {
