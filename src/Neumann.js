@@ -127,8 +127,22 @@ export default class Neumann extends React.Component {
                     purchased: { $set: true },
                 }
             }),
-            money: this.state.money.minus(upg.costValue),
         });
+        
+        switch (upg.costType) {
+            case "money":
+                this.setState({
+                    money: this.state.money.minus(upg.costValue),
+                });
+                break;
+            case "knowledge":
+                    this.setState({
+                        knowledge: this.state.knowledge.minus(upg.costValue),
+                    });
+                break;
+            default:
+                break;
+        }
 
         switch (upg.rewardType) {
             case "upgradeMult":

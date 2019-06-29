@@ -66,7 +66,7 @@ export default class ComputeFunc {
                 // console.log("numBuy = " + numBuy);
                 break;
             case "Max Upg":
-                item.name === "Lemonade Stand" && console.log(maxbuys);
+                // item.name === "Lemonade Stand" && console.log(maxbuys);
                 const limit100 = (item.owned >= 100 || (item.owned + maxbuys.Max) >= 100) ? true : false;
                 const checkOpts = limit100 ? ["max100"] : ["max25"];
                 for (const key of checkOpts) {
@@ -113,7 +113,7 @@ export default class ComputeFunc {
         ).plus(1).log(item.costCoef).floor(), 10);
 
         let max100 = (Math.floor((max + item.owned) / 100) * 100)
-            - (item.owned % 100);
+            - item.owned;
         max100 = max100 >= 0 ? max100 : 0;
 
         let max25 = (Math.floor((max + item.owned) / 25) * 25)

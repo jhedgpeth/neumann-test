@@ -43,6 +43,11 @@ export default class Business extends React.Component {
                             disabled={buttonDisabled}>
                             {myCost.num}x {n}
                         </button>
+                        <div className="testdiv">
+                            <div className="testdiv-pct" style={{ width: '50%' }}>
+                                <span >50/100</span>
+                            </div>
+                        </div>
                         <div key={n + "owned"} className="business-owned">{HelperConst.showNum(item.owned)}</div>
                     </div>
 

@@ -3,7 +3,7 @@
 body {
   font: 15px "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
   margin: 10px;
-  color: #ccc;
+  color: #ddd;
   background: #000;
 }
 
@@ -31,7 +31,7 @@ body {
 #header {
   height: 45px;
   grid-area: header;
-  background-color: #111;
+  background-color: #222222;
   padding: 5px;
 }
 
@@ -57,7 +57,7 @@ body {
 #footer {
   height: 50px;
   grid-area: footer;
-  background-color: #4f5f76;
+  background-color: #222222;
   padding: 5px;
 }
 
@@ -65,7 +65,7 @@ body {
 -----------------------------------------------------------------------------*/
 
 #left-sidebar {
-  background-color: #303;
+  background-color: #1c5d99;
   grid-area: lsidebar;
   padding: 10px;
 }
@@ -80,14 +80,13 @@ body {
 
 .button-wrapper {
   width: 100%;
-  grid-column: span 2;
+  /* grid-column: span 2; */
   display: grid;
   grid-template-columns: 3fr 1fr;
   grid-row: span 2;
 }
 
 .business-buy {
-  background: #044;
   text-align: center;
   text-decoration: none;
   display: inline-block;
@@ -99,11 +98,36 @@ body {
   margin: 0px;
   outline: none;
   width: 100%;
+  grid-column: 1/1;
+  grid-row: 1/1;
+}
+.testdiv {
+  height: 35px;
+  line-height: 35px;
+  border-radius: 5px 0 0 0;
+  /* border: 2px solid red; */
+  grid-column: 1/1;
+  grid-row: 1/1;
+  position: relative;
+}
+.testdiv-pct {
+  height: 100%;
+  background: red;
+  color: #fff;
+  text-align: center;
+  /* padding: 5px 0px; */
+  border-radius: 5px 0 0 0;
+}
+.testdiv-pct  span {
+  display: inline-block;
+  /* position: absolute; */
+  width: 100%;
+  left: 0;
 }
 
-.cannotAfford {
+.business-buy.cannotAfford {
   background: #020;
-  color: #555;
+  color: #888;
 }
 .business-buy.canAfford {
   background: #050;
@@ -141,7 +165,8 @@ body {
   background: #020;
 }
 .cost-wrapper.cannotAfford {
-  background: #000;
+  background: #020;
+  color: #888;
 }
 
 .earning-wrapper {
@@ -157,12 +182,12 @@ body {
 
 #right-sidebar {
   grid-area: rsidebar;
-  background-color: #0f2862;
+  background-color: #1c5d99;
   padding: 10px;
 }
 
 .purchase-amount.amt-selected {
-  color: #ccc;
+  color: #ddd;
   background: #404;
 }
 
@@ -170,7 +195,7 @@ body {
 -----------------------------------------------------------------------------*/
 
 #content {
-  background-color: #222;
+  background-color: #222222;
   grid-area: content;
   position: relative;
   min-width: 500px;
@@ -197,10 +222,8 @@ body {
   border-radius: 5px;
 }
 .upgrade-buy {
-  background: #044;
   text-align: center;
   text-decoration: none;
-  /* display: inline-block; */
   color: #ddd;
   height: 40%;
   border-radius: 5px 5px 0 0;
@@ -213,6 +236,10 @@ body {
   align-items: center;
   justify-content: center;
 }
+.upgrade-buy.cannotAfford {
+  background: #020;
+  color: #888;
+}
 .upgrade-buy.canAfford {
   background: #050;
 }
@@ -224,7 +251,7 @@ body {
   transform: translateY(2px);
 }
 .upgrade-reward {
-  background: #333;
+  background: #444;
   width: 100%;
   height: 30%;
   display: flex;
@@ -243,5 +270,6 @@ body {
   background: #020;
 }
 .upgrade-cost-wrapper.cannotAfford {
-  background: #000;
+  background: #020;
+  color: #888;
 }

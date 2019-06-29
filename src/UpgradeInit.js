@@ -4,7 +4,7 @@ export default function UpgradeInit() {
 
     return ([
         {
-            name: "upgrade1",
+            name: "Bigger Lemons",
             watchType: "money",
             watchValue: new Decimal(100),
             costType: "money",
@@ -15,7 +15,7 @@ export default function UpgradeInit() {
             revealed: false,
             purchased: false,
         },{
-            name: "upgrade2",
+            name: "Auto Juicer",
             watchType: "money",
             watchValue: new Decimal(1e3),
             costType: "money",
@@ -26,18 +26,18 @@ export default function UpgradeInit() {
             revealed: false,
             purchased: false,
         },{
-            name: "upgrade3",
+            name: "Demographics",
             watchType: "knowledge",
             watchValue: new Decimal(10),
             costType: "knowledge",
-            costValue: new Decimal(100),
+            costValue: new Decimal(30),
             rewardType: "upgradeMult",
             rewardTarget: "Newspaper Delivery",
             rewardValue: 10,
             revealed: false,
             purchased: false,
         },{
-            name: "upgrade4",
+            name: "Sweet Ride",
             watchType: "money",
             watchValue: new Decimal(1e3),
             costType: "money",
