@@ -1,14 +1,20 @@
 import React from 'react';
+import update from 'immutability-helper';
 import ComputeFunc from './ComputeFunc';
 import HelperConst from './HelperConst';
 
 
 export default class Business extends React.Component {
 
+    static applyMultiplier(bus, mult) {
+        return update(bus, {
+            upgradeMult: { $set: bus.upgradeMult * mult },
+        })
+    }
 
     render() {
-        let rows = [];
-        this.props.businesses.forEach((item) => {
+
+        const rows = this.props.businesses.map((item) => {
             const n = item.name;
             const myCost = ComputeFunc.getCost(item, this.props.purchaseAmt, this.props.money);
             // console.log(myCost);
@@ -27,7 +33,7 @@ export default class Business extends React.Component {
             const myEarning = ComputeFunc.computeEarning(item);
             // console.log(this.props.money.toFixed(2));
 
-            rows.push(
+            return (
                 <div key={n + "business"} className="business">
                     <div key={n + "button-wrapper"} className="button-wrapper">
                         <button

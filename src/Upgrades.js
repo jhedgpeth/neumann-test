@@ -8,13 +8,16 @@ export default class Upgrades extends React.Component {
 
 
     render() {
-        let rows = [];
 
-        this.props.upgrades.forEach((item) => {
-            if (item.purchased) { return; };
-            if (item.watchType === "money" && item.watchValue.gt(this.props.money)) { return; };
-            if (item.watchType === "knowledge" && item.watchValue.gt(this.props.knowledge)) { return; };
+        const sources = this.props.upgrades.reduce((result, item) => {
+            if (!item.purchased && item.revealed) {
+                result.push(item);
+            }
+            return result;
+        }, []);
 
+        const rows = sources.map(item => {
+            if (item.purchased || !item.revealed) { return ""; };
 
             let n = item.name;
             let buttonClass = "upgrade-buy";
@@ -35,9 +38,18 @@ export default class Upgrades extends React.Component {
                     buttonClass += " cannotAfford";
                 }
             }
+            let costSymbol = ""
+            switch (item.costType) {
+                case "knowledge":
+                    costSymbol = HelperConst.knowledgeSymbolSpan();
+                    break;
+                default:
+                    costSymbol = HelperConst.moneySymbolSpan();
+                    break;
+            }
 
-            rows.push(
-                <div key={n + "upgrade"} className="upgrade">
+            return (
+                <div key={n + "upgrade"} className="upgrade" >
                     <button
                         key={n + "button"}
                         className={buttonClass}
@@ -45,10 +57,13 @@ export default class Upgrades extends React.Component {
                         disabled={buttonDisabled}>
                         {n}
                     </button>
-                    <div key={n + "upgrade-cost-wrapper"} className="upgrade-cost-wrapper canAfford">
-                        {HelperConst.moneySymbolSpan()}{HelperConst.showNum(item.costValue)}
+                    <div key={n + "upgrade-reward"} className="upgrade-reward">
+                        {item.rewardTarget} x{item.rewardValue}
                     </div>
-                </div>
+                    <div key={n + "upgrade-cost-wrapper"} className="upgrade-cost-wrapper canAfford">
+                        {costSymbol}{HelperConst.showNum(item.costValue)}
+                    </div>
+                </div >
             )
 
         });

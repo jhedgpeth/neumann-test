@@ -11,13 +11,13 @@ export default class HelperConst {
     static moneySymbolSpan() { return (<span className="moneySymbol">{this.moneySymbol}</span>); };
     static knowledgeSymbolSpan() { return (<span className="knowledgeSymbol">{this.knowledgeSymbol}</span>); };
 
-    static purchaseOpts = ["1", "10", "25", "100", "Max", "Max OCD", "PrimeTime"];
+    static purchaseOpts = ["1", "10", "25", "100", "Max", "Max OCD", "Max Upg", "PrimeTime"];
 
     static myNumFormat() {
         return ({
             backend: 'decimal.js',
             sigfigs: 4,
-            maxSmall: 10,
+            maxSmall: 100,
             format: 'engineering',
             Decimal: Decimal
         });

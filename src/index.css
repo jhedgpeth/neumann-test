@@ -117,10 +117,7 @@ body {
 }
 
 .business-owned {
-  text-align: center;
-  text-justify: center;
   text-decoration: none;
-  display: inline-block;
   background: #ddd;
   color: #000;
   height: 100%;
@@ -129,6 +126,9 @@ body {
   border: 0px;
   margin: 0px;
   width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .cost-wrapper {
@@ -170,7 +170,7 @@ body {
 -----------------------------------------------------------------------------*/
 
 #content {
-  background-color: #333;
+  background-color: #222;
   grid-area: content;
   position: relative;
   min-width: 500px;
@@ -188,22 +188,30 @@ body {
   width: 100%;
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  grid-auto-rows: 60px;
+  grid-auto-rows: 80px;
+  grid-column-gap: 20px;
   grid-row-gap: 20px;
+}
+.upgrade {
+  border: 1px solid black;
+  border-radius: 5px;
 }
 .upgrade-buy {
   background: #044;
   text-align: center;
   text-decoration: none;
-  display: inline-block;
+  /* display: inline-block; */
   color: #ddd;
-  height: 60%;
+  height: 40%;
   border-radius: 5px 5px 0 0;
   padding: 0px;
   border: 0px;
   margin: 0px;
   outline: none;
   width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .upgrade-buy.canAfford {
   background: #050;
@@ -215,10 +223,21 @@ body {
   background-color: #050 !important;
   transform: translateY(2px);
 }
+.upgrade-reward {
+  background: #333;
+  width: 100%;
+  height: 30%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 .upgrade-cost-wrapper {
   width: 100%;
-  height: 40%;
+  height: 30%;
   border-radius: 0 0 5px 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .upgrade-cost-wrapper.canAfford {
   background: #020;

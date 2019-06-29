@@ -1,4 +1,5 @@
 import React from 'react';
+import update from 'immutability-helper';
 import './index.css';
 import { Decimal } from 'decimal.js';
 import Income from './Income';
@@ -73,53 +74,79 @@ export default class Neumann extends React.Component {
     }
 
     updateGame() {
-        // console.log("updateGame()");
-        // const Decimal = require('decimal.js');
-
         const revenuePerSec = ComputeFunc.totalEarning(this.state.businesses);
         const revenuePerTick = ComputeFunc.getEarningPerTick(revenuePerSec, this.timeInterval);
-        
+
         const learningPerSec = ComputeFunc.totalEarning(this.state.probes);
         const learningPerTick = ComputeFunc.getEarningPerTick(learningPerSec, this.timeInterval);
+
+        const newUpgrades = this.state.upgrades.map(item => {
+            if (!item.revealed) {
+                if (item.watchType === "money" && item.watchValue.lte(this.state.money)) {
+                    item.revealed = true;
+                    console.log("revealed upgrade", item.name);
+                };
+                if (item.watchType === "knowledge" && item.watchValue.lte(this.state.knowledge)) {
+                    item.revealed = true;
+                    console.log("revealed upgrade", item.name);
+                };
+            }
+            return item;
+        })
 
         this.setState({
             money: this.state.money.plus(revenuePerTick),
             knowledge: this.state.knowledge.plus(learningPerTick),
+            upgrades: newUpgrades,
         });
     }
 
     clickBusiness(bus) {
         console.log("business click ", bus.name);
         const busCost = ComputeFunc.getCost(bus, this.state.purchaseAmt, this.state.money);
-        if (this.state.money.gte(busCost.cost)) {
 
-            let updatedBus = { ...bus };
-            updatedBus.owned = (updatedBus.owned + busCost.num);
-            const newMoney = this.state.money.minus(busCost.cost);
+        const idx = this.state.businesses.findIndex(btest => btest.name === bus.name);
+        this.setState({
+            businesses: update(this.state.businesses, {
+                [idx]: {
+                    owned: { $set: bus.owned + busCost.num },
+                }
+            }),
+            money: this.state.money.minus(busCost.cost),
+        });
 
-            let busList = this.state.businesses.map((b) => {
-                return (b.name === bus.name) ? updatedBus : b;
-            })
-            this.setState((state, props) => ({
-                businesses: busList,
-                money: newMoney,
-            }))
-        }
     }
 
     clickUpgrade(upg) {
-        console.log("upgrade click ",upg.name);
+        console.log("upgrade click ", upg.name);
 
-        let updatedUpgrade = {...upg};
-        updatedUpgrade.purchased = true;
-        const newMoney = this.state.money.minus(upg.costValue);
-        let UpgList = this.state.upgrades.map((u) => {
-            return (u.name === upg.name) ? updatedUpgrade : u;
+        const idx = this.state.upgrades.findIndex(utest => utest.name === upg.name);
+        this.setState({
+            upgrades: update(this.state.upgrades, {
+                [idx]: {
+                    purchased: { $set: true },
+                }
+            }),
+            money: this.state.money.minus(upg.costValue),
         });
-        this.setState((state, props) => ({
-            upgrades: UpgList,
-            money: newMoney,
-        }))
+
+        switch (upg.rewardType) {
+            case "upgradeMult":
+                const busIdx = this.state.businesses.findIndex(utest => utest.name === upg.rewardTarget);
+                this.setState({
+                    businesses: update(this.state.businesses, {
+                        [busIdx]: {
+                            $set: Business.applyMultiplier(
+                                this.state.businesses[busIdx],
+                                upg.rewardValue)
+                        },
+                    }),
+                });
+                break;
+            default:
+                console.log("unknown rewardType");
+                break;
+        }
 
     }
 

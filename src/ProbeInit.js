@@ -14,6 +14,8 @@ export default function ProbeInit() {
             costCoef: 1.07,
             timeBase: 1,
             initialVisible: 1,
+            upgradeMult: 1,
+            upgradeAdd: 0,
         },
         {
             name: "probe2",
@@ -26,6 +28,8 @@ export default function ProbeInit() {
             costCoef: 1.14,
             timeBase: 1,
             initialVisible: 60,
+            upgradeMult: 1,
+            upgradeAdd: 0,
         },
     ]);
 
