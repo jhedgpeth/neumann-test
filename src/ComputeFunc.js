@@ -12,30 +12,32 @@ export default class ComputeFunc {
     }
 
     static buyPct(num, resource) {
-        const pct= resource.div(num).times(100).floor().toNumber()
+        const pct = resource.div(num).times(100).floor().toNumber()
         // console.log("num:",num.toFixed(),"resource:",resource.toFixed(),"pct:",pct);
-        return pct>100 ? 100 : pct;
+        return pct > 100 ? 100 : pct;
     }
 
-    static computeEarning(item) {
+    static computeEarning(item, prestige) {
         const num25s = Math.floor(item.owned / 25);
         const mult25 = num25s > 3 ? 3 : num25s;
         const mult100 = Math.floor(item.owned / 100);
+        const prestigeMultiplier = prestige.num.times(prestige.val).div(100).plus(1);
         let revenue = new Decimal(
             item.incomeBase
                 .times(Math.pow(2, mult25))
                 .times(Math.pow(4, mult100))
                 .times(item.owned)
                 .times(item.upgradeMult)
+                .times(prestigeMultiplier)
         );
         return revenue;
     }
 
-    static totalEarning(items) {
+    static totalEarning(items, prestige) {
         let revenue = new Decimal(0);
 
         items.forEach((item) => {
-            revenue = revenue.plus(ComputeFunc.computeEarning(item));
+            revenue = revenue.plus(ComputeFunc.computeEarning(item, prestige));
         });
         return revenue;
     }
@@ -46,6 +48,10 @@ export default class ComputeFunc {
 
     static getEarningPct(revenue, totalRevenue) {
         return revenue.div(totalRevenue).times(100).toFixed(2);
+    }
+
+    static calcPrestigeEarned(revenue) {
+        return Decimal.sqrt(revenue.div(Math.pow(10, 9))).times(150).floor();
     }
 
     static getCost(item, purchaseAmt, resource) {
@@ -139,7 +145,7 @@ export default class ComputeFunc {
             if (diff > 0 && diff < max) {
                 primeTime = primes[idx] - item.owned;
             }
-            if (diff>max) { break; }
+            if (diff > max) { break; }
         }
         // console.timeEnd('primeidx');
 

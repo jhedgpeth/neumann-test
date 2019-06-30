@@ -29,14 +29,21 @@ export default class Neumann extends React.Component {
             probes: [],
             upgrades: [],
             purchaseAmt: "1",
+            prestige: { num: new Decimal(1000), val: 5 },
+            prestigeNext: new Decimal(0),
+            lifetimeEarnings: new Decimal(0),
         };
 
         this.timeInterval = 100;
         this.timeMultiplier = this.timeInterval / 1000;
 
         // this._business = React.createRef();
+        this.restart = this.restart.bind(this);
+        this.resetAll = this.resetAll.bind(this);
         this.pause = this.pause.bind(this);
         this.resume = this.resume.bind(this);
+        this.prestige = this.prestige.bind(this);
+        this.updatePrestigeEarned = this.updatePrestigeEarned.bind(this);
         this.updateGame = this.updateGame.bind(this);
         this.clickBusiness = this.clickBusiness.bind(this);
         this.clickUpgrade = this.clickUpgrade.bind(this);
@@ -52,7 +59,11 @@ export default class Neumann extends React.Component {
             money: new Decimal(0),
         })
         this.gameIntervalId = setInterval(this.updateGame, this.timeInterval);
+        this.prestigeIntervalId = setInterval(this.updatePrestigeEarned, 1000);
 
+        this.cleanState = { ...this.state };
+        delete this.cleanState.pauseText;
+        delete this.cleanState.purchaseAmt;
     }
 
     componentWillUnmount() {
@@ -65,16 +76,65 @@ export default class Neumann extends React.Component {
 
     }
 
+    resetAll() {
+        this.pause();
+        this.setState((state) => ({
+            money: new Decimal(0),
+            knowledge: new Decimal(0),
+            businesses: BusinessInit(),
+            probes: ProbeInit(),
+            upgrades: UpgradeInit(),
+            purchaseAmt: "1",
+            prestige: { num: new Decimal(1000), val: 5 },
+            prestigeNext: new Decimal(0),
+            lifetimeEarnings: new Decimal(0),
+        }));
+        this.resume();
+    }
+
+    restart() {
+        this.pause();
+        this.setState(this.cleanState);
+        this.setState((state) => ({
+            businesses: BusinessInit(),
+            probes: ProbeInit(),
+            upgrades: UpgradeInit(),
+            money: new Decimal(0),
+        }));
+        this.resume();
+    }
+
     pause() {
         if (this.gameIntervalId) {
             clearInterval(this.gameIntervalId);
-            delete(this.gameIntervalId);
+            delete (this.gameIntervalId);
         }
     }
 
     resume() {
         if (!this.gameIntervalId) {
             this.gameIntervalId = setInterval(this.updateGame, this.timeInterval);
+        }
+    }
+
+    updatePrestigeEarned() {
+        const newPrestigeNext = ComputeFunc.calcPrestigeEarned(this.state.lifetimeEarnings);
+        if (newPrestigeNext !== this.state.prestigeNext) {
+            this.setState({
+                prestigeNext: newPrestigeNext,
+            })
+        }
+        // console.log(Decimal.sqrt(this.state.lifetimeEarnings.div(Math.pow(10, 6))).times(150));
+    }
+
+    prestige() {
+        if (this.state.prestigeNext.gt(0)) {
+            this.updatePrestigeEarned();
+            const newPrestige = this.state.prestige.num.plus(this.state.prestigeNext);
+            this.restart();
+            this.setState((state) => ({
+                prestige: { num: newPrestige, val: state.prestige.val },
+            }));
         }
     }
 
@@ -90,10 +150,11 @@ export default class Neumann extends React.Component {
     }
 
     updateGame() {
-        const revenuePerSec = ComputeFunc.totalEarning(this.state.businesses);
+        const revenuePerSec = ComputeFunc.totalEarning(this.state.businesses, this.state.prestige);
         const revenuePerTick = ComputeFunc.getEarningPerTick(revenuePerSec, this.timeInterval);
+        const newLifetimeEarnings = this.state.lifetimeEarnings.plus(revenuePerTick);
 
-        const learningPerSec = ComputeFunc.totalEarning(this.state.probes);
+        const learningPerSec = ComputeFunc.totalEarning(this.state.probes, this.state.prestige);
         const learningPerTick = ComputeFunc.getEarningPerTick(learningPerSec, this.timeInterval);
 
         const newUpgrades = this.state.upgrades.map(item => {
@@ -114,6 +175,7 @@ export default class Neumann extends React.Component {
             money: this.state.money.plus(revenuePerTick),
             knowledge: this.state.knowledge.plus(learningPerTick),
             upgrades: newUpgrades,
+            lifetimeEarnings: newLifetimeEarnings,
         });
     }
 
@@ -191,20 +253,22 @@ export default class Neumann extends React.Component {
                         knowledge={this.state.knowledge}
                         businesses={this.state.businesses}
                         probes={this.state.probes}
+                        prestige={this.state.prestige}
+                        prestigeNext={this.state.prestigeNext}
                     />
 
                 </div>
-                    <ScrollContainer className="left-sidebar">
+                <ScrollContainer className="left-sidebar">
 
                     <Upgrades
-                            upgrades={this.state.upgrades}
-                            businesses={this.state.businesses}
-                            money={this.state.money}
-                            knowledge={this.state.knowledge}
-                            onClick={this.clickUpgrade}
-                        />
+                        upgrades={this.state.upgrades}
+                        businesses={this.state.businesses}
+                        money={this.state.money}
+                        knowledge={this.state.knowledge}
+                        onClick={this.clickUpgrade}
+                    />
 
-                    </ScrollContainer>
+                </ScrollContainer>
                 <div id="right-sidebar">
 
                     <div className="purchaseAmts">
@@ -225,19 +289,25 @@ export default class Neumann extends React.Component {
                     </div>
                     <button className="pause-button" onClick={this.pause}>Pause</button>
                     <button className="pause-button" onClick={this.resume}>Resume</button>
+                    <button className="reset-button" onClick={this.resetAll}>RESET</button>
+                    <button
+                        className="prestige-button"
+                        disabled={this.state.prestigeNext.gt(0) ? false : true}
+                        onClick={this.prestige}>Prestige</button>
 
                 </div>
 
                 <div id="content">
                     <div className="container">
 
-                    <Business
+                        <Business
                             businesses={this.state.businesses}
                             purchaseAmt={this.state.purchaseAmt}
                             money={this.state.money}
+                            prestige={this.state.prestige}
                             onClick={this.clickBusiness}
                         />
-                       
+
 
                     </div>
 

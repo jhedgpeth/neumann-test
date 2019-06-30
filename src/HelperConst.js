@@ -5,11 +5,13 @@ export default class HelperConst {
 
     static moneySymbol = "$";
     // static knowledgeSymbol = "𓂀";
-    // static knowledgeSymbol = '\u29a8';
-    static knowledgeSymbol = "&";
+    static knowledgeSymbol = '\u29a8';
+    // static knowledgeSymbol = "&";
+    static prestigeSymbol = '\u039b';
 
     static moneySymbolSpan() { return (<span className="moneySymbol">{this.moneySymbol}</span>); };
     static knowledgeSymbolSpan() { return (<span className="knowledgeSymbol">{this.knowledgeSymbol}</span>); };
+    static prestigeSymbolSpan() { return (<span className="prestigeSymbol">{this.prestigeSymbol}</span>); };
 
     static purchaseOpts = ["1", "10", "25", "100", "Max", "Max OCD", "Max Upg", "PrimeTime"];
 

@@ -14,7 +14,7 @@ export default class Business extends React.Component {
 
     render() {
 
-        const totalEarning = ComputeFunc.totalEarning(this.props.businesses);
+        const totalEarning = ComputeFunc.totalEarning(this.props.businesses, this.props.prestige);
 
         const rows = this.props.businesses.map((item) => {
             const n = item.name;
@@ -37,7 +37,7 @@ export default class Business extends React.Component {
                 costClass = "cost-wrapper cannotAfford ";
             }
 
-            const myEarning = ComputeFunc.computeEarning(item);
+            const myEarning = ComputeFunc.computeEarning(item, this.props.prestige);
             // console.log(this.props.money.toFixed(2));
             const myEarningPct = ComputeFunc.getEarningPct(myEarning,totalEarning);
 

@@ -32,31 +32,99 @@ body {
   color: orange;
 }
 
+.prestigeSymbol {
+  color: purple;
+}
+
 /* Header
 -----------------------------------------------------------------------------*/
 
 #header {
-  height: 50px;
+  height: 60px;
   grid-area: header;
   background-color: #222222;
   padding: 5px;
 }
 
+.header-wrapper {
+  height: 60px;
+}
+
 .income {
-  width: 300px;
+  font-size: 1.1rem;
+  /* width: 300px; */
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 90px;
-  align-items: top;
+  grid-template-columns: 120px 110px 130px;
+  grid-template-rows: 30px 30px;
+  float: left;
+}
+.income-header {
+  grid-column: 1;
+  padding: 0 5px;
+  margin: auto 0 auto auto;
 }
 .income-money {
-  grid-column: 1;
+  grid-column: 2;
   grid-row: 1;
+  display: flex;
+  align-items: center;
+  justify-content: left;
+}
+.income-earning {
+  grid-column: 3;
+  grid-row: 1;
+  display: flex;
+  align-items: center;
+  justify-content: left;
 }
 .income-knowledge {
   grid-column: 2;
-  grid-row: 1;
+  grid-row: 2;
+  display: flex;
+  align-items: center;
+  justify-content: left;
 }
+.income-learning {
+  grid-column: 3;
+  grid-row: 2;
+  display: flex;
+  align-items: center;
+  justify-content: left;
+}
+
+.prestige {
+  font-size: 1.1rem;
+  display: grid;
+  grid-template-columns: 120px 110px 130px;
+  grid-template-rows: 30px 30px;
+}
+.prestige-header {
+  grid-column: 1;
+  padding: 0 5px;
+  margin: auto 0 auto auto;
+}
+.prestige-units {
+  grid-column: 2;
+  grid-row: 1;
+  display: flex;
+  align-items: center;
+  justify-content: left;
+}
+.prestige-earning {
+  grid-column: 3;
+  grid-row: 1;
+  display: flex;
+  align-items: center;
+  justify-content: left;
+}
+.prestige-boost {
+  grid-column: 2;
+  grid-row: 2;
+  display: flex;
+  align-items: center;
+  justify-content: left;
+}
+
 
 /* footer
 -----------------------------------------------------------------------------*/
@@ -119,7 +187,7 @@ body {
   grid-row: 1/1;
   z-index: 2;
   text-shadow: 0 -1px 0 #fff, 0 1px 0 #2e2e2e, 0 2px 0 #2c2c2c, 0 3px 0 #2a2a2a,
-    0 4px 0 #282828, 0 22px 30px rgba(0, 0, 0, 0.9),
+    0 22px 30px rgba(0, 0, 0, 0.9),
     2px 2px 2px rgba(206, 89, 55, 0);
 }
 .upgrade-buy-progress {
@@ -259,7 +327,7 @@ body {
   grid-row: 1;
   z-index: 2;
   text-shadow: 0 -1px 0 #fff, 0 1px 0 #2e2e2e, 0 2px 0 #2c2c2c, 0 3px 0 #2a2a2a,
-    0 4px 0 #282828, 0 22px 30px rgba(0, 0, 0, 0.9),
+    0 22px 30px rgba(0, 0, 0, 0.9),
     2px 2px 2px rgba(206, 89, 55, 0);
 }
 .business-buy-progress.money {
