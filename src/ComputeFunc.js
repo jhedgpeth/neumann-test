@@ -11,6 +11,12 @@ export default class ComputeFunc {
         };
     }
 
+    static buyPct(num, resource) {
+        const pct= resource.div(num).times(100).floor().toNumber()
+        // console.log("num:",num.toFixed(),"resource:",resource.toFixed(),"pct:",pct);
+        return pct>100 ? 100 : pct;
+    }
+
     static computeEarning(item) {
         const num25s = Math.floor(item.owned / 25);
         const mult25 = num25s > 3 ? 3 : num25s;

@@ -18,6 +18,13 @@ export default class Business extends React.Component {
             const n = item.name;
             const myCost = ComputeFunc.getCost(item, this.props.purchaseAmt, this.props.money);
             // console.log(myCost);
+
+            const buyPct = ComputeFunc.buyPct(myCost.cost, this.props.money);
+            const buyPctStyle = { width: buyPct+'%'}
+            // item.name==="Lemonade Stand" && console.log("buyPct:",buyPct);
+            // item.name==="Lemonade Stand" && console.log("buyPctStyle:",buyPctStyle);
+            // console.log("buyPct:",buyPct);
+
             let buttonClass = "";
             let costClass = "";
             let buttonDisabled = false;
@@ -36,6 +43,11 @@ export default class Business extends React.Component {
             return (
                 <div key={n + "business"} className="business">
                     <div key={n + "button-wrapper"} className="button-wrapper">
+                        <div className="business-buy-progress">
+                            <div className="business-buy-progress-pct" style={buyPctStyle}>
+                                <span ></span>
+                            </div>
+                        </div>
                         <button
                             key={n + "button"}
                             className={buttonClass}
@@ -43,12 +55,7 @@ export default class Business extends React.Component {
                             disabled={buttonDisabled}>
                             {myCost.num}x {n}
                         </button>
-                        <div className="testdiv">
-                            <div className="testdiv-pct" style={{ width: '50%' }}>
-                                <span >50/100</span>
-                            </div>
-                        </div>
-                        <div key={n + "owned"} className="business-owned">{HelperConst.showNum(item.owned)}</div>
+                        <div key={n + "owned"} className="business-owned">{HelperConst.showInt(item.owned)}</div>
                     </div>
 
                     <div key={n + "cost-wrapper"} className={costClass}>

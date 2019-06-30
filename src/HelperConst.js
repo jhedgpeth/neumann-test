@@ -13,7 +13,15 @@ export default class HelperConst {
 
     static purchaseOpts = ["1", "10", "25", "100", "Max", "Max OCD", "Max Upg", "PrimeTime"];
 
-    static myNumFormat() {
+    static showNum(num) {
+        return HelperConst.myFormatterNum().format(num);
+    }
+
+    static showInt(num) {
+        return HelperConst.myFormatterInt().format(num);
+    }
+
+    static myNumCfg() {
         return ({
             backend: 'decimal.js',
             sigfigs: 4,
@@ -23,16 +31,32 @@ export default class HelperConst {
         });
     };
 
-    static showNum(num) {
-        return HelperConst.myFormatter().format(num);
-    }
+    static myIntCfg() {
+        return ({
+            backend: 'decimal.js',
+            sigfigs: 4,
+            maxSmall: 0,
+            format: 'engineering',
+            Decimal: Decimal
+        });
+    };
 
-    static myFormatter() {
+    static myFormatterNum() {
         const numberformat = require('swarm-numberformat');
-        if (!this.numberformat) {
-            this.numberformat = new numberformat.Formatter(HelperConst.myNumFormat());
+        console.log("typeof myNumFormat:",typeof(this.myNumCfg));
+        if (!this.myNumFormat) {
+            console.log("entered defining area");
+            this.myNumFormat = new numberformat.Formatter(HelperConst.myNumCfg());
         }
-        return this.numberformat;
+        return this.myNumFormat;
+
+    }
+    static myFormatterInt() {
+        const numberformat = require('swarm-numberformat');
+        if (!this.myIntFormat) {
+            this.myIntFormat = new numberformat.Formatter(HelperConst.myIntCfg());
+        }
+        return this.myIntFormat;
 
     }
 }

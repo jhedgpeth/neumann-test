@@ -128,7 +128,7 @@ export default class Neumann extends React.Component {
                 }
             }),
         });
-        
+
         switch (upg.costType) {
             case "money":
                 this.setState({
@@ -230,6 +230,7 @@ export default class Neumann extends React.Component {
 
                 </div>
             </div>
+            
         )
     }
 
