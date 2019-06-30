@@ -44,6 +44,10 @@ export default class ComputeFunc {
         return revenue.times(timeInterval / 1000);
     }
 
+    static getEarningPct(revenue, totalRevenue) {
+        return revenue.div(totalRevenue).times(100).toFixed(2);
+    }
+
     static getCost(item, purchaseAmt, resource) {
 
         const maxbuys = this.maxBuy(item, resource);

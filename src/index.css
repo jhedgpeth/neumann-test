@@ -1,15 +1,16 @@
 /* Misc
 -----------------------------------------------------------------------------*/
 body {
-  font: 15px "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  margin: 10px;
+  font: 0.8rem "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  margin: 8px;
   color: #ddd;
   background: #000;
 }
 
 #wrapper {
+  width: 1024px;
   display: grid;
-  grid-template-columns: 250px 400px 250px;
+  grid-template-columns: 220px 524px 220px;
   grid-template-areas: "header header header " "lsidebar content rsidebar" "footer footer footer ";
 }
 
@@ -35,7 +36,7 @@ body {
 -----------------------------------------------------------------------------*/
 
 #header {
-  height: 45px;
+  height: 50px;
   grid-area: header;
   background-color: #222222;
   padding: 5px;
@@ -70,127 +71,123 @@ body {
 /* left sidebar
 -----------------------------------------------------------------------------*/
 
-#left-sidebar {
+/* #left-sidebar {
   background-color: #04395e;
   grid-area: lsidebar;
   padding: 10px;
+  height: 628px;
+} */
+
+.left-sidebar {
+  background-color: #04395e;
+  grid-area: lsidebar;
+  padding: 10px;
+  height: 528px;
 }
 
-.business-container {
+.upgrade-container {
   width: 100%;
-  margin: 5px 0;
   display: grid;
-  grid-template-columns: 1fr;
-  grid-auto-rows: 60px;
+  grid-template-columns: repeat(1, 200px);
+  grid-auto-rows: 80px;
   grid-row-gap: 20px;
 }
-
-.business,
 .upgrade {
-  box-shadow: 0 8px 6px -6px black;
-}
-
-.button-wrapper {
-  width: 100%;
-  /* grid-column: span 2; */
+  border: 1px solid black;
+  border-radius: 5px;
   display: grid;
-  grid-template-columns: 3fr 1fr;
-  grid-row: span 2;
+  grid-template-rows: 40% 30% 30%;
+  /* transform: rotate(5deg); */
 }
-
-.business-buy {
+.upgrade-buy {
+  font-weight: bold;
   text-align: center;
   text-decoration: none;
-  display: inline-block;
   background: transparent;
   color: #ddd;
-  height: 35px;
-  border-radius: 5px 0 0 0;
+  height: 100%;
+  border-radius: 5px 5px 0 0;
   padding: 0px;
   border: 0px;
   margin: 0px;
   outline: none;
   width: 100%;
+  display: inline-block;
+  align-items: center;
+  justify-content: center;
   grid-column: 1/1;
   grid-row: 1/1;
   z-index: 2;
+  text-shadow: 0 -1px 0 #fff, 0 1px 0 #2e2e2e, 0 2px 0 #2c2c2c, 0 3px 0 #2a2a2a,
+    0 4px 0 #282828, 0 22px 30px rgba(0, 0, 0, 0.9),
+    2px 2px 2px rgba(206, 89, 55, 0);
 }
-.business-buy-progress {
-  height: 35px;
-  line-height: 35px;
+.upgrade-buy-progress {
+  height: 100%;
+  line-height: 40%;
   border-radius: 5px 0 0 0;
   /* border: 2px solid red; */
   grid-column: 1/1;
   grid-row: 1/1;
-  position: relative;
+}
+.upgrade-buy-progress.money {
   background: #020;
 }
-.business-buy-progress-pct {
-  height: 100%;
-  background: #050;
-  color: #ddd;
-  text-align: center;
-  border-radius: 5px 0 0 0;
+.upgrade-buy-progress.knowledge {
+  background: #442;
 }
-.business-buy-progress-pct span {
-  display: inline-block;
-  width: 100%;
-  left: 0;
-}
-.business-buy.canAfford,
-.upgrade-buy.canAfford,
-.purchase-amount {
-  cursor: pointer;
-}
-.business-buy.cannotAfford,
-.upgrade-buy.cannotAfford {
-  cursor: not-allowed;
-}
-.business-buy.canAfford:hover {
+.upgrade-buy.canAfford.money:hover {
   background-color: #090;
 }
-.business-buy:active:enabled {
+.upgrade-buy.canAfford.knowledge:hover {
+  background-color: #aa2;
+}
+.upgrade-buy:active:enabled {
   background-color: #050 !important;
   transform: translateY(2px);
 }
 
-.business-owned {
-  text-decoration: none;
-  background: #ddd;
-  color: #000;
+.upgrade-buy-progress-pct {
   height: 100%;
-  border-radius: 0 5px 0 0;
-  padding: 0px;
-  border: 0px;
-  margin: 0px;
+  color: #ddd;
+  text-align: center;
+  border-radius: 5px 0 0 0;
+}
+.upgrade-buy-progress-pct.money {
+  background: #050;
+}
+.upgrade-buy-progress-pct.knowledge {
+  background: #772;
+}
+
+.upgrade-buy-progress-pct span {
+  display: inline-block;
   width: 100%;
+  left: 0;
+}
+
+.upgrade-reward {
+  background: #444;
+  width: 100%;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-
-.cost-wrapper {
-  height: 20px;
-  width: 50%;
-  float: left;
-  padding: 5px 0 0 0;
-  border-radius: 0 0 0 5px;
+.upgrade-cost-wrapper {
+  width: 100%;
+  height: 100%;
+  border-radius: 0 0 5px 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.cost-wrapper.canAfford {
+.upgrade-cost-wrapper.canAfford {
   background: #020;
 }
-.cost-wrapper.cannotAfford {
+.upgrade-cost-wrapper.cannotAfford {
   background: #020;
   color: #888;
-}
-
-.earning-wrapper {
-  height: 20px;
-  width: 50%;
-  float: right;
-  padding: 5px 0 0 0;
-  background: #444;
-  border-radius: 0 0 5px 0;
 }
 
 /* right sidebar
@@ -200,6 +197,7 @@ body {
   grid-area: rsidebar;
   background-color: #04395e;
   padding: 10px;
+  height: 528px;
 }
 
 .purchase-amount.amt-selected {
@@ -215,75 +213,161 @@ body {
   grid-area: content;
   position: relative;
   min-width: 300px;
-  min-height: 400px;
+  /* min-height: 400px; */
+  height: 538px;
   padding: 5px;
 }
 
 .container {
-  margin: 5px 10px;
+  margin: 5px 7px;
 }
 
-.upgrade-container {
+.business-container {
   width: 100%;
+  margin: 5px 0;
   display: grid;
-  grid-template-columns: repeat(2, 180px);
+  grid-template-columns: 240px 240px;
+  grid-column-gap: 20px;
   grid-auto-rows: 80px;
-  grid-column-gap: 10px;
   grid-row-gap: 20px;
 }
-.upgrade {
-  border: 1px solid black;
-  border-radius: 5px;
+
+.business {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: 60% 40%;
 }
-.upgrade-buy {
+
+.business,
+.upgrade {
+  box-shadow: 0 8px 6px -6px black;
+}
+
+.business-buy {
+  font-weight: bold;
   text-align: center;
   text-decoration: none;
+  display: inline-block;
+  background: transparent;
   color: #ddd;
-  height: 40%;
-  border-radius: 5px 5px 0 0;
+  border-radius: 5px 0 0 0;
   padding: 0px;
   border: 0px;
   margin: 0px;
   outline: none;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  grid-column: 1/3;
+  grid-row: 1;
+  z-index: 2;
+  text-shadow: 0 -1px 0 #fff, 0 1px 0 #2e2e2e, 0 2px 0 #2c2c2c, 0 3px 0 #2a2a2a,
+    0 4px 0 #282828, 0 22px 30px rgba(0, 0, 0, 0.9),
+    2px 2px 2px rgba(206, 89, 55, 0);
 }
-.upgrade-buy.cannotAfford {
+.business-buy-progress.money {
   background: #020;
-  color: #888;
 }
-.upgrade-buy.canAfford {
-  background: #050;
+.business-buy-progress.knowledge {
+  background: #442;
 }
-.upgrade-buy.canAfford:hover {
+.business-buy.canAfford.money:hover {
   background-color: #090;
 }
-.upgrade-buy:active:enabled {
+.business-buy.canAfford.knowledge:hover {
+  background-color: #aa2;
+}
+.business-buy:active:enabled {
   background-color: #050 !important;
   transform: translateY(2px);
 }
-.upgrade-reward {
-  background: #444;
+.business-buy-progress {
+  border-radius: 5px 0 0 0;
+  /* border: 2px solid red; */
+  grid-column: 1/3;
+  grid-row: 1;
+}
+
+.business-buy-progress-pct {
+  height: 100%;
+  background: #050;
+  color: #ddd;
+  text-align: center;
+  border-radius: 5px 0 0 0;
+}
+.upgrade-buy-progress-pct.money {
+  background: #050;
+}
+.upgrade-buy-progress-pct.knowledge {
+  background: #772;
+}
+
+.business-buy-progress-pct span {
+  display: inline-block;
   width: 100%;
-  height: 30%;
+  left: 0;
+}
+.business-buy.canAfford,
+.upgrade-buy.canAfford,
+.purchase-amount {
+  cursor: pointer;
+}
+.business-buy.cannotAfford,
+.upgrade-buy.cannotAfford {
+  cursor: not-allowed;
+}
+
+.business-owned {
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-decoration: none;
+  background: #ddd;
+  color: #000;
+  height: 100%;
+  border-radius: 0 5px 0 0;
+  padding: 0px;
+  border: 0px;
+  margin: 0px;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
+  grid-column: 3;
+  grid-row: 1;
 }
-.upgrade-cost-wrapper {
-  width: 100%;
-  height: 30%;
-  border-radius: 0 0 5px 5px;
+
+.cost-wrapper {
+  padding: 0 5px 0 5px;
+  border-radius: 0 0 0 5px;
+  grid-column: 1;
+  grid-row: 2;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: left;
 }
-.upgrade-cost-wrapper.canAfford {
+.cost-wrapper.canAfford {
   background: #020;
 }
-.upgrade-cost-wrapper.cannotAfford {
+.cost-wrapper.cannotAfford {
   background: #020;
   color: #888;
+}
+
+.earning-wrapper {
+  background: #444;
+  padding: 0 5px 0 5px;
+
+  grid-column: 2;
+  grid-row: 2;
+  display: flex;
+  align-items: center;
+  justify-content: left;
+}
+
+.earning-pct-wrapper {
+  background: #444;
+  border-left: 1px solid black;
+  border-radius: 0 0 5px 0;
+  grid-column: 3;
+  grid-row: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

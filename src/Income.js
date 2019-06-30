@@ -14,12 +14,12 @@ export default class Income extends React.Component {
                 <div className="income-money">
                     Money: {HelperConst.moneySymbolSpan()}{HelperConst.showNum(this.props.money)}
                     <br />
-                    Revenue: {HelperConst.moneySymbolSpan()}{HelperConst.showNum(revenue)}/s
+                    + {HelperConst.moneySymbolSpan()}{HelperConst.showNum(revenue)}/s
                 </div>
                 <div className="income-knowledge">
                     Knowledge: {HelperConst.knowledgeSymbolSpan()}{HelperConst.showNum(this.props.knowledge)}
                     <br />
-                    Learning: {HelperConst.knowledgeSymbolSpan()}{HelperConst.showNum(learning)}/s
+                    + {HelperConst.knowledgeSymbolSpan()}{HelperConst.showNum(learning)}/s
                 </div>
             </div>
 

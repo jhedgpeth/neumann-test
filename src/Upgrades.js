@@ -1,7 +1,7 @@
 import React from 'react';
 // import ComputeFunc from './ComputeFunc';
 import HelperConst from './HelperConst';
-
+import ComputeFunc from './ComputeFunc';
 
 export default class Upgrades extends React.Component {
 
@@ -20,22 +20,32 @@ export default class Upgrades extends React.Component {
             if (item.purchased || !item.revealed) { return ""; };
 
             let n = item.name;
-            let buttonClass = "upgrade-buy";
+            let buttonClass = "upgrade-buy ";
             let buttonDisabled = true;
+
+            let buyPct = 0;
+            let bgClass = "";
+
             if (item.costType === "money") {
+                bgClass = "money ";
+                buyPct = ComputeFunc.buyPct(item.costValue, this.props.money);
+
                 if (this.props.money.gte(item.costValue)) {
-                    buttonClass += " canAfford";
+                    buttonClass += "canAfford ";
                     buttonDisabled = false;
                 } else {
-                    buttonClass += " cannotAfford";
+                    buttonClass += "cannotAfford ";
                 }
             }
             if (item.costType === "knowledge") {
+                bgClass = "knowledge ";
+                buyPct = ComputeFunc.buyPct(item.costValue, this.props.knowledge);
+
                 if (this.props.knowledge.gte(item.costValue)) {
-                    buttonClass += " canAfford";
+                    buttonClass += "canAfford ";
                     buttonDisabled = false;
                 } else {
-                    buttonClass += " cannotAfford";
+                    buttonClass += "cannotAfford ";
                 }
             }
             let costSymbol = ""
@@ -48,11 +58,18 @@ export default class Upgrades extends React.Component {
                     break;
             }
 
+            const buyPctStyle = { width: buyPct + '%' }
+
             return (
                 <div key={n + "upgrade"} className="upgrade" >
+                    <div className={"upgrade-buy-progress " + bgClass}>
+                        <div className={"upgrade-buy-progress-pct " + bgClass} style={buyPctStyle}>
+                            <span ></span>
+                        </div>
+                    </div>
                     <button
                         key={n + "button"}
-                        className={buttonClass}
+                        className={buttonClass+bgClass}
                         onClick={() => this.props.onClick(item)}
                         disabled={buttonDisabled}>
                         {n}

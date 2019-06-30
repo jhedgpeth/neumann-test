@@ -43,7 +43,6 @@ export default class HelperConst {
 
     static myFormatterNum() {
         const numberformat = require('swarm-numberformat');
-        console.log("typeof myNumFormat:",typeof(this.myNumCfg));
         if (!this.myNumFormat) {
             console.log("entered defining area");
             this.myNumFormat = new numberformat.Formatter(HelperConst.myNumCfg());

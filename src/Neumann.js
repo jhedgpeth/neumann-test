@@ -11,7 +11,8 @@ import UpgradeInit from './UpgradeInit';
 import ComputeFunc from './ComputeFunc';
 import HelperConst from './HelperConst';
 import Upgrades from './Upgrades';
-// import HelperConst from './HelperConst';
+import ScrollContainer from 'react-indiana-drag-scroll'
+
 
 
 // =====================================================
@@ -34,6 +35,8 @@ export default class Neumann extends React.Component {
         this.timeMultiplier = this.timeInterval / 1000;
 
         // this._business = React.createRef();
+        this.pause = this.pause.bind(this);
+        this.resume = this.resume.bind(this);
         this.updateGame = this.updateGame.bind(this);
         this.clickBusiness = this.clickBusiness.bind(this);
         this.clickUpgrade = this.clickUpgrade.bind(this);
@@ -62,15 +65,28 @@ export default class Neumann extends React.Component {
 
     }
 
+    pause() {
+        if (this.gameIntervalId) {
+            clearInterval(this.gameIntervalId);
+            delete(this.gameIntervalId);
+        }
+    }
+
+    resume() {
+        if (!this.gameIntervalId) {
+            this.gameIntervalId = setInterval(this.updateGame, this.timeInterval);
+        }
+    }
+
     updatePurchaseAmt(amt) {
         if (HelperConst.purchaseOpts.indexOf(amt) !== -1 && this.state.purchaseAmt !== amt) {
             this.setState({
                 purchaseAmt: amt,
             })
         }
-        console.log(this.state.businesses);
-        console.log(this.state.businesses[0]);
-        console.log(ComputeFunc.maxBuy(this.state.businesses[0], this.state.money).max25);
+        // console.log(this.state.businesses);
+        // console.log(this.state.businesses[0]);
+        // console.log(ComputeFunc.maxBuy(this.state.businesses[0], this.state.money).max25);
     }
 
     updateGame() {
@@ -136,9 +152,9 @@ export default class Neumann extends React.Component {
                 });
                 break;
             case "knowledge":
-                    this.setState({
-                        knowledge: this.state.knowledge.minus(upg.costValue),
-                    });
+                this.setState({
+                    knowledge: this.state.knowledge.minus(upg.costValue),
+                });
                 break;
             default:
                 break;
@@ -178,16 +194,17 @@ export default class Neumann extends React.Component {
                     />
 
                 </div>
-                <div id="left-sidebar">
+                    <ScrollContainer className="left-sidebar">
 
-                    <Business
-                        businesses={this.state.businesses}
-                        purchaseAmt={this.state.purchaseAmt}
-                        money={this.state.money}
-                        onClick={this.clickBusiness}
-                    />
+                    <Upgrades
+                            upgrades={this.state.upgrades}
+                            businesses={this.state.businesses}
+                            money={this.state.money}
+                            knowledge={this.state.knowledge}
+                            onClick={this.clickUpgrade}
+                        />
 
-                </div>
+                    </ScrollContainer>
                 <div id="right-sidebar">
 
                     <div className="purchaseAmts">
@@ -206,19 +223,21 @@ export default class Neumann extends React.Component {
                             )
                         })}
                     </div>
+                    <button className="pause-button" onClick={this.pause}>Pause</button>
+                    <button className="pause-button" onClick={this.resume}>Resume</button>
 
                 </div>
 
                 <div id="content">
                     <div className="container">
 
-                        <Upgrades
-                            upgrades={this.state.upgrades}
+                    <Business
                             businesses={this.state.businesses}
+                            purchaseAmt={this.state.purchaseAmt}
                             money={this.state.money}
-                            knowledge={this.state.knowledge}
-                            onClick={this.clickUpgrade}
+                            onClick={this.clickBusiness}
                         />
+                       
 
                     </div>
 
@@ -230,7 +249,7 @@ export default class Neumann extends React.Component {
 
                 </div>
             </div>
-            
+
         )
     }
 
