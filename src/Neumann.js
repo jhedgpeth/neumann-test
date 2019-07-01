@@ -11,8 +11,6 @@ import UpgradeInit from './UpgradeInit';
 import ComputeFunc from './ComputeFunc';
 import HelperConst from './HelperConst';
 import Upgrades from './Upgrades';
-import ScrollContainer from 'react-indiana-drag-scroll'
-
 
 
 // =====================================================
@@ -64,6 +62,7 @@ export default class Neumann extends React.Component {
         this.cleanState = { ...this.state };
         delete this.cleanState.pauseText;
         delete this.cleanState.purchaseAmt;
+
     }
 
     componentWillUnmount() {
@@ -258,7 +257,7 @@ export default class Neumann extends React.Component {
                     />
 
                 </div>
-                <ScrollContainer className="left-sidebar">
+                <div className="left-sidebar">
 
                     <Upgrades
                         upgrades={this.state.upgrades}
@@ -268,7 +267,7 @@ export default class Neumann extends React.Component {
                         onClick={this.clickUpgrade}
                     />
 
-                </ScrollContainer>
+                </div>
                 <div id="right-sidebar">
 
                     <div className="purchaseAmts">

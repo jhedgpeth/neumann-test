@@ -7,7 +7,7 @@
     "immutability-helper": "^3.0.1",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "react-indiana-drag-scroll": "^1.1.1",
+    "react-perfect-scrollbar": "^1.5.3",
     "react-scripts": "3.0.1",
     "swarm-numberformat": "^0.4.0"
   },

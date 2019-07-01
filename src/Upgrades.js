@@ -1,13 +1,21 @@
 import React from 'react';
+// import PerfectScrollbar from 'react-perfect-scrollbar'
 // import ComputeFunc from './ComputeFunc';
 import HelperConst from './HelperConst';
 import ComputeFunc from './ComputeFunc';
 
 export default class Upgrades extends React.Component {
 
+    componentDidMount() {
+        console.log("upgrades didmount");
+    }
 
+    componentWillUnmount() {
+        console.log("upgrades willunmount");
+    }
 
     render() {
+        const PerfectScrollbar = require('react-perfect-scrollbar');
 
         const sources = this.props.upgrades.reduce((result, item) => {
             if (!item.purchased && item.revealed) {
@@ -69,7 +77,7 @@ export default class Upgrades extends React.Component {
                     </div>
                     <button
                         key={n + "button"}
-                        className={buttonClass+bgClass}
+                        className={buttonClass + bgClass}
                         onClick={() => this.props.onClick(item)}
                         disabled={buttonDisabled}>
                         {n}
@@ -86,9 +94,9 @@ export default class Upgrades extends React.Component {
         });
 
         return (
-            <div className="upgrade-container">
-                {rows}
-            </div>
+                <PerfectScrollbar className="upgrade-container">
+                    {rows}
+                </PerfectScrollbar>
         )
 
     }

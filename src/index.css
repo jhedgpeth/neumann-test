@@ -10,8 +10,13 @@ body {
 #wrapper {
   width: 1024px;
   display: grid;
-  grid-template-columns: 220px 524px 220px;
+  grid-template-columns: 245px 524px 220px;
   grid-template-areas: "header header header " "lsidebar content rsidebar" "footer footer footer ";
+}
+
+.ps__rail-x,
+.ps__rail-y {
+  display: none;
 }
 
 /* Misc
@@ -151,6 +156,8 @@ body {
   grid-area: lsidebar;
   padding: 10px;
   height: 528px;
+  /* min-height: 528px; */
+
 }
 
 .upgrade-container {
@@ -159,6 +166,9 @@ body {
   grid-template-columns: repeat(1, 200px);
   grid-auto-rows: 80px;
   grid-row-gap: 20px;
+  /* height: 460px; */
+  height: 528px;
+  overflow-y: scroll;
 }
 .upgrade {
   border: 1px solid black;
@@ -193,7 +203,7 @@ body {
 .upgrade-buy-progress {
   height: 100%;
   line-height: 40%;
-  border-radius: 5px 0 0 0;
+  border-radius: 5px 5px 0 0;
   /* border: 2px solid red; */
   grid-column: 1/1;
   grid-row: 1/1;
@@ -219,7 +229,7 @@ body {
   height: 100%;
   color: #ddd;
   text-align: center;
-  border-radius: 5px 0 0 0;
+  border-radius: 5px 5px 0 0;
 }
 .upgrade-buy-progress-pct.money {
   background: #050;
@@ -421,7 +431,7 @@ body {
 .earning-wrapper {
   background: #444;
   padding: 0 5px 0 5px;
-
+  border-right: 1px solid black;
   grid-column: 2;
   grid-row: 2;
   display: flex;
@@ -431,7 +441,7 @@ body {
 
 .earning-pct-wrapper {
   background: #444;
-  border-left: 1px solid black;
+  
   border-radius: 0 0 5px 0;
   grid-column: 3;
   grid-row: 2;
