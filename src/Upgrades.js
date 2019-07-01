@@ -1,6 +1,4 @@
 import React from 'react';
-// import PerfectScrollbar from 'react-perfect-scrollbar'
-// import ComputeFunc from './ComputeFunc';
 import HelperConst from './HelperConst';
 import ComputeFunc from './ComputeFunc';
 
@@ -15,8 +13,6 @@ export default class Upgrades extends React.Component {
     }
 
     render() {
-        const PerfectScrollbar = require('react-perfect-scrollbar');
-
         const sources = this.props.upgrades.reduce((result, item) => {
             if (!item.purchased && item.revealed) {
                 result.push(item);
@@ -85,7 +81,7 @@ export default class Upgrades extends React.Component {
                     <div key={n + "upgrade-reward"} className="upgrade-reward">
                         {item.rewardTarget} x{item.rewardValue}
                     </div>
-                    <div key={n + "upgrade-cost-wrapper"} className="upgrade-cost-wrapper canAfford">
+                    <div key={n + "upgrade-cost-wrapper"} className={"upgrade-cost-wrapper canAfford "+bgClass} >
                         {costSymbol}{HelperConst.showNum(item.costValue)}
                     </div>
                 </div >
@@ -94,9 +90,9 @@ export default class Upgrades extends React.Component {
         });
 
         return (
-                <PerfectScrollbar className="upgrade-container">
+                <div className="upgrade-container">
                     {rows}
-                </PerfectScrollbar>
+                </div>
         )
 
     }

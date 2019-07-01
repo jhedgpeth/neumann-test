@@ -1,6 +1,7 @@
 import React from 'react';
 import ComputeFunc from './ComputeFunc';
 import HelperConst from './HelperConst';
+import './neon.scss';
 
 export default class Income extends React.Component {
 
@@ -38,6 +39,12 @@ export default class Income extends React.Component {
 
                 </div>
 
+                <div class="text-effect">
+                    <h1 class="neon" data-text="NEUMANN" contenteditable>NEUMANN</h1>
+                    <div class="gradient"></div>
+                    <div class="spotlight"></div>
+                </div>
+
                 <div className="prestige">
                     <div className="prestige-header">
                         Prestige:
@@ -55,7 +62,7 @@ export default class Income extends React.Component {
                     <div className="prestige-boost">
                         {HelperConst.showInt(prestigeMultiplier)}%
                     </div>
-                    
+
                 </div>
 
             </div>

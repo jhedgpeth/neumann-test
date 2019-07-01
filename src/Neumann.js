@@ -1,6 +1,6 @@
 import React from 'react';
 import update from 'immutability-helper';
-import './index.css';
+import './index.scss';
 import { Decimal } from 'decimal.js';
 import Income from './Income';
 import Business from './Business.js';
