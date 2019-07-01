@@ -13,10 +13,16 @@ export default class Business extends React.Component {
     }
 
     render() {
+        const sources = this.props.businesses.reduce((result, item) => {
+            if (item.revealed) {
+                result.push(item);
+            }
+            return result;
+        }, []);
 
         const totalEarning = ComputeFunc.totalEarning(this.props.businesses, this.props.prestige);
 
-        const rows = this.props.businesses.map((item) => {
+        const rows = sources.map((item) => {
             const n = item.name;
             const myCost = ComputeFunc.getCost(item, this.props.purchaseAmt, this.props.money);
             // console.log(myCost);
@@ -43,7 +49,7 @@ export default class Business extends React.Component {
 
 
             return (
-                <div key={n + "business"} className="business">
+                <div key={n + "business"} className={"business "+bgClass} >
                     {/* <div key={n + "button-wrapper"} className="button-wrapper"> */}
                         <div className={"business-buy-progress " + bgClass}>
                             <div className={"business-buy-progress-pct "+bgClass} style={buyPctStyle}>

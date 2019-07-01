@@ -65,7 +65,7 @@ export default class Upgrades extends React.Component {
             const buyPctStyle = { width: buyPct + '%' }
 
             return (
-                <div key={n + "upgrade"} className="upgrade" >
+                <div key={n + "upgrade"} className={"upgrade "+bgClass} >
                     <div className={"upgrade-buy-progress " + bgClass}>
                         <div className={"upgrade-buy-progress-pct " + bgClass} style={buyPctStyle}>
                             <span ></span>

@@ -156,23 +156,39 @@ export default class Neumann extends React.Component {
         const learningPerSec = ComputeFunc.totalEarning(this.state.probes, this.state.prestige);
         const learningPerTick = ComputeFunc.getEarningPerTick(learningPerSec, this.timeInterval);
 
+        const newBusinesses = this.state.businesses.map(item => {
+            let newItem = { ...item };
+            if (!item.revealed) {
+                if (item.costType === "money" && item.initialVisible.lte(this.state.money)) {
+                    newItem.revealed = true;
+                    console.log("revealed business", item.name);
+                };
+                if (item.costType === "knowledge" && item.initialVisible.lte(this.state.knowledge)) {
+                    newItem.revealed = true;
+                    console.log("revealed business", item.name);
+                };
+            }
+            return newItem;
+        })
         const newUpgrades = this.state.upgrades.map(item => {
+            let newItem = { ...item };
             if (!item.revealed) {
                 if (item.watchType === "money" && item.watchValue.lte(this.state.money)) {
-                    item.revealed = true;
+                    newItem.revealed = true;
                     console.log("revealed upgrade", item.name);
                 };
                 if (item.watchType === "knowledge" && item.watchValue.lte(this.state.knowledge)) {
-                    item.revealed = true;
+                    newItem.revealed = true;
                     console.log("revealed upgrade", item.name);
                 };
             }
-            return item;
+            return newItem;
         })
 
         this.setState({
             money: this.state.money.plus(revenuePerTick),
             knowledge: this.state.knowledge.plus(learningPerTick),
+            businesses: newBusinesses,
             upgrades: newUpgrades,
             lifetimeEarnings: newLifetimeEarnings,
         });
@@ -257,6 +273,11 @@ export default class Neumann extends React.Component {
                     />
 
                 </div>
+
+                <div id="tabs">
+                    tabs
+                </div>
+
                 <div className="left-sidebar">
 
                     <Upgrades
