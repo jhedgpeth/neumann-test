@@ -1,4 +1,4 @@
-/* Misc
+/* Colors
 -----------------------------------------------------------------------------*/
 $c_lsidebar: #000;
 $c_rsidebar: #000;
@@ -7,26 +7,22 @@ $c_headerbg: #000;
 $c_footerbg: #000;
 $c_tabsbg: #000;
 /* money */
-// $c_moneybg: #020;
-// $c_moneybuy: #050;
-// $c_moneyhover: #090;
 $c_moneybg: #0a2d05;
 $c_moneybuy: #145a0b;
 $c_moneyhover: #29b516;
 $c_moneydivider: #145a0b;
 /*  knowledge */
-// $c_knowledgebg: #442;
-// $c_knowledgebuy: #772;
-// $c_knowledgehover: #aa2;
 $c_knowledgebg: #0f0f56;
 $c_knowledgebuy: #1f1fac;
 $c_knowledgehover: #4d4dff;
 
-/* misc */
 $c_mywhite: #ddd;
 $c_mydimwhite: #888;
 $c_neonblue: #4d4dff;
 $c_neongreen: #49fb35;
+
+/* Layout
+-----------------------------------------------------------------------------*/
 
 body {
   font: 0.8rem "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -41,12 +37,40 @@ body {
   width: 1024px;
   max-width: 1024px;
   display: grid;
-  grid-template-columns: 245px 524px 220px;
+  grid-template-columns: 1024px;
   grid-template-areas:
-    "header   header  header "
-    "tabs     tabs    tabs"
-    "lsidebar content rsidebar"
-    "footer   footer  footer ";
+    "header "
+    "tabs-container"
+    "footer ";
+}
+
+.react-tabs-container {
+  grid-area: tabs-container;
+  width: 1024px;
+  max-width: 1024px;
+  height: 600px;
+  display: grid;
+  grid-template-columns: 100%;
+  grid-template-areas:
+    "tabs"
+    "panel-main";
+}
+
+#tabs {
+  height: 25px;
+  grid-area: tabs;
+  background-color: $c_tabsbg;
+  padding: 5px;
+  border: 1px solid $c_mywhite;
+  
+}
+
+.main-tab-panel {
+  grid-area: "panel-main";
+  max-height: 600px;
+  display: grid;
+  grid-template-columns: 245px auto 220px;
+  grid-template-areas: "lsidebar content rsidebar";
 }
 
 /* Misc
@@ -161,15 +185,12 @@ body {
   justify-content: left;
 }
 
-/* footer
+/* tabs
 -----------------------------------------------------------------------------*/
 
-#tabs {
-  height: 25px;
-  grid-area: tabs;
-  background-color: $c_tabsbg;
-  padding: 5px;
-  border: 1px solid $c_mywhite;
+.tab-list {
+  list-style-type: none;
+  display:flex;
 }
 
 /* footer

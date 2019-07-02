@@ -2,6 +2,7 @@ import React from 'react';
 import update from 'immutability-helper';
 import './index.scss';
 import { Decimal } from 'decimal.js';
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import Income from './Income';
 import Business from './Business.js';
 // import Probe from './Probe.js';
@@ -30,6 +31,7 @@ export default class Neumann extends React.Component {
             prestige: { num: new Decimal(1000), val: 5 },
             prestigeNext: new Decimal(0),
             lifetimeEarnings: new Decimal(0),
+            tabIndex: 0,
         };
 
         this.timeInterval = 100;
@@ -87,6 +89,7 @@ export default class Neumann extends React.Component {
             prestige: { num: new Decimal(1000), val: 5 },
             prestigeNext: new Decimal(0),
             lifetimeEarnings: new Decimal(0),
+            tabIndex: 0,
         }));
         this.resume();
     }
@@ -274,64 +277,81 @@ export default class Neumann extends React.Component {
 
                 </div>
 
-                <div id="tabs">
-                    tabs
-                </div>
+                <Tabs
+                    className="react-tabs-container"
+                    selectedIndex={this.state.tabIndex}
+                    onSelect={tabIndex => this.setState({ tabIndex })}>
 
-                <div className="left-sidebar">
-
-                    <Upgrades
-                        upgrades={this.state.upgrades}
-                        businesses={this.state.businesses}
-                        money={this.state.money}
-                        knowledge={this.state.knowledge}
-                        onClick={this.clickUpgrade}
-                    />
-
-                </div>
-                <div id="right-sidebar">
-
-                    <div className="purchaseAmts">
-                        {HelperConst.purchaseOpts.map((amt) => {
-                            let amtClass = "purchase-amount"
-                            if (amt === this.state.purchaseAmt) {
-                                amtClass = "purchase-amount amt-selected";
-                            }
-                            return (
-                                <button
-                                    key={amt + "purchaseAmt"}
-                                    className={amtClass}
-                                    onClick={() => { this.updatePurchaseAmt(amt) }}>
-                                    {amt}
-                                </button>
-                            )
-                        })}
-                    </div>
-                    <button className="pause-button" onClick={this.pause}>Pause</button>
-                    <button className="pause-button" onClick={this.resume}>Resume</button>
-                    <button className="reset-button" onClick={this.resetAll}>RESET</button>
-                    <button
-                        className="prestige-button"
-                        disabled={this.state.prestigeNext.gt(0) ? false : true}
-                        onClick={this.prestige}>Prestige</button>
-
-                </div>
-
-                <div id="content">
-                    <div className="container">
-
-                        <Business
-                            businesses={this.state.businesses}
-                            purchaseAmt={this.state.purchaseAmt}
-                            money={this.state.money}
-                            prestige={this.state.prestige}
-                            onClick={this.clickBusiness}
-                        />
-
-
+                    <div id="tabs">
+                        <TabList className="tab-list">
+                            <Tab className="tab-list-item">Title 1</Tab>
+                            <Tab className="tab-list-item">Title 2</Tab>
+                        </TabList>
                     </div>
 
-                </div>
+                    <TabPanel className="main-tab-panel">
+                        <div className="left-sidebar">
+
+                            <Upgrades
+                                upgrades={this.state.upgrades}
+                                businesses={this.state.businesses}
+                                money={this.state.money}
+                                knowledge={this.state.knowledge}
+                                onClick={this.clickUpgrade}
+                            />
+
+                        </div>
+                        <div id="right-sidebar">
+
+                            <div className="purchaseAmts">
+                                {HelperConst.purchaseOpts.map((amt) => {
+                                    let amtClass = "purchase-amount"
+                                    if (amt === this.state.purchaseAmt) {
+                                        amtClass = "purchase-amount amt-selected";
+                                    }
+                                    return (
+                                        <button
+                                            key={amt + "purchaseAmt"}
+                                            className={amtClass}
+                                            onClick={() => { this.updatePurchaseAmt(amt) }}>
+                                            {amt}
+                                        </button>
+                                    )
+                                })}
+                            </div>
+                            <button className="pause-button" onClick={this.pause}>Pause</button>
+                            <button className="pause-button" onClick={this.resume}>Resume</button>
+                            <button className="reset-button" onClick={this.resetAll}>RESET</button>
+                            <button
+                                className="prestige-button"
+                                disabled={this.state.prestigeNext.gt(0) ? false : true}
+                                onClick={this.prestige}>Prestige</button>
+
+                        </div>
+
+                        <div id="content">
+                            <div className="container">
+
+                                <Business
+                                    businesses={this.state.businesses}
+                                    purchaseAmt={this.state.purchaseAmt}
+                                    money={this.state.money}
+                                    prestige={this.state.prestige}
+                                    onClick={this.clickBusiness}
+                                />
+
+
+                            </div>
+
+                        </div>
+
+                    </TabPanel>
+
+                    <TabPanel>
+                        panel 2?
+                    </TabPanel>
+
+                </Tabs>
 
                 <div id="footer">
 
