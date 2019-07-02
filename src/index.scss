@@ -15,6 +15,9 @@ $c_moneydivider: #145a0b;
 $c_knowledgebg: #0f0f56;
 $c_knowledgebuy: #1f1fac;
 $c_knowledgehover: #4d4dff;
+/* tabs */
+$c_taboff: #0f0f56;
+$c_tabon: #4d4dff;
 
 $c_mywhite: #ddd;
 $c_mydimwhite: #888;
@@ -60,9 +63,8 @@ body {
   height: 25px;
   grid-area: tabs;
   background-color: $c_tabsbg;
-  padding: 5px;
-  border: 1px solid $c_mywhite;
-  
+  padding: 0;
+  border-bottom: 2px solid $c_tabon; 
 }
 
 .main-tab-panel {
@@ -71,6 +73,15 @@ body {
   display: grid;
   grid-template-columns: 245px auto 220px;
   grid-template-areas: "lsidebar content rsidebar";
+}
+
+.probe-tab-panel {
+  background: #333;
+  grid-area: "panel-main";
+  max-height: 600px;
+  display: grid;
+  grid-template-columns: auto 220px;
+  grid-template-areas: "content rsidebar";
 }
 
 /* Misc
@@ -189,8 +200,40 @@ body {
 -----------------------------------------------------------------------------*/
 
 .tab-list {
+  height: 26px;
   list-style-type: none;
   display:flex;
+  flex-direction: row;
+}
+
+#tabs ul {
+  margin: 0;
+  padding: 0 5px;
+}
+#tabs li {
+  margin: 0 5px;
+  font-weight: bold;
+}
+
+.tab-list-item {
+  background: $c_taboff;
+  border: 1px solid $c_neonblue;
+  // border-bottom: 2px solid $c_neonblue;
+  padding: 2px 5px;
+  cursor: pointer;
+}
+.react-tabs__tab-panel {
+  display: none;
+}
+.react-tabs__tab-panel--selected {
+  display: grid;
+}
+.react-tabs__tab--selected {
+  background: $c_tabon;
+  // border-left: 1px solid $c_neonblue;
+  // border-top: 1px solid $c_neonblue;
+  // border-right: 1px solid $c_neonblue;
+  // border-bottom: 1px solid $c_tabsbg;
 }
 
 /* footer
@@ -364,6 +407,7 @@ body {
   /* min-height: 400px; */
   height: 538px;
   padding: 5px;
+  margin: auto;
 }
 
 .container {
@@ -527,4 +571,23 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+/* Main content
+-----------------------------------------------------------------------------*/
+
+
+#probecontent {
+  background-color: #311;
+  grid-area: content;
+  position: relative;
+  min-width: 800px;
+  /* min-height: 400px; */
+  height: 538px;
+  padding: 5px;
+  margin: auto;
+}
+
+.probecontainer {
+  margin: 5px 7px;
 }

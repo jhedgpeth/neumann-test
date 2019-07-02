@@ -284,12 +284,13 @@ export default class Neumann extends React.Component {
 
                     <div id="tabs">
                         <TabList className="tab-list">
-                            <Tab className="tab-list-item">Title 1</Tab>
-                            <Tab className="tab-list-item">Title 2</Tab>
+                            <Tab className="tab-list-item">Businesses</Tab>
+                            <Tab className="tab-list-item">Probes</Tab>
                         </TabList>
                     </div>
 
-                    <TabPanel className="main-tab-panel">
+                    <TabPanel className="react-tabs__tab-panel main-tab-panel">
+
                         <div className="left-sidebar">
 
                             <Upgrades
@@ -347,8 +348,44 @@ export default class Neumann extends React.Component {
 
                     </TabPanel>
 
-                    <TabPanel>
-                        panel 2?
+                    <TabPanel className="react-tabs__tab-panel probe-tab-panel">
+                        
+                        <div id="right-sidebar">
+
+                            <div className="purchaseAmts">
+                                {HelperConst.purchaseOpts.map((amt) => {
+                                    let amtClass = "purchase-amount"
+                                    if (amt === this.state.purchaseAmt) {
+                                        amtClass = "purchase-amount amt-selected";
+                                    }
+                                    return (
+                                        <button
+                                            key={amt + "purchaseAmt"}
+                                            className={amtClass}
+                                            onClick={() => { this.updatePurchaseAmt(amt) }}>
+                                            {amt}
+                                        </button>
+                                    )
+                                })}
+                            </div>
+                            <button className="pause-button" onClick={this.pause}>Pause</button>
+                            <button className="pause-button" onClick={this.resume}>Resume</button>
+                            <button className="reset-button" onClick={this.resetAll}>RESET</button>
+                            <button
+                                className="prestige-button"
+                                disabled={this.state.prestigeNext.gt(0) ? false : true}
+                                onClick={this.prestige}>Prestige</button>
+
+                        </div>
+
+                        <div id="probecontent">
+                            <div className="probecontainer">
+
+                                text for panel 2
+
+                            </div>
+
+                        </div>
                     </TabPanel>
 
                 </Tabs>
