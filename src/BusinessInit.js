@@ -4,7 +4,7 @@ export default function BusinessInit() {
 
     return ([
         {
-            name: "Lemonade Stand",
+            name: "Odd Jobs",
             desc: "desc1",
             owned: 1,
             incomeType: "money",

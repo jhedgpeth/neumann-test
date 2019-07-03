@@ -1,28 +1,4 @@
-/* Colors
------------------------------------------------------------------------------*/
-$c_lsidebar: #000;
-$c_rsidebar: #000;
-$c_mainbg: #000;
-$c_headerbg: #000;
-$c_footerbg: #000;
-$c_tabsbg: #000;
-/* money */
-$c_moneybg: #0a2d05;
-$c_moneybuy: #145a0b;
-$c_moneyhover: #29b516;
-$c_moneydivider: #145a0b;
-/*  knowledge */
-$c_knowledgebg: #0f0f56;
-$c_knowledgebuy: #1f1fac;
-$c_knowledgehover: #4d4dff;
-/* tabs */
-$c_taboff: #0f0f56;
-$c_tabon: #4d4dff;
-
-$c_mywhite: #ddd;
-$c_mydimwhite: #888;
-$c_neonblue: #4d4dff;
-$c_neongreen: #49fb35;
+@import "colors.scss";
 
 /* Layout
 -----------------------------------------------------------------------------*/
@@ -60,11 +36,11 @@ body {
 }
 
 #tabs {
-  height: 25px;
+  height: 30px;
   grid-area: tabs;
   background-color: $c_tabsbg;
   padding: 0;
-  border-bottom: 2px solid $c_tabon; 
+  // border-bottom: 2px solid $c_tabon;
 }
 
 .main-tab-panel {
@@ -95,15 +71,15 @@ body {
 }
 
 .moneySymbol {
-  color: green;
+  color: $c_moneysymbol;
 }
 
 .knowledgeSymbol {
-  color: orange;
+  color: $c_knowledgesymbol;
 }
 
 .prestigeSymbol {
-  color: purple;
+  color: $c_prestigesymbol;
 }
 
 /* Header
@@ -201,39 +177,38 @@ body {
 
 .tab-list {
   height: 26px;
-  list-style-type: none;
-  display:flex;
-  flex-direction: row;
-}
-
-#tabs ul {
   margin: 0;
-  padding: 0 5px;
-}
-#tabs li {
-  margin: 0 5px;
-  font-weight: bold;
+  padding: 0 15px;
+  list-style-type: none;
+  display: flex;
+  flex-direction: row;
+  border-bottom: 2px solid $c_tabon;
 }
 
 .tab-list-item {
+  display: inline-block;
+  width: 10em;
+  text-align: center;
+  margin: 0 15px;
+  font-weight: bold;
   background: $c_taboff;
   border: 1px solid $c_neonblue;
-  // border-bottom: 2px solid $c_neonblue;
+  border-bottom: none;
+  bottom: -1px;
   padding: 2px 5px;
   cursor: pointer;
+  color: $c_mydimwhite;
 }
+.react-tabs__tab--selected {
+  background: $c_tabon;
+  color: $c_mywhite;
+}
+
 .react-tabs__tab-panel {
   display: none;
 }
 .react-tabs__tab-panel--selected {
   display: grid;
-}
-.react-tabs__tab--selected {
-  background: $c_tabon;
-  // border-left: 1px solid $c_neonblue;
-  // border-top: 1px solid $c_neonblue;
-  // border-right: 1px solid $c_neonblue;
-  // border-bottom: 1px solid $c_tabsbg;
 }
 
 /* footer
@@ -390,13 +365,42 @@ body {
   padding: 10px;
   height: 528px;
 }
-
+.purchaseAmts {
+  display: flex;
+  width: 140px;
+  max-width: 140px;
+  margin: 0 0 20px 0;
+}
 .purchase-amount.amt-selected {
   color: $c_mywhite;
   background: #404;
 }
 
-/* Main content
+.buyx-prefix {
+  font-size: 1.1rem;
+  font-weight: bold;
+  display: inline-block;
+  margin: auto;
+  padding: 0 10px 0 0;
+}
+
+.Dropdown-root {
+
+}
+
+.pause-button,
+.reset-button,
+.prestige-button {
+  background: #000;
+  color: $c_mywhite;
+  border: 1px solid $c_selected;
+}
+
+.prestige-button {
+  margin: 20px 0 0 0;
+}
+
+/* Business content
 -----------------------------------------------------------------------------*/
 
 #content {
@@ -484,6 +488,7 @@ body {
   /* border: 2px solid red; */
   grid-column: 1/3;
   grid-row: 1;
+  border-right: 1px solid $c_moneydivider;
 }
 
 .business-buy-progress-pct {
@@ -573,9 +578,8 @@ body {
   justify-content: center;
 }
 
-/* Main content
+/* Probe content
 -----------------------------------------------------------------------------*/
-
 
 #probecontent {
   background-color: #311;

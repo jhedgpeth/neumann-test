@@ -1,6 +1,8 @@
 import React from 'react';
 import update from 'immutability-helper';
+import Dropdown from 'react-dropdown'
 import './index.scss';
+import './dropdown.scss'
 import { Decimal } from 'decimal.js';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import Income from './Income';
@@ -47,6 +49,7 @@ export default class Neumann extends React.Component {
         this.updateGame = this.updateGame.bind(this);
         this.clickBusiness = this.clickBusiness.bind(this);
         this.clickUpgrade = this.clickUpgrade.bind(this);
+        this.purchaseAmtDropDownHandler = this.purchaseAmtDropDownHandler.bind(this);
 
     }
 
@@ -64,7 +67,7 @@ export default class Neumann extends React.Component {
         this.cleanState = { ...this.state };
         delete this.cleanState.pauseText;
         delete this.cleanState.purchaseAmt;
-
+        console.log(HelperConst.purchaseOptsSpecial);
     }
 
     componentWillUnmount() {
@@ -140,11 +143,17 @@ export default class Neumann extends React.Component {
         }
     }
 
+    purchaseAmtDropDownHandler(amt) {
+        this.updatePurchaseAmt(amt.value);
+    }
+
     updatePurchaseAmt(amt) {
+        console.log("received new purchaseAmt:",amt);
         if (HelperConst.purchaseOpts.indexOf(amt) !== -1 && this.state.purchaseAmt !== amt) {
             this.setState({
                 purchaseAmt: amt,
             })
+            console.log("new purchaseAmt:",amt);
         }
         // console.log(this.state.businesses);
         // console.log(this.state.businesses[0]);
@@ -158,6 +167,8 @@ export default class Neumann extends React.Component {
 
         const learningPerSec = ComputeFunc.totalEarning(this.state.probes, this.state.prestige);
         const learningPerTick = ComputeFunc.getEarningPerTick(learningPerSec, this.timeInterval);
+        // const learningPerSec = new Decimal(0);
+        // const learningPerTick = new Decimal(0);
 
         const newBusinesses = this.state.businesses.map(item => {
             let newItem = { ...item };
@@ -304,8 +315,9 @@ export default class Neumann extends React.Component {
                         </div>
                         <div id="right-sidebar">
 
+
                             <div className="purchaseAmts">
-                                {HelperConst.purchaseOpts.map((amt) => {
+                                {/* {HelperConst.purchaseOptsNum.map((amt) => {
                                     let amtClass = "purchase-amount"
                                     if (amt === this.state.purchaseAmt) {
                                         amtClass = "purchase-amount amt-selected";
@@ -318,7 +330,13 @@ export default class Neumann extends React.Component {
                                             {amt}
                                         </button>
                                     )
-                                })}
+                                })} */}
+                            <span className="buyx-prefix">Buy X</span>
+                            <Dropdown 
+                            options={HelperConst.purchaseOpts} 
+                            onChange={this.purchaseAmtDropDownHandler} 
+                            value={this.state.purchaseAmt} 
+                            placeholder="Select an option" />
                             </div>
                             <button className="pause-button" onClick={this.pause}>Pause</button>
                             <button className="pause-button" onClick={this.resume}>Resume</button>

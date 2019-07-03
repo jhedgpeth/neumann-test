@@ -17,7 +17,7 @@ export default class ComputeFunc {
         return pct > 100 ? 100 : pct;
     }
 
-    static computeEarning(item, prestige) {
+    static computeEarningMoney(item, prestige) {
         const num25s = Math.floor(item.owned / 25);
         const mult25 = num25s > 3 ? 3 : num25s;
         const mult100 = Math.floor(item.owned / 100);
@@ -31,6 +31,23 @@ export default class ComputeFunc {
                 .times(prestigeMultiplier)
         );
         return revenue;
+    }
+
+    static computeEarningKnowledge(item, prestige) {
+        // const num25s = Math.floor(item.owned / 25);
+        // const prestigeMultiplier = prestige.num.times(prestige.val).div(100).plus(1);
+        let revenue = new Decimal(
+            item.incomeBase
+                .times(item.owned)
+                .times(item.upgradeMult)
+        );
+        return revenue;
+    }
+
+    static computeEarning(item, prestige) {
+        return item.incomeType === "money"
+            ? this.computeEarningMoney(item, prestige)
+            : this.computeEarningKnowledge(item, prestige);
     }
 
     static totalEarning(items, prestige) {

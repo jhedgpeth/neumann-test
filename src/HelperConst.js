@@ -13,7 +13,10 @@ export default class HelperConst {
     static knowledgeSymbolSpan() { return (<span className="knowledgeSymbol">{this.knowledgeSymbol}</span>); };
     static prestigeSymbolSpan() { return (<span className="prestigeSymbol">{this.prestigeSymbol}</span>); };
 
-    static purchaseOpts = ["1", "10", "25", "100", "Max", "Max OCD", "Max Upg", "PrimeTime"];
+    static purchaseOpts = ["1", "10", "25", "Max", "Max OCD", "Max Upg", "PrimeTime"];
+    static purchaseOptsNum = this.purchaseOpts.filter(item => item.match(/\d/));
+    static purchaseOptsSpecial = this.purchaseOpts.filter(item => !item.match(/\d/));
+    
 
     static showNum(num) {
         return HelperConst.myFormatterNum().format(num);
