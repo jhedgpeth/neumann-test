@@ -3,6 +3,7 @@
 .Dropdown-root {
   position: relative;
   z-index: 2;
+  width: 70%;
 }
 
 .Dropdown-control {
@@ -15,7 +16,7 @@
   color: $c_mywhite;
   cursor: default;
   outline: none;
-  padding: 8px 52px 8px 10px;
+  padding: 5px 25px 5px 10px;
   transition: all 200ms ease;
 }
 
@@ -69,7 +70,9 @@
   // color: rgba(51, 51, 51, 0.8);
   cursor: pointer;
   display: block;
-  padding: 8px 10px;
+  padding: 5px 10px;
+  font-weight: bold;
+  font-size: 1rem;
 }
 
 .Dropdown-option:last-child {
@@ -87,6 +90,7 @@
   // background-color: #f2f9fc;
   // color: #333;
   font-weight: bold;
+  
 }
 
 .Dropdown-noresults {
@@ -95,4 +99,9 @@
   cursor: default;
   display: block;
   padding: 8px 10px;
+}
+
+.is-selected {
+  font-weight: bold;
+  font-size: 1rem;
 }

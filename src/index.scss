@@ -1,10 +1,9 @@
-@import "colors.scss";
+@import './colors.scss';
 
 /* Layout
 -----------------------------------------------------------------------------*/
 
 body {
-  font: 0.8rem "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
   margin: 8px;
   color: $c_mywhite;
   background: #000;
@@ -27,7 +26,7 @@ body {
   grid-area: tabs-container;
   width: 1024px;
   max-width: 1024px;
-  height: 600px;
+  // height: 600px;
   display: grid;
   grid-template-columns: 100%;
   grid-template-areas:
@@ -45,18 +44,20 @@ body {
 
 .main-tab-panel {
   grid-area: "panel-main";
-  max-height: 600px;
+  // max-height: 600px;
+  max-width: 1024px;
   display: grid;
-  grid-template-columns: 245px auto 220px;
+  grid-template-columns: 245px 559px 220px;
   grid-template-areas: "lsidebar content rsidebar";
 }
 
 .probe-tab-panel {
   background: #333;
   grid-area: "panel-main";
-  max-height: 600px;
+  // max-height: 600px;
+  max-width: 1024px;
   display: grid;
-  grid-template-columns: auto 220px;
+  grid-template-columns: 804px 220px;
   grid-template-areas: "content rsidebar";
 }
 
@@ -82,6 +83,10 @@ body {
   color: $c_prestigesymbol;
 }
 
+.multiplySymbol {
+  // font-size: .5rem;
+}
+
 /* Header
 -----------------------------------------------------------------------------*/
 
@@ -94,13 +99,15 @@ body {
 
 .header-wrapper {
   height: 60px;
+  display: grid;
+  grid-template-columns: 40% 20% 40%;
 }
 
 .income {
-  font-size: 1.1rem;
+  font-size: 1rem;
   /* width: 300px; */
   display: grid;
-  grid-template-columns: 120px 110px 140px;
+  grid-template-columns: 30% 30% 40%;
   grid-template-rows: 30px 30px;
   float: left;
 }
@@ -139,7 +146,7 @@ body {
 }
 
 .prestige {
-  font-size: 1.1rem;
+  font-size: 1rem;
   display: grid;
   grid-template-columns: 110px 110px 150px;
   grid-template-rows: 30px 30px;
@@ -238,6 +245,7 @@ body {
   padding: 10px;
   height: 528px;
   /* min-height: 528px; */
+  display: block;
 }
 
 .upgrade-container {
@@ -364,28 +372,31 @@ body {
   background-color: $c_rsidebar;
   padding: 10px;
   height: 528px;
+  display: block;
+  max-width: 220px;
 }
 .purchaseAmts {
-  display: flex;
-  width: 140px;
-  max-width: 140px;
+  width: 200px;
+  height: 35px;
+  // max-width: 240px;
   margin: 0 0 20px 0;
+  display: flex;
+  align-items: center;
+  justify-content: right;
 }
-.purchase-amount.amt-selected {
-  color: $c_mywhite;
-  background: #404;
-}
+// .purchase-amount.amt-selected {
+//   color: $c_mywhite;
+//   background: #404;
+// }
 
 .buyx-prefix {
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: bold;
-  display: inline-block;
   margin: auto;
   padding: 0 10px 0 0;
-}
-
-.Dropdown-root {
-
+  color: $c_selected;
+  width: 30%;
+  text-align: right;
 }
 
 .pause-button,
@@ -409,9 +420,9 @@ body {
   position: relative;
   min-width: 300px;
   /* min-height: 400px; */
-  height: 538px;
-  padding: 5px;
-  margin: auto;
+  height: 528px;
+  padding: 10px;
+  margin: 0;
 }
 
 .container {
@@ -519,8 +530,17 @@ body {
   cursor: not-allowed;
 }
 
+.buyMultiple {
+  color: $c_mywhite;
+  text-shadow:
+		-1px -1px 0 $c_selected,
+		1px -1px 0 $c_selected,
+		-1px 1px 0 $c_selected,
+		1px 1px 0 $c_selected;
+}
+
 .business-owned {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   font-weight: bold;
   text-decoration: none;
   height: 100%;
@@ -585,7 +605,8 @@ body {
   background-color: #311;
   grid-area: content;
   position: relative;
-  min-width: 800px;
+  width: 794px;
+  // width: 100%;
   /* min-height: 400px; */
   height: 538px;
   padding: 5px;
@@ -593,5 +614,8 @@ body {
 }
 
 .probecontainer {
-  margin: 5px 7px;
+  width: 774px;
+  margin: 5px 10px;
+  // min-width: 780px;
+  // max-width: 790px;
 }

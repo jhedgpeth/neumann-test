@@ -1,0 +1,17 @@
+@import url("https://fonts.googleapis.com/css?family=Space+Mono:regular:bold&display=swap");
+
+body {
+  font-size: 12px;
+  font-family: "Space Mono", monospace;
+  /* font-weight: 600; */
+}
+
+.business-buy {
+  font-family: "Space Mono", monospace;
+}
+
+.pause-button,
+.reset-button,
+.prestige-button {
+    font-family: "Space Mono", monospace;
+}

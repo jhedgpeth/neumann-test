@@ -1,6 +1,7 @@
 import React from 'react';
 import update from 'immutability-helper';
 import Dropdown from 'react-dropdown'
+import './fonts.css';
 import './index.scss';
 import './dropdown.scss'
 import { Decimal } from 'decimal.js';
@@ -317,21 +318,8 @@ export default class Neumann extends React.Component {
 
 
                             <div className="purchaseAmts">
-                                {/* {HelperConst.purchaseOptsNum.map((amt) => {
-                                    let amtClass = "purchase-amount"
-                                    if (amt === this.state.purchaseAmt) {
-                                        amtClass = "purchase-amount amt-selected";
-                                    }
-                                    return (
-                                        <button
-                                            key={amt + "purchaseAmt"}
-                                            className={amtClass}
-                                            onClick={() => { this.updatePurchaseAmt(amt) }}>
-                                            {amt}
-                                        </button>
-                                    )
-                                })} */}
-                            <span className="buyx-prefix">Buy X</span>
+                                
+                            <span className="buyx-prefix">Buy {HelperConst.multiplySymbol}</span>
                             <Dropdown 
                             options={HelperConst.purchaseOpts} 
                             onChange={this.purchaseAmtDropDownHandler} 
@@ -370,29 +358,22 @@ export default class Neumann extends React.Component {
                         
                         <div id="right-sidebar">
 
-                            <div className="purchaseAmts">
-                                {HelperConst.purchaseOpts.map((amt) => {
-                                    let amtClass = "purchase-amount"
-                                    if (amt === this.state.purchaseAmt) {
-                                        amtClass = "purchase-amount amt-selected";
-                                    }
-                                    return (
-                                        <button
-                                            key={amt + "purchaseAmt"}
-                                            className={amtClass}
-                                            onClick={() => { this.updatePurchaseAmt(amt) }}>
-                                            {amt}
-                                        </button>
-                                    )
-                                })}
-                            </div>
-                            <button className="pause-button" onClick={this.pause}>Pause</button>
-                            <button className="pause-button" onClick={this.resume}>Resume</button>
-                            <button className="reset-button" onClick={this.resetAll}>RESET</button>
-                            <button
-                                className="prestige-button"
-                                disabled={this.state.prestigeNext.gt(0) ? false : true}
-                                onClick={this.prestige}>Prestige</button>
+                        <div className="purchaseAmts">
+                                
+                                <span className="buyx-prefix">Buy {HelperConst.multiplySymbol}</span>
+                                <Dropdown 
+                                options={HelperConst.purchaseOpts} 
+                                onChange={this.purchaseAmtDropDownHandler} 
+                                value={this.state.purchaseAmt} 
+                                placeholder="Select an option" />
+                                </div>
+                                <button className="pause-button" onClick={this.pause}>Pause</button>
+                                <button className="pause-button" onClick={this.resume}>Resume</button>
+                                <button className="reset-button" onClick={this.resetAll}>RESET</button>
+                                <button
+                                    className="prestige-button"
+                                    disabled={this.state.prestigeNext.gt(0) ? false : true}
+                                    onClick={this.prestige}>Prestige</button>
 
                         </div>
 

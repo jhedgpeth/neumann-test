@@ -2,6 +2,7 @@ import React from 'react';
 import update from 'immutability-helper';
 import ComputeFunc from './ComputeFunc';
 import HelperConst from './HelperConst';
+import './fonts.css';
 
 
 export default class Business extends React.Component {
@@ -45,25 +46,26 @@ export default class Business extends React.Component {
 
             const myEarning = ComputeFunc.computeEarning(item, this.props.prestige);
             // console.log(this.props.money.toFixed(2));
-            const myEarningPct = ComputeFunc.getEarningPct(myEarning,totalEarning);
+            const myEarningPct = ComputeFunc.getEarningPct(myEarning, totalEarning);
 
 
             return (
-                <div key={n + "business"} className={"business "+bgClass} >
-                    {/* <div key={n + "button-wrapper"} className="button-wrapper"> */}
-                        <div className={"business-buy-progress " + bgClass}>
-                            <div className={"business-buy-progress-pct "+bgClass} style={buyPctStyle}>
-                                <span ></span>
-                            </div>
+                <div key={n + "business"} className={"business " + bgClass} >
+                    <div className={"business-buy-progress " + bgClass}>
+                        <div className={"business-buy-progress-pct " + bgClass} style={buyPctStyle}>
+                            <span ></span>
                         </div>
-                        <button
-                            key={n + "button"}
-                            className={buttonClass + bgClass}
-                            onClick={() => this.props.onClick(item)}
-                            disabled={buttonDisabled}>
-                            {myCost.num}x {n}
-                        </button>
-                        <div key={n + "owned"} className="business-owned">{HelperConst.showInt(item.owned)}</div>
+                    </div>
+                    <button
+                        key={n + "button"}
+                        className={buttonClass + bgClass}
+                        onClick={() => this.props.onClick(item)}
+                        disabled={buttonDisabled}>
+                        <span
+                            className="buyMultiple">{myCost.num}{HelperConst.multiplySymbolSpan()}
+                        </span> {n}
+                    </button>
+                    <div key={n + "owned"} className="business-owned">{HelperConst.showInt(item.owned)}</div>
                     {/* </div> */}
 
                     <div key={n + "cost-wrapper"} className={costClass}>
@@ -74,8 +76,8 @@ export default class Business extends React.Component {
                         <div key={n + "revenue-total"} className="business-revenue-total">+{HelperConst.moneySymbolSpan()}{HelperConst.showNum(myEarning)}/s</div>
                     </div>
 
-                    <div key={n+"earning-pct-wrapper"} className="earning-pct-wrapper">
-                        <div key={n+"earning-pct"} className="earning-pct">{myEarningPct}%</div>
+                    <div key={n + "earning-pct-wrapper"} className="earning-pct-wrapper">
+                        <div key={n + "earning-pct"} className="earning-pct">{myEarningPct}%</div>
                     </div>
                 </div>
             );
@@ -84,7 +86,7 @@ export default class Business extends React.Component {
 
         return (
             <div className="business-container">
-                    {rows}
+                {rows}
             </div>
         )
     };

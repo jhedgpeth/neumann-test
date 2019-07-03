@@ -1,6 +1,7 @@
 import React from 'react';
 import HelperConst from './HelperConst';
 import ComputeFunc from './ComputeFunc';
+import './fonts.css';
 
 export default class Upgrades extends React.Component {
 

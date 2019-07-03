@@ -2,6 +2,7 @@ import React from 'react';
 // import { Decimal } from 'decimal.js';
 import ComputeFunc from './ComputeFunc';
 import HelperConst from './HelperConst';
+import './fonts.css';
 import './neon.scss';
 
 export default class Income extends React.Component {
@@ -25,7 +26,7 @@ export default class Income extends React.Component {
                         {HelperConst.moneySymbolSpan()}{HelperConst.showNum(this.props.money)}
                     </div>
                     <div className="income-earning">
-                        ( + {HelperConst.moneySymbolSpan()}{HelperConst.showNum(revenue)}/s )
+                        (+ {HelperConst.moneySymbolSpan()}{HelperConst.showNum(revenue)}/s)
                     </div>
 
 
@@ -36,7 +37,7 @@ export default class Income extends React.Component {
                         {HelperConst.knowledgeSymbolSpan()}{HelperConst.showNum(this.props.knowledge)}
                     </div>
                     <div className="income-learning">
-                        ( + {HelperConst.knowledgeSymbolSpan()}{HelperConst.showNum(learning)}/s )
+                        (+ {HelperConst.knowledgeSymbolSpan()}{HelperConst.showNum(learning)}/s)
                     </div>
 
                 </div>
@@ -55,7 +56,7 @@ export default class Income extends React.Component {
                         {HelperConst.prestigeSymbolSpan()}{HelperConst.showInt(this.props.prestige.num)}
                     </div>
                     <div className="prestige-earning">
-                        ( + {HelperConst.prestigeSymbolSpan()}{HelperConst.showInt(this.props.prestigeNext)})
+                        (+ {HelperConst.prestigeSymbolSpan()}{HelperConst.showInt(this.props.prestigeNext)})
                     </div>
 
                     <div className="prestige-header">

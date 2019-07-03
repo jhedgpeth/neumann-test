@@ -1,4 +1,5 @@
 import { Decimal } from 'decimal.js';
+import './fonts.css';
 
 export default class ComputeFunc {
 

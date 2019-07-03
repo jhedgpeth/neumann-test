@@ -1,5 +1,6 @@
 import React from 'react';
 import { Decimal } from 'decimal.js';
+import './fonts.css';
 
 export default class HelperConst {
 
@@ -9,9 +10,16 @@ export default class HelperConst {
     // static knowledgeSymbol = "&";
     static prestigeSymbol = '\u039b';
 
+    // static rightarrow = '\u2b95';
+
+    // static multiplySymbol = '\u2718';
+    static multiplySymbol = '\u2a2f';
+
+
     static moneySymbolSpan() { return (<span className="moneySymbol">{this.moneySymbol}</span>); };
     static knowledgeSymbolSpan() { return (<span className="knowledgeSymbol">{this.knowledgeSymbol}</span>); };
     static prestigeSymbolSpan() { return (<span className="prestigeSymbol">{this.prestigeSymbol}</span>); };
+    static multiplySymbolSpan() { return (<span className="multiplySymbol">{this.multiplySymbol}</span>);}
 
     static purchaseOpts = ["1", "10", "25", "Max", "Max OCD", "Max Upg", "PrimeTime"];
     static purchaseOptsNum = this.purchaseOpts.filter(item => item.match(/\d/));

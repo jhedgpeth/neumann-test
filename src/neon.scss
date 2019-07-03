@@ -12,9 +12,9 @@ $color2: #49fb35;
 .text-effect {
   overflow: hidden;
   position: relative;
-  width: 220px;
-  float: left;
-  margin: 5px;
+  width: 100%;
+  text-align: center;
+  margin: auto;
 
   // The blend modes mute the colors, so let's bump them up
   filter: contrast(110%) brightness(190%);
@@ -96,7 +96,7 @@ $color2: #49fb35;
 // Style text
 .neon {
   //   font: 700 220px 'Lato', sans-serif;
-  font-size: 3em;
+  font-size: 40px;
   //   text-transform: uppercase;
   text-align: center;
   margin: 0;
