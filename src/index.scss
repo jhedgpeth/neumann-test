@@ -391,13 +391,13 @@ body {
     $c_knowledgebuy 40px
   );
   box-shadow: 1px 0 0 0 $c_knowledgehover;
-  background-size: 141% 100%;
+  background-size: 238px 100%;
 }
 .upgAnim {
-  -webkit-animation: ProgressAnim 20s infinite linear forwards;
-  -moz-animation: ProgressAnim 20s infinite linear forwards;
-  -o-animation: ProgressAnim 20s infinite linear forwards;
-  animation: ProgressAnim 2s infinite linear forwards;
+  // -webkit-animation: ProgressAnim 20s infinite linear forwards;
+  // -moz-animation: ProgressAnim 20s infinite linear forwards;
+  // -o-animation: ProgressAnim 20s infinite linear forwards;
+  // animation: ProgressAnim 2s infinite linear forwards;
 }
 
 .upgrade-buy-progress-pct span {
@@ -431,34 +431,34 @@ body {
 
 @-webkit-keyframes ProgressAnim {
   from {
-    background-position: right;
+    background-position: left;
   }
   to {
-    background-position: left;
+    background-position: right;
   }
 }
 @-moz-keyframes ProgressAnim {
   from {
-    background-position: right;
+    background-position: left;
   }
   to {
-    background-position: left;
+    background-position: right;
   }
 }
 @-o-keyframes ProgressAnim {
   from {
-    background-position: right;
+    background-position: left;
   }
   to {
-    background-position: left;
+    background-position: right;
   }
 }
 @keyframes ProgressAnim {
   from {
-    background-position: right;
+    background-position: left;
   }
   to {
-    background-position: left;
+    background-position: right;
   }
 }
 

@@ -31,7 +31,7 @@ export default class Neumann extends React.Component {
             probes: [],
             upgrades: [],
             purchaseAmt: "1",
-            prestige: { num: new Decimal(1000), val: 5 },
+            prestige: { num: new Decimal(0), val: 5 },
             prestigeNext: new Decimal(0),
             lifetimeEarnings: new Decimal(0),
             tabIndex: 0,
