@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/neumann-test/static/css/main.8ea1f5ed.chunk.css",
+    "main.js": "/neumann-test/static/js/main.f19e381d.chunk.js",
+    "main.js.map": "/neumann-test/static/js/main.f19e381d.chunk.js.map",
+    "runtime~main.js": "/neumann-test/static/js/runtime~main.869e5942.js",
+    "runtime~main.js.map": "/neumann-test/static/js/runtime~main.869e5942.js.map",
+    "static/js/2.45c6de98.chunk.js": "/neumann-test/static/js/2.45c6de98.chunk.js",
+    "static/js/2.45c6de98.chunk.js.map": "/neumann-test/static/js/2.45c6de98.chunk.js.map",
+    "index.html": "/neumann-test/index.html",
+    "precache-manifest.e13ee7ba238d7095cfea3bbd855b3e65.js": "/neumann-test/precache-manifest.e13ee7ba238d7095cfea3bbd855b3e65.js",
+    "service-worker.js": "/neumann-test/service-worker.js",
+    "static/css/main.8ea1f5ed.chunk.css.map": "/neumann-test/static/css/main.8ea1f5ed.chunk.css.map"
+  }
+}
