@@ -1,4 +1,4 @@
-@import './colors.scss';
+@import "./colors.scss";
 
 /* Layout
 -----------------------------------------------------------------------------*/
@@ -226,7 +226,14 @@ body {
   grid-area: footer;
   background-color: $c_footerbg;
   padding: 5px;
-  border: 1px solid $c_mywhite;
+  // border: 1px solid $c_mywhite;
+  border-top: 1px solid $c_neonblue;
+  opacity: 0.3;
+  transition: opacity 1s ease 0.3s;
+}
+#footer:hover {
+  opacity: 1;
+  transition: opacity 0.5s ease 0.1s;
 }
 
 /* left sidebar
@@ -248,7 +255,17 @@ body {
   display: block;
 }
 
-.upgrade-container {
+// .upgrade-container {
+//   width: 100%;
+//   display: grid;
+//   grid-template-columns: repeat(1, 200px);
+//   grid-auto-rows: 80px;
+//   grid-row-gap: 20px;
+//   /* height: 460px; */
+//   height: 528px;
+//   // overflow-y: scroll;
+// }
+.ScrollbarsCustom-Content {
   width: 100%;
   display: grid;
   grid-template-columns: repeat(1, 200px);
@@ -256,8 +273,16 @@ body {
   grid-row-gap: 20px;
   /* height: 460px; */
   height: 528px;
-  overflow-y: scroll;
+  // overflow-y: scroll;
 }
+.ScrollbarsCustom-Track {
+  background: $c_scrollbg !important;
+}
+.ScrollbarsCustom-Thumb {
+  // color: $c_neongreen;
+  background: $c_scrollfg !important;
+}
+
 .upgrade {
   // border: 1px solid black;
   border-radius: 5px;
@@ -292,6 +317,8 @@ body {
   z-index: 2;
   // text-shadow: 0 -1px 0 #fff, 0 1px 0 #2e2e2e, 0 2px 0 #2c2c2c, 0 3px 0 #2a2a2a,
   //   0 22px 30px rgba(0, 0, 0, 0.9), 2px 2px 2px rgba(206, 89, 55, 0);
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
+    1px 1px 0 #000;
 }
 .upgrade-buy-progress {
   height: 100%;
@@ -308,10 +335,24 @@ body {
   background: $c_knowledgebg;
 }
 .upgrade-buy.canAfford.money:hover {
-  background-color: $c_moneyhover;
+  // background-color: $c_moneyhover;
+  background: repeating-linear-gradient(
+    135deg,
+    $c_moneybg,
+    $c_moneybg 20px,
+    $c_moneyhover 20px,
+    $c_moneyhover 40px
+  );
 }
 .upgrade-buy.canAfford.knowledge:hover {
-  background-color: $c_knowledgehover;
+  // background-color: $c_knowledgehover;
+  background: repeating-linear-gradient(
+    135deg,
+    $c_knowledgebg,
+    $c_knowledgebg 20px,
+    $c_knowledgehover 20px,
+    $c_knowledgehover 40px
+  );
 }
 .upgrade-buy.money:active:enabled {
   background-color: $c_moneybuy !important;
@@ -329,10 +370,34 @@ body {
   border-radius: 5px 5px 0 0;
 }
 .upgrade-buy-progress-pct.money {
-  background: $c_moneybuy;
+  // background: $c_moneybuy;
+  background: repeating-linear-gradient(
+    135deg,
+    $c_moneybg,
+    $c_moneybg 20px,
+    $c_moneybuy 20px,
+    $c_moneybuy 40px
+  );
+  box-shadow: 1px 0 0 0 $c_moneyhover;
+  background-size: 255px 100%;
 }
 .upgrade-buy-progress-pct.knowledge {
-  background: $c_knowledgebuy;
+  // background: $c_knowledgebuy;
+  background: repeating-linear-gradient(
+    135deg,
+    $c_knowledgebg,
+    $c_knowledgebg 20px,
+    $c_knowledgebuy 20px,
+    $c_knowledgebuy 40px
+  );
+  box-shadow: 1px 0 0 0 $c_knowledgehover;
+  background-size: 141% 100%;
+}
+.upgAnim {
+  -webkit-animation: ProgressAnim 20s infinite linear forwards;
+  -moz-animation: ProgressAnim 20s infinite linear forwards;
+  -o-animation: ProgressAnim 20s infinite linear forwards;
+  animation: ProgressAnim 2s infinite linear forwards;
 }
 
 .upgrade-buy-progress-pct span {
@@ -362,6 +427,39 @@ body {
 }
 .upgrade-cost-wrapper.knowledge.cannotAfford {
   color: $c_mydimwhite;
+}
+
+@-webkit-keyframes ProgressAnim {
+  from {
+    background-position: right;
+  }
+  to {
+    background-position: left;
+  }
+}
+@-moz-keyframes ProgressAnim {
+  from {
+    background-position: right;
+  }
+  to {
+    background-position: left;
+  }
+}
+@-o-keyframes ProgressAnim {
+  from {
+    background-position: right;
+  }
+  to {
+    background-position: left;
+  }
+}
+@keyframes ProgressAnim {
+  from {
+    background-position: right;
+  }
+  to {
+    background-position: left;
+  }
 }
 
 /* right sidebar
@@ -405,6 +503,11 @@ body {
   background: #000;
   color: $c_mywhite;
   border: 1px solid $c_selected;
+}
+.pause-button:hover,
+.reset-button:hover,
+.prestige-button:hover {
+  box-shadow: inset 0 0 0 3px $c_selected;
 }
 
 .prestige-button {
@@ -452,11 +555,11 @@ body {
   border: 1px solid $c_knowledgehover;
 }
 .upgrade.knowledge {
-  box-shadow: 0 4px 5px 1px $c_neonblue;
+  // box-shadow: 0 4px 5px 1px $c_neonblue;
 }
 .business,
 .upgrade.money {
-  box-shadow: 0 4px 5px 1px $c_neongreen;
+  // box-shadow: 0 4px 5px 1px $c_neongreen;
 }
 
 .business-buy {
@@ -476,6 +579,8 @@ body {
   z-index: 2;
   // text-shadow: 0 -1px 0 #fff, 0 1px 0 #2e2e2e, 0 2px 0 #2c2c2c, 0 3px 0 #2a2a2a,
   //   0 22px 30px rgba(0, 0, 0, 0.9), 2px 2px 2px rgba(206, 89, 55, 0);
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
+    1px 1px 0 #000;
 }
 .business-buy-progress.money {
   background: $c_moneybg;
@@ -532,11 +637,8 @@ body {
 
 .buyMultiple {
   color: $c_mywhite;
-  text-shadow:
-		-1px -1px 0 $c_selected,
-		1px -1px 0 $c_selected,
-		-1px 1px 0 $c_selected,
-		1px 1px 0 $c_selected;
+  text-shadow: -1px -1px 0 $c_selected, 1px -1px 0 $c_selected,
+    -1px 1px 0 $c_selected, 1px 1px 0 $c_selected;
 }
 
 .business-owned {

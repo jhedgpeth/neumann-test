@@ -1,17 +1,21 @@
-@import url("https://fonts.googleapis.com/css?family=Space+Mono:regular:bold&display=swap");
+/* @import url("https://fonts.googleapis.com/css?family=Space+Mono:regular:bold&display=swap"); */
+@import url('https://fonts.googleapis.com/css?family=Jura&display=swap');
 
 body {
   font-size: 12px;
-  font-family: "Space Mono", monospace;
+  /* font-family: "Space Mono", monospace; */
+  font-family: 'Jura', sans-serif;
   /* font-weight: 600; */
 }
 
 .business-buy {
-  font-family: "Space Mono", monospace;
+  /* font-family: "Space Mono", monospace; */
+  font-family: 'Jura', sans-serif;
 }
 
 .pause-button,
 .reset-button,
 .prestige-button {
-    font-family: "Space Mono", monospace;
+    /* font-family: "Space Mono", monospace; */
+    font-family: 'Jura', sans-serif;
 }

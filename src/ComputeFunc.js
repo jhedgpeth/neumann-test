@@ -13,8 +13,7 @@ export default class ComputeFunc {
     }
 
     static buyPct(num, resource) {
-        const pct = resource.div(num).times(100).floor().toNumber()
-        // console.log("num:",num.toFixed(),"resource:",resource.toFixed(),"pct:",pct);
+        const pct = resource.div(num).times(100).toNumber()
         return pct > 100 ? 100 : pct;
     }
 
