@@ -15,15 +15,15 @@ import UpgradeInit from './UpgradeInit';
 import ComputeFunc from './ComputeFunc';
 import HelperConst from './HelperConst';
 import Upgrades from './Upgrades';
-
+let Decimal = require('decimal.js');
 
 // =====================================================
 export default class Neumann extends React.Component {
 
-
     constructor(props) {
         super(props);
-        var Decimal = require('decimal.js');
+
+        
         this.state = {
             money: new Decimal(0),
             knowledge: new Decimal(0),
@@ -55,7 +55,6 @@ export default class Neumann extends React.Component {
     }
 
     componentDidMount() {
-        var Decimal = require('decimal.js');
         console.log("game didmount");
         this.setState({
             businesses: BusinessInit(),
@@ -83,7 +82,6 @@ export default class Neumann extends React.Component {
     }
 
     resetAll() {
-        var Decimal = require('decimal.js');
         this.pause();
         this.setState((state) => ({
             money: new Decimal(0),
@@ -101,7 +99,6 @@ export default class Neumann extends React.Component {
     }
 
     restart() {
-        var Decimal = require('decimal.js');
         this.pause();
         this.setState(this.cleanState);
         this.setState((state) => ({

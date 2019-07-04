@@ -1,5 +1,6 @@
 // import { Decimal } from 'decimal.js';
 import './fonts.css';
+let Decimal = require('decimal.js');
 
 export default class ComputeFunc {
 
@@ -18,7 +19,6 @@ export default class ComputeFunc {
     }
 
     static computeEarningMoney(item, prestige) {
-        var Decimal = require('decimal.js');
         const num25s = Math.floor(item.owned / 25);
         const mult25 = num25s > 3 ? 3 : num25s;
         const mult100 = Math.floor(item.owned / 100);
@@ -35,7 +35,6 @@ export default class ComputeFunc {
     }
 
     static computeEarningKnowledge(item, prestige) {
-        var Decimal = require('decimal.js');
         // const num25s = Math.floor(item.owned / 25);
         // const prestigeMultiplier = prestige.num.times(prestige.val).div(100).plus(1);
         let revenue = new Decimal(
@@ -53,7 +52,6 @@ export default class ComputeFunc {
     }
 
     static totalEarning(items, prestige) {
-        var Decimal = require('decimal.js');
         let revenue = new Decimal(0);
 
         items.forEach((item) => {
@@ -71,7 +69,6 @@ export default class ComputeFunc {
     }
 
     static calcPrestigeEarned(revenue) {
-        var Decimal = require('decimal.js');
         return Decimal.sqrt(revenue.div(Math.pow(10, 9))).times(150).floor();
     }
 
@@ -139,7 +136,6 @@ export default class ComputeFunc {
     }
 
     static maxBuy(item, resource) {
-        var Decimal = require('decimal.js');
         // console.log("resource is ", typeof (resource), ", ", resource.times(1).toFixed());
         const max = parseInt(new Decimal(
             resource

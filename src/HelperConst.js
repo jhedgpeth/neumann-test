@@ -1,6 +1,7 @@
 import React from 'react';
 // import { Decimal } from 'decimal.js';
 import './fonts.css';
+let Decimal = require('decimal.js');
 
 export default class HelperConst {
 
@@ -35,7 +36,6 @@ export default class HelperConst {
     }
 
     static myNumCfg() {
-        var Decimal = require('decimal.js');
         return ({
             backend: 'decimal.js',
             sigfigs: 4,
@@ -46,7 +46,6 @@ export default class HelperConst {
     };
 
     static myIntCfg() {
-        var Decimal = require('decimal.js');
         return ({
             backend: 'decimal.js',
             sigfigs: 4,
