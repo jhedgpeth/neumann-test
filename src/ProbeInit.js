@@ -9,7 +9,7 @@ export default function ProbeInit() {
             desc: "desc1",
             owned: 1,
             incomeType: "knowledge",
-            incomeBase: new Decimal(50.05),
+            incomeBase: new Decimal(0.05),
             costType: "knowledge",
             costBase: new Decimal(4),
             costCoef: 1.07,

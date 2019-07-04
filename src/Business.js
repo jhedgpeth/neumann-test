@@ -13,6 +13,9 @@ export default class Business extends React.Component {
         })
     }
 
+
+
+
     render() {
         const sources = this.props.businesses.reduce((result, item) => {
             if (item.revealed) {
@@ -21,7 +24,7 @@ export default class Business extends React.Component {
             return result;
         }, []);
 
-        const totalEarning = ComputeFunc.totalEarning(this.props.businesses, this.props.prestige);
+        const totalEarning = ComputeFunc.totalPayout(this.props.businesses, this.props.prestige);
 
         const rows = sources.map((item) => {
             const n = item.name;
@@ -29,7 +32,9 @@ export default class Business extends React.Component {
             // console.log(myCost);
 
             const buyPct = ComputeFunc.buyPct(myCost.cost, this.props.money);
-            const buyPctStyle = { width: buyPct + '%' }
+            const buyPctStyle = { width: buyPct + '%' };
+            const earnPct = ComputeFunc.earnPct(item);
+            const earnPctStyle = { width: earnPct + '%' };
 
             let bgClass = "money ";
             let buttonClass = "";
@@ -44,8 +49,7 @@ export default class Business extends React.Component {
                 costClass = "cost-wrapper cannotAfford ";
             }
 
-            const myEarning = ComputeFunc.computeEarning(item, this.props.prestige);
-            // console.log(this.props.money.toFixed(2));
+            const myEarning = ComputeFunc.getPayout(item, this.props.prestige);
             const myEarningPct = ComputeFunc.getEarningPct(myEarning, totalEarning);
 
 
@@ -53,6 +57,11 @@ export default class Business extends React.Component {
                 <div key={n + "business"} className={"business " + bgClass} >
                     <div className={"business-buy-progress " + bgClass}>
                         <div className={"business-buy-progress-pct " + bgClass} style={buyPctStyle}>
+                            <span ></span>
+                        </div>
+                    </div>
+                    <div className={"business-earn-progress " + bgClass}>
+                        <div className={"business-earn-progress-pct " + bgClass} style={earnPctStyle}>
                             <span ></span>
                         </div>
                     </div>

@@ -23,9 +23,9 @@ export default class Neumann extends React.Component {
     constructor(props) {
         super(props);
 
-        
+
         this.state = {
-            money: new Decimal(0),
+            money: new Decimal(1),
             knowledge: new Decimal(0),
             businesses: [],
             probes: [],
@@ -60,7 +60,7 @@ export default class Neumann extends React.Component {
             businesses: BusinessInit(),
             probes: ProbeInit(),
             upgrades: UpgradeInit(),
-            money: new Decimal(0),
+            money: new Decimal(1),
         })
         this.gameIntervalId = setInterval(this.updateGame, this.timeInterval);
         this.prestigeIntervalId = setInterval(this.updatePrestigeEarned, 1000);
@@ -84,7 +84,7 @@ export default class Neumann extends React.Component {
     resetAll() {
         this.pause();
         this.setState((state) => ({
-            money: new Decimal(0),
+            money: new Decimal(1),
             knowledge: new Decimal(0),
             businesses: BusinessInit(),
             probes: ProbeInit(),
@@ -149,28 +149,60 @@ export default class Neumann extends React.Component {
     }
 
     updatePurchaseAmt(amt) {
-        console.log("received new purchaseAmt:",amt);
+        console.log("received new purchaseAmt:", amt);
         if (HelperConst.purchaseOpts.indexOf(amt) !== -1 && this.state.purchaseAmt !== amt) {
             this.setState({
                 purchaseAmt: amt,
             })
-            console.log("new purchaseAmt:",amt);
+            console.log("new purchaseAmt:", amt);
         }
         // console.log(this.state.businesses);
         // console.log(this.state.businesses[0]);
         // console.log(ComputeFunc.maxBuy(this.state.businesses[0], this.state.money).max25);
     }
 
+    decrementCountdowns() {
+        let changed = false;
+        const newBusinesses = this.state.businesses.map(item => {
+            let newItem = { ...item };
+            if (!item.revealed && item.owned === 0) {
+                if (item.countdown !== 0) {
+                    newItem.countdown = 0;
+                    changed = true;
+                    console.log("resetting ", item.name, " to countdown 0");
+                }
+            } else {
+                newItem.payout = false;
+                newItem.countdown = newItem.countdown - this.timeMultiplier;
+                if (newItem.countdown < 0) {
+                    newItem.payout = true;
+                    newItem.countdown = item.timeBase;
+                }
+                changed = true;
+                // console.log(newItem.name, " countdown:", newItem.countdown, " payout:",newItem.payout);
+            }
+            return newItem;
+        });
+        if (changed) {
+            this.setState((state) => ({
+                businesses: newBusinesses,
+            }))
+        }
+    }
+
     updateGame() {
-        const revenuePerSec = ComputeFunc.totalEarning(this.state.businesses, this.state.prestige);
+        this.decrementCountdowns();
+
+        const revenuePerSec = ComputeFunc.totalPayout(this.state.businesses, this.state.prestige);
         const revenuePerTick = ComputeFunc.getEarningPerTick(revenuePerSec, this.timeInterval);
         const newLifetimeEarnings = this.state.lifetimeEarnings.plus(revenuePerTick);
 
-        const learningPerSec = ComputeFunc.totalEarning(this.state.probes, this.state.prestige);
+        const learningPerSec = ComputeFunc.totalPayout(this.state.probes, this.state.prestige);
         const learningPerTick = ComputeFunc.getEarningPerTick(learningPerSec, this.timeInterval);
         // const learningPerSec = new Decimal(0);
         // const learningPerTick = new Decimal(0);
 
+        /* reveal businesses if money reached */
         const newBusinesses = this.state.businesses.map(item => {
             let newItem = { ...item };
             if (!item.revealed) {
@@ -185,6 +217,7 @@ export default class Neumann extends React.Component {
             }
             return newItem;
         })
+        /* reveal upgrades if resource reached */
         const newUpgrades = this.state.upgrades.map(item => {
             let newItem = { ...item };
             if (!item.revealed) {
@@ -318,13 +351,13 @@ export default class Neumann extends React.Component {
 
 
                             <div className="purchaseAmts">
-                                
-                            <span className="buyx-prefix">Buy {HelperConst.multiplySymbol}</span>
-                            <Dropdown 
-                            options={HelperConst.purchaseOpts} 
-                            onChange={this.purchaseAmtDropDownHandler} 
-                            value={this.state.purchaseAmt} 
-                            placeholder="Select an option" />
+
+                                <span className="buyx-prefix">Buy {HelperConst.multiplySymbol}</span>
+                                <Dropdown
+                                    options={HelperConst.purchaseOpts}
+                                    onChange={this.purchaseAmtDropDownHandler}
+                                    value={this.state.purchaseAmt}
+                                    placeholder="Select an option" />
                             </div>
                             <button className="pause-button" onClick={this.pause}>Pause</button>
                             <button className="pause-button" onClick={this.resume}>Resume</button>
@@ -355,25 +388,25 @@ export default class Neumann extends React.Component {
                     </TabPanel>
 
                     <TabPanel className="react-tabs__tab-panel probe-tab-panel">
-                        
+
                         <div id="right-sidebar">
 
-                        <div className="purchaseAmts">
-                                
+                            <div className="purchaseAmts">
+
                                 <span className="buyx-prefix">Buy {HelperConst.multiplySymbol}</span>
-                                <Dropdown 
-                                options={HelperConst.purchaseOpts} 
-                                onChange={this.purchaseAmtDropDownHandler} 
-                                value={this.state.purchaseAmt} 
-                                placeholder="Select an option" />
-                                </div>
-                                <button className="pause-button" onClick={this.pause}>Pause</button>
-                                <button className="pause-button" onClick={this.resume}>Resume</button>
-                                <button className="reset-button" onClick={this.resetAll}>RESET</button>
-                                <button
-                                    className="prestige-button"
-                                    disabled={this.state.prestigeNext.gt(0) ? false : true}
-                                    onClick={this.prestige}>Prestige</button>
+                                <Dropdown
+                                    options={HelperConst.purchaseOpts}
+                                    onChange={this.purchaseAmtDropDownHandler}
+                                    value={this.state.purchaseAmt}
+                                    placeholder="Select an option" />
+                            </div>
+                            <button className="pause-button" onClick={this.pause}>Pause</button>
+                            <button className="pause-button" onClick={this.resume}>Resume</button>
+                            <button className="reset-button" onClick={this.resetAll}>RESET</button>
+                            <button
+                                className="prestige-button"
+                                disabled={this.state.prestigeNext.gt(0) ? false : true}
+                                onClick={this.prestige}>Prestige</button>
 
                         </div>
 

@@ -18,7 +18,11 @@ export default class ComputeFunc {
         return pct > 100 ? 100 : pct;
     }
 
-    static computeEarningMoney(item, prestige) {
+    static earnPct(item) {
+        return 100 - ((item.countdown / item.timeBase) * 100);
+    }
+
+    static computePayoutValueMoney(item,prestige) {
         const num25s = Math.floor(item.owned / 25);
         const mult25 = num25s > 3 ? 3 : num25s;
         const mult100 = Math.floor(item.owned / 100);
@@ -34,28 +38,48 @@ export default class ComputeFunc {
         return revenue;
     }
 
-    static computeEarningKnowledge(item, prestige) {
-        // const num25s = Math.floor(item.owned / 25);
-        // const prestigeMultiplier = prestige.num.times(prestige.val).div(100).plus(1);
-        let revenue = new Decimal(
-            item.incomeBase
+    static computePayoutValueKnowledge(item,prestige) {
+        return item.incomeBase
                 .times(item.owned)
-                .times(item.upgradeMult)
-        );
+                .times(item.upgradeMult);
+    }
+
+    static computeEarningPerSec(item,prestige) {
+        if (item.incomeType === "money") {
+            return this.computePayoutValueMoney(item,prestige).div(item.timeBase);
+        }  else {
+            return this.computePayoutValueKnowledge(item,prestige).div(item.timeBase);
+        }
+    }
+
+    static computeTotalEarningPerSec(items,prestige) {
+        let revenue = new Decimal(0);
+        items.forEach((item) => {
+            revenue = revenue.plus(this.computeEarningPerSec(item,prestige));
+        });
         return revenue;
     }
 
-    static computeEarning(item, prestige) {
-        return item.incomeType === "money"
-            ? this.computeEarningMoney(item, prestige)
-            : this.computeEarningKnowledge(item, prestige);
+    static getPayoutMoney(item, prestige) {
+        if (!item.payout) { return new Decimal(0) };
+        return this.computePayoutValueMoney(item,prestige);
     }
 
-    static totalEarning(items, prestige) {
+    static getPayoutKnowledge(item, prestige) {
+        return this.computePayoutValueKnowledge(item,prestige);
+    }
+
+    static getPayout(item, prestige) {
+        return item.incomeType === "money"
+            ? this.getPayoutMoney(item, prestige)
+            : this.getPayoutKnowledge(item, prestige);
+    }
+
+    static totalPayout(items, prestige) {
         let revenue = new Decimal(0);
 
         items.forEach((item) => {
-            revenue = revenue.plus(ComputeFunc.computeEarning(item, prestige));
+            revenue = revenue.plus(ComputeFunc.getPayout(item, prestige));
         });
         return revenue;
     }
