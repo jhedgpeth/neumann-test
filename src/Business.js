@@ -13,7 +13,14 @@ export default class Business extends React.Component {
         })
     }
 
-
+    static getAdjustedTimeBase(bus, milestone) {
+        const mults = ComputeFunc.timeMilestoneIdx(milestone);
+        console.log("mults:",mults);
+        if (mults>=0) {
+            return bus.timeBase / Math.pow(2,mults);
+        }
+        return bus.timeBase;
+    }
 
 
     render() {

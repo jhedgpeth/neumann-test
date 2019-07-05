@@ -14,6 +14,7 @@ export default function ProbeInit() {
             costBase: new Decimal(4),
             costCoef: 1.07,
             timeBase: 1,
+            timeAdjusted: 1,
             initialVisible: new Decimal(1),
             upgradeMult: 1,
             upgradeAdd: 0,

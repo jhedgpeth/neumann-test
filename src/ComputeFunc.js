@@ -1,8 +1,28 @@
 // import { Decimal } from 'decimal.js';
 import './styles/fonts.css';
+import HelperConst from './HelperConst';
 let Decimal = require('decimal.js');
 
 export default class ComputeFunc {
+
+    static timeMilestoneIdx(num) {
+        // console.log("testing new milestone:", num);
+        let retIdx = -1;
+        HelperConst.timeMilestones.forEach((milestone, idx) => {
+            // console.log("num:",num," milestone:",milestone);
+            if (num >= milestone) { retIdx = idx; }
+        });
+        // const milestoneMax = HelperConst.timeMilestones.length();
+        const num100s = Math.floor(num / 100);
+        return (retIdx + num100s);
+    }
+
+    static getMilestone(idx) {
+        const hardcodeMax = HelperConst.timeMilestones.length-1;
+        if (idx<=hardcodeMax) { return HelperConst.timeMilestones[idx]};
+        const diff = (idx-hardcodeMax);
+        return (100 * diff);
+    }
 
     static affordable(item, money, knowledge) {
         if (item.watchType === "money" && item.watchValue.lte(money)) {
@@ -19,54 +39,58 @@ export default class ComputeFunc {
     }
 
     static earnPct(item) {
-        return 100 - ((item.countdown / item.timeBase) * 100);
+        if (item.timeAdjusted < 0.2) {
+            return 100;
+        }
+        return (item.timeCounter / item.timeAdjusted) * 100;
     }
 
-    static computePayoutValueMoney(item,prestige) {
+    static computePayoutValueMoney(item, prestige) {
         const num25s = Math.floor(item.owned / 25);
-        const mult25 = num25s > 3 ? 3 : num25s;
+        // 25, 50, 100, 200, ...
+        const mult25 = num25s > 2 ? 2 : num25s;
         const mult100 = Math.floor(item.owned / 100);
         const prestigeMultiplier = prestige.num.times(prestige.val).div(100).plus(1);
         let revenue = new Decimal(
             item.incomeBase
-                .times(Math.pow(2, mult25))
-                .times(Math.pow(4, mult100))
                 .times(item.owned)
+                .times(Math.pow(2, mult25))
+                .times(Math.pow(2, mult100))
                 .times(item.upgradeMult)
                 .times(prestigeMultiplier)
         );
         return revenue;
     }
 
-    static computePayoutValueKnowledge(item,prestige) {
+    static computePayoutValueKnowledge(item, prestige) {
         return item.incomeBase
-                .times(item.owned)
-                .times(item.upgradeMult);
+            .times(item.owned)
+            .times(item.upgradeMult);
     }
 
-    static computeEarningPerSec(item,prestige) {
+    static computeEarningPerSec(item, prestige) {
         if (item.incomeType === "money") {
-            return this.computePayoutValueMoney(item,prestige).div(item.timeBase);
-        }  else {
-            return this.computePayoutValueKnowledge(item,prestige).div(item.timeBase);
+            return this.computePayoutValueMoney(item, prestige).div(item.timeAdjusted);
+        } else {
+            return this.computePayoutValueKnowledge(item, prestige).div(item.timeAdjusted);
         }
     }
 
-    static computeTotalEarningPerSec(items,prestige) {
+    static computeTotalEarningPerSec(items, prestige) {
         let revenue = new Decimal(0);
         items.forEach((item) => {
-            revenue = revenue.plus(this.computeEarningPerSec(item,prestige));
+            revenue = revenue.plus(this.computeEarningPerSec(item, prestige));
         });
         return revenue;
     }
 
     static getPayoutMoney(item, prestige) {
         if (!item.payout) { return new Decimal(0) };
-        return this.computePayoutValueMoney(item,prestige);
+        return this.computePayoutValueMoney(item, prestige);
     }
 
     static getPayoutKnowledge(item, prestige) {
-        return this.computePayoutValueKnowledge(item,prestige);
+        return this.computePayoutValueKnowledge(item, prestige);
     }
 
     static getPayout(item, prestige) {
@@ -154,7 +178,8 @@ export default class ComputeFunc {
         return {
             num: parseInt(numBuy, 10),
             cost: item.costBase.times(
-                Math.pow(item.costCoef, item.owned) * (Math.pow(item.costCoef, numBuy) - 1))
+                Math.pow(item.costCoef, item.owned) * (Math.pow(item.costCoef, numBuy) - 1)
+            )
                 .div(item.costCoef - 1),
         }
     }

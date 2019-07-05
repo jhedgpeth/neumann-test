@@ -26,6 +26,8 @@ export default class HelperConst {
     static purchaseOptsNum = this.purchaseOpts.filter(item => item.match(/\d/));
     static purchaseOptsSpecial = this.purchaseOpts.filter(item => !item.match(/\d/));
     
+    // set all-business milestones for time boost, including all 100's
+    static timeMilestones = [1, 10, 25, 50];
 
     static showNum(num) {
         return HelperConst.myFormatterNum().format(num);

@@ -35,6 +35,7 @@ export default class Neumann extends React.Component {
             prestigeNext: new Decimal(0),
             lifetimeEarnings: new Decimal(0),
             lifetimeLearning: new Decimal(0),
+            timeMilestone: 0,
             tabIndex: 0,
         };
 
@@ -53,6 +54,10 @@ export default class Neumann extends React.Component {
         this.clickUpgrade = this.clickUpgrade.bind(this);
         this.purchaseAmtDropDownHandler = this.purchaseAmtDropDownHandler.bind(this);
 
+        /* cheats */
+        this.prestigeCheat = this.prestigeCheat.bind(this);
+        this.cheatPrestigeVal = "1e9";
+
     }
 
     componentDidMount() {
@@ -68,6 +73,7 @@ export default class Neumann extends React.Component {
     componentWillUnmount() {
         console.log("game willunmount");
         clearInterval(this.gameIntervalId);
+        clearInterval(this.prestigeIntervalId);
     }
 
     componentDidUpdate() {
@@ -88,6 +94,7 @@ export default class Neumann extends React.Component {
             prestigeNext: new Decimal(0),
             lifetimeEarnings: new Decimal(0),
             lifetimeLearning: new Decimal(0),
+            timeMilestone: 0,
             tabIndex: 0,
         }));
         this.resume();
@@ -101,6 +108,7 @@ export default class Neumann extends React.Component {
             probes: ProbeInit(),
             upgrades: UpgradeInit(),
             money: new Decimal(0),
+            timeMilestone: 0,
         }));
         this.resume();
     }
@@ -110,11 +118,18 @@ export default class Neumann extends React.Component {
             clearInterval(this.gameIntervalId);
             delete (this.gameIntervalId);
         }
+        if (this.prestigeIntervalId) {
+            clearInterval(this.prestigeIntervalId);
+            delete (this.prestigeIntervalId)
+        }
     }
 
     resume() {
         if (!this.gameIntervalId) {
             this.gameIntervalId = setInterval(this.updateGame, this.timeInterval);
+        }
+        if (!this.prestigeIntervalId) {
+            this.prestigeIntervalId = setInterval(this.updatePrestigeEarned, 1000);
         }
     }
 
@@ -125,6 +140,7 @@ export default class Neumann extends React.Component {
                 prestigeNext: newPrestigeNext,
             })
         }
+        // console.log("lifetime:",this.state.lifetimeEarnings.toFixed(),"  newprestige:",newPrestigeNext.toFixed());
         // console.log(Decimal.sqrt(this.state.lifetimeEarnings.div(Math.pow(10, 6))).times(150));
     }
 
@@ -156,25 +172,33 @@ export default class Neumann extends React.Component {
         // console.log(ComputeFunc.maxBuy(this.state.businesses[0], this.state.money).max25);
     }
 
-    decrementCountdowns() {
+    prestigeCheat() {
+        console.log("CHEAT: adding", this.cheatPrestigeVal, "prestige");
+        this.setState((state) => ({
+            prestige: { num: state.prestige.num.plus(this.cheatPrestigeVal), val: state.prestige.val },
+        }));
+    }
+
+
+    incrementTimeCounters() {
         let changed = false;
         const newBusinesses = this.state.businesses.map(item => {
             let newItem = { ...item };
             if (item.owned === 0) {
-                if (item.revealed && item.countdown !== item.timeBase) {
-                    newItem.countdown = item.timeBase;
+                if (item.revealed && item.timeCounter !== 0) {
+                    newItem.timeCounter = 0;
                     changed = true;
-                    console.log("resetting ", item.name, " to countdown ", newItem.countdown);
+                    console.log("resetting ", item.name, " to timeCounter ", newItem.timeCounter);
                 }
             } else {
                 newItem.payout = false;
-                newItem.countdown = newItem.countdown - this.timeMultiplier;
-                if (newItem.countdown < 0) {
+                newItem.timeCounter = newItem.timeCounter + this.timeMultiplier;
+                if (newItem.timeCounter >= newItem.timeAdjusted) {
                     newItem.payout = true;
-                    newItem.countdown = item.timeBase;
+                    newItem.timeCounter = 0;
                 }
                 changed = true;
-                // console.log(newItem.name, " countdown:", newItem.countdown, " payout:",newItem.payout);
+                // console.log(newItem.name, " timeCounter:", newItem.timeCounter, " payout:",newItem.payout);
             }
             return newItem;
         });
@@ -186,12 +210,12 @@ export default class Neumann extends React.Component {
     }
 
     updateGame() {
-        this.decrementCountdowns();
+        this.incrementTimeCounters();
 
         const payoutMoneyThisTick = ComputeFunc.totalPayout(this.state.businesses, this.state.prestige);
         const newLifetimeEarnings = this.state.lifetimeEarnings.plus(payoutMoneyThisTick);
         // console.log("payoutMoneyThisTick:",payoutMoneyThisTick.toFixed());
-        
+
         const payoutKnowledgeThisTick = ComputeFunc.totalPayout(this.state.probes, this.state.prestige);
 
         /* reveal businesses if money reached */
@@ -238,16 +262,43 @@ export default class Neumann extends React.Component {
         console.log("business click ", bus.name);
         const busCost = ComputeFunc.getCost(bus, this.state.purchaseAmt, this.state.money);
 
-        const idx = this.state.businesses.findIndex(btest => btest.name === bus.name);
-        this.setState({
-            businesses: update(this.state.businesses, {
-                [idx]: {
-                    owned: { $set: bus.owned + busCost.num },
-                }
-            }),
-            money: this.state.money.minus(busCost.cost),
+        let newBusinesses = this.state.businesses.map(item => {
+            let newItem = { ...item };
+            if (newItem.name === bus.name) {
+                newItem.owned += busCost.num;
+                console.log("adding", busCost.num, "to", newItem.name);
+            }
+            return newItem;
         });
+        console.log(bus.name, "owned set to", bus.owned + busCost.num);
 
+        let newMilestone = this.state.timeMilestone;
+        console.log("curIdx");
+        const curIdx = ComputeFunc.timeMilestoneIdx(this.state.timeMilestone);
+        const newLowest = newBusinesses.reduce((min, bus) =>
+            bus.owned < min ? bus.owned : min,
+            Number.MAX_SAFE_INTEGER);
+            console.log("newIdx");
+        const newIdx = ComputeFunc.timeMilestoneIdx(newLowest);
+        console.log("newIdx:",newIdx," curIdx:",curIdx);
+
+        /* apply time modifiers if new time milestone reached */
+        if (newIdx > curIdx) {
+            newMilestone = ComputeFunc.getMilestone(newIdx);
+            console.log("new owned milestone:", newMilestone);
+            newBusinesses = newBusinesses.map(item => {
+                let newItem = { ...item };
+                newItem.timeAdjusted = Business.getAdjustedTimeBase(item, newMilestone);
+                console.log(newItem.name, "timeAdjusted now", newItem.timeAdjusted);
+                return newItem;
+            });
+        }
+
+        this.setState((state, props) => ({
+            businesses: newBusinesses,
+            money: state.money.minus(busCost.cost),
+            timeMilestone: newMilestone,
+        }))
     }
 
     clickUpgrade(upg) {
@@ -289,6 +340,7 @@ export default class Neumann extends React.Component {
                         },
                     }),
                 });
+                console.log(this.state.businesses[busIdx].name, "received multiplier", upg.rewardValue);
                 break;
             default:
                 console.log("unknown rewardType");
@@ -358,6 +410,8 @@ export default class Neumann extends React.Component {
                                 className="prestige-button"
                                 disabled={this.state.prestigeNext.gt(0) ? false : true}
                                 onClick={this.prestige}>Prestige</button>
+                            <button className="test-give-prestige"
+                                onClick={this.prestigeCheat}>+{this.cheatPrestigeVal} prestige</button>
 
                         </div>
 
@@ -399,6 +453,8 @@ export default class Neumann extends React.Component {
                                 className="prestige-button"
                                 disabled={this.state.prestigeNext.gt(0) ? false : true}
                                 onClick={this.prestige}>Prestige</button>
+                            <button className="test-give-prestige"
+                                onClick={this.prestigeCheat}>+{this.cheatPrestigeVal} prestige</button>
 
                         </div>
 
