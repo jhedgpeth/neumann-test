@@ -1,8 +1,8 @@
 import React from 'react';
 import ComputeFunc from './ComputeFunc';
 import HelperConst from './HelperConst';
-import './fonts.css';
-import './neon.scss';
+import './styles/fonts.css';
+import './styles/neon.scss';
 
 export default class Income extends React.Component {
 

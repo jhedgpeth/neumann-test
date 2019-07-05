@@ -1,17 +1,17 @@
 import React from 'react';
 import update from 'immutability-helper';
 import Dropdown from 'react-dropdown'
-import './fonts.css';
-import './index.scss';
-import './dropdown.scss'
+import './styles/fonts.css';
+import './styles/index.scss';
+import './styles/dropdown.scss'
 // import { Decimal } from 'decimal.js';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import Income from './Income';
 import Business from './Business.js';
 // import Probe from './Probe.js';
-import BusinessInit from './BusinessInit';
-import ProbeInit from './ProbeInit';
-import UpgradeInit from './UpgradeInit';
+import BusinessInit from './objInit/BusinessInit';
+import ProbeInit from './objInit/ProbeInit';
+import UpgradeInit from './objInit/UpgradeInit';
 import ComputeFunc from './ComputeFunc';
 import HelperConst from './HelperConst';
 import Upgrades from './Upgrades';
@@ -34,6 +34,7 @@ export default class Neumann extends React.Component {
             prestige: { num: new Decimal(0), val: 5 },
             prestigeNext: new Decimal(0),
             lifetimeEarnings: new Decimal(0),
+            lifetimeLearning: new Decimal(0),
             tabIndex: 0,
         };
 
@@ -56,14 +57,7 @@ export default class Neumann extends React.Component {
 
     componentDidMount() {
         console.log("game didmount");
-        this.setState({
-            businesses: BusinessInit(),
-            probes: ProbeInit(),
-            upgrades: UpgradeInit(),
-            money: new Decimal(1),
-        })
-        this.gameIntervalId = setInterval(this.updateGame, this.timeInterval);
-        this.prestigeIntervalId = setInterval(this.updatePrestigeEarned, 1000);
+        this.resetAll();
 
         this.cleanState = { ...this.state };
         delete this.cleanState.pauseText;
@@ -90,9 +84,10 @@ export default class Neumann extends React.Component {
             probes: ProbeInit(),
             upgrades: UpgradeInit(),
             purchaseAmt: "1",
-            prestige: { num: new Decimal(1000), val: 5 },
+            prestige: { num: new Decimal(0), val: 5 },
             prestigeNext: new Decimal(0),
             lifetimeEarnings: new Decimal(0),
+            lifetimeLearning: new Decimal(0),
             tabIndex: 0,
         }));
         this.resume();
@@ -165,11 +160,11 @@ export default class Neumann extends React.Component {
         let changed = false;
         const newBusinesses = this.state.businesses.map(item => {
             let newItem = { ...item };
-            if (!item.revealed && item.owned === 0) {
-                if (item.countdown !== 0) {
-                    newItem.countdown = 0;
+            if (item.owned === 0) {
+                if (item.revealed && item.countdown !== item.timeBase) {
+                    newItem.countdown = item.timeBase;
                     changed = true;
-                    console.log("resetting ", item.name, " to countdown 0");
+                    console.log("resetting ", item.name, " to countdown ", newItem.countdown);
                 }
             } else {
                 newItem.payout = false;
@@ -193,14 +188,11 @@ export default class Neumann extends React.Component {
     updateGame() {
         this.decrementCountdowns();
 
-        const revenuePerSec = ComputeFunc.totalPayout(this.state.businesses, this.state.prestige);
-        const revenuePerTick = ComputeFunc.getEarningPerTick(revenuePerSec, this.timeInterval);
-        const newLifetimeEarnings = this.state.lifetimeEarnings.plus(revenuePerTick);
-
-        const learningPerSec = ComputeFunc.totalPayout(this.state.probes, this.state.prestige);
-        const learningPerTick = ComputeFunc.getEarningPerTick(learningPerSec, this.timeInterval);
-        // const learningPerSec = new Decimal(0);
-        // const learningPerTick = new Decimal(0);
+        const payoutMoneyThisTick = ComputeFunc.totalPayout(this.state.businesses, this.state.prestige);
+        const newLifetimeEarnings = this.state.lifetimeEarnings.plus(payoutMoneyThisTick);
+        // console.log("payoutMoneyThisTick:",payoutMoneyThisTick.toFixed());
+        
+        const payoutKnowledgeThisTick = ComputeFunc.totalPayout(this.state.probes, this.state.prestige);
 
         /* reveal businesses if money reached */
         const newBusinesses = this.state.businesses.map(item => {
@@ -234,8 +226,8 @@ export default class Neumann extends React.Component {
         })
 
         this.setState({
-            money: this.state.money.plus(revenuePerTick),
-            knowledge: this.state.knowledge.plus(learningPerTick),
+            money: this.state.money.plus(payoutMoneyThisTick),
+            knowledge: this.state.knowledge.plus(payoutKnowledgeThisTick),
             businesses: newBusinesses,
             upgrades: newUpgrades,
             lifetimeEarnings: newLifetimeEarnings,

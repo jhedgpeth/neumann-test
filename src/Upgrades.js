@@ -1,7 +1,7 @@
 import React from 'react';
 import HelperConst from './HelperConst';
 import ComputeFunc from './ComputeFunc';
-import './fonts.css';
+import './styles/fonts.css';
 import ScrollBar  from 'react-scrollbars-custom';
 
 export default class Upgrades extends React.Component {

@@ -2,7 +2,7 @@ import React from 'react';
 import update from 'immutability-helper';
 import ComputeFunc from './ComputeFunc';
 import HelperConst from './HelperConst';
-import './fonts.css';
+import './styles/fonts.css';
 
 
 export default class Business extends React.Component {
@@ -24,7 +24,7 @@ export default class Business extends React.Component {
             return result;
         }, []);
 
-        const totalEarning = ComputeFunc.totalPayout(this.props.businesses, this.props.prestige);
+        const totalEarningPerSec = ComputeFunc.computeTotalEarningPerSec(this.props.businesses, this.props.prestige);
 
         const rows = sources.map((item) => {
             const n = item.name;
@@ -49,8 +49,9 @@ export default class Business extends React.Component {
                 costClass = "cost-wrapper cannotAfford ";
             }
 
-            const myEarning = ComputeFunc.getPayout(item, this.props.prestige);
-            const myEarningPct = ComputeFunc.getEarningPct(myEarning, totalEarning);
+            const myEarningPerSec = ComputeFunc.computeEarningPerSec(item, this.props.prestige);
+            const myPayout = ComputeFunc.computePayoutValueMoney(item, this.props.prestige);
+            const myEarningPct = ComputeFunc.getEarningPct(myEarningPerSec, totalEarningPerSec);
 
 
             return (
@@ -82,7 +83,7 @@ export default class Business extends React.Component {
                     </div>
 
                     <div key={n + "earning-wrapper"} className="earning-wrapper">
-                        <div key={n + "revenue-total"} className="business-revenue-total">+{HelperConst.moneySymbolSpan()}{HelperConst.showNum(myEarning)}/s</div>
+                        <div key={n + "revenue-total"} className="business-revenue-total">+{HelperConst.moneySymbolSpan()}{HelperConst.showNum(myPayout)}</div>
                     </div>
 
                     <div key={n + "earning-pct-wrapper"} className="earning-pct-wrapper">
