@@ -5,13 +5,15 @@ let Decimal = require('decimal.js');
 
 export default class ComputeFunc {
 
-    static availMaxUpgrade(num) {
-        if (num >= 100) {
-            return Math.floor(num / 100) * 100;
-        } else if (num >= 50) {
-            return 50;
+    static availMaxUpgrade(owned, max) {
+        const maxPoss = owned + max;
+        if (maxPoss >= 100) {
+            const maxCheck = Math.floor(maxPoss / 100) * 100;
+            return (maxCheck === owned) ? maxCheck + 100 : maxCheck;
+        } else if (maxPoss >= 50) {
+            return (owned >= 50) ? 100 : 50;
         } else {
-            return 25;
+            return (owned >= 25) ? 50 : 25;
         }
     }
 
@@ -167,7 +169,8 @@ export default class ComputeFunc {
                 )
         ).plus(1).log(item.costCoef).floor(), 10);
 
-        const maxUpg = this.availMaxUpgrade(max + item.owned) - item.owned;
+        // item.name === "Odd Jobs" && console.log("max:", max, "item.owned:", item.owned, " availmaxupg:", this.availMaxUpgrade(item.owned, max));
+        const maxUpg = this.availMaxUpgrade(item.owned, max) - item.owned;
 
         let maxOcd = (Math.floor((max + item.owned) / 25) * 25)
             - item.owned;
@@ -177,12 +180,12 @@ export default class ComputeFunc {
         let primeTime = 0;
 
         // console.time('primeidx');
-        const primeCheck = item.owned +max;
+        const primeCheck = item.owned + max;
         for (const idx in primes) {
-            if (primeCheck>=primes[idx]) {
+            if (primeCheck >= primes[idx]) {
                 primeTime = primes[idx];
             }
-            if (primes[idx]>primeCheck) {
+            if (primes[idx] > primeCheck) {
                 break;
             }
         }
@@ -190,7 +193,7 @@ export default class ComputeFunc {
         // console.timeEnd('primeidx');
 
         return ({
-            Max: max>0 ? max : 1,
+            Max: max > 0 ? max : 1,
             "Max OCD": maxOcd,
             "Max Upg": maxUpg,
             PrimeTime: primeTime,

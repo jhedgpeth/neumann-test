@@ -273,14 +273,12 @@ export default class Neumann extends React.Component {
         console.log(bus.name, "owned set to", bus.owned + busCost.num);
 
         let newMilestone = this.state.timeMilestone;
-        console.log("curIdx");
         const curIdx = ComputeFunc.timeMilestoneIdx(this.state.timeMilestone);
         const newLowest = newBusinesses.reduce((min, bus) =>
             bus.owned < min ? bus.owned : min,
             Number.MAX_SAFE_INTEGER);
-            console.log("newIdx");
         const newIdx = ComputeFunc.timeMilestoneIdx(newLowest);
-        console.log("newIdx:",newIdx," curIdx:",curIdx);
+        // console.log("newIdx:",newIdx," curIdx:",curIdx);
 
         /* apply time modifiers if new time milestone reached */
         if (newIdx > curIdx) {
@@ -410,8 +408,8 @@ export default class Neumann extends React.Component {
                                 className="prestige-button"
                                 disabled={this.state.prestigeNext.gt(0) ? false : true}
                                 onClick={this.prestige}>Prestige</button>
-                            <button className="test-give-prestige"
-                                onClick={this.prestigeCheat}>+{this.cheatPrestigeVal} prestige</button>
+                            {/* <button className="test-give-prestige"
+                                onClick={this.prestigeCheat}>+{this.cheatPrestigeVal} prestige</button> */}
 
                         </div>
 
@@ -453,8 +451,8 @@ export default class Neumann extends React.Component {
                                 className="prestige-button"
                                 disabled={this.state.prestigeNext.gt(0) ? false : true}
                                 onClick={this.prestige}>Prestige</button>
-                            <button className="test-give-prestige"
-                                onClick={this.prestigeCheat}>+{this.cheatPrestigeVal} prestige</button>
+                            {/* <button className="test-give-prestige"
+                                onClick={this.prestigeCheat}>+{this.cheatPrestigeVal} prestige</button> */}
 
                         </div>
 
