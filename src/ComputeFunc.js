@@ -51,7 +51,7 @@ export default class ComputeFunc {
     }
 
     static earnPct(item) {
-        if (item.timeAdjusted < 0.2) {
+        if (item.timeAdjusted < 0.2 || (item.timeAdjusted - item.timeCounter)<0.1) {
             return 100;
         }
         return (item.timeCounter / item.timeAdjusted) * 100;

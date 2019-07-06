@@ -12,11 +12,11 @@
 .Dropdown-control {
   position: relative;
   overflow: hidden;
-  background-color: #000;
+  background-color: $c_mainbg;
   border: 1px solid $c_selected;
   border-radius: 2px;
   box-sizing: border-box;
-  color: $c_mywhite;
+  color: $c_mainfg;
   cursor: default;
   outline: none;
   padding: 5px 25px 5px 10px;
@@ -30,7 +30,7 @@
 
 
 .Dropdown-arrow {
-  border-color: #999 transparent transparent;
+  border-color: $c_selected transparent transparent;
   border-style: solid;
   border-width: 5px 5px 0;
   content: ' ';
@@ -44,14 +44,14 @@
 }
 
 .is-open .Dropdown-arrow {
-  border-color: transparent transparent #999;
+  border-color: transparent transparent $c_selected;
   border-width: 0 5px 5px;
 }
 
 .Dropdown-menu {
-  background-color: #000;
+  background-color: $c_mainbg;
   border: 1px solid $c_selected;
-  box-shadow: 0 3px 3px 3px #000;
+  box-shadow: 0 3px 3px 3px $c_mainbg;
   box-sizing: border-box;
   margin-top: -1px;
   max-height: 250px;
@@ -88,7 +88,7 @@
 .Dropdown-option:hover {
   // background-color: #f2f9fc;
   background-color: $c_selected;
-  color: white;
+  color: $c_mainfg;
 }
 
 .Dropdown-option.is-selected {
@@ -100,7 +100,7 @@
 
 .Dropdown-noresults {
   box-sizing: border-box;
-  color: #ccc;
+  color: $c_mainfg;
   cursor: default;
   display: block;
   padding: 8px 10px;

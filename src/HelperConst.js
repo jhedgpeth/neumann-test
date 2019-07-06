@@ -2,6 +2,7 @@ import React from 'react';
 // import { Decimal } from 'decimal.js';
 import './styles/fonts.css';
 let Decimal = require('decimal.js');
+const numberformat = require('swarm-numberformat');
 
 export default class HelperConst {
 
@@ -58,7 +59,6 @@ export default class HelperConst {
     };
 
     static myFormatterNum() {
-        const numberformat = require('swarm-numberformat');
         if (!this.myNumFormat) {
             console.log("entered defining area");
             this.myNumFormat = new numberformat.Formatter(HelperConst.myNumCfg());
@@ -67,7 +67,6 @@ export default class HelperConst {
 
     }
     static myFormatterInt() {
-        const numberformat = require('swarm-numberformat');
         if (!this.myIntFormat) {
             this.myIntFormat = new numberformat.Formatter(HelperConst.myIntCfg());
         }

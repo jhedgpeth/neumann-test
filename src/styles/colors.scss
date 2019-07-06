@@ -1,11 +1,15 @@
 /* Colors
 -----------------------------------------------------------------------------*/
-$c_lsidebar: #000;
-$c_rsidebar: #000;
 $c_mainbg: #000;
-$c_headerbg: #000;
-$c_footerbg: #000;
-$c_tabsbg: #000;
+$c_lsidebar: $c_mainbg;
+$c_rsidebar: $c_mainbg;
+$c_headerbg: $c_mainbg;
+$c_footerbg: $c_mainbg;
+$c_tabsbg: $c_mainbg;
+
+$c_mainfg: #ddd;
+$c_maindimfg: #888;
+
 /* money */
 $c_moneysymbol: #29b516;
 $c_moneybg: #082A02;
@@ -16,21 +20,22 @@ $c_moneydivider: #1A8A09;
 /*  knowledge */
 $c_knowledgesymbol: #b55b16;
 $c_knowledgebg: #030D2F;
-$c_knowledgebuy: #09298F;
-$c_knowledgehover: #163bb5;
+// $c_knowledgebuy: #09298F;
+$c_knowledgebuy: #163bb5;
+$c_knowledgehover: #4d4dff;
 /* prestige */ 
 $c_prestigesymbol: #b51629;
 /* tabs */
 $c_taboff: #0f0f56;
 $c_tabon: #4d4dff;
 
-$c_mywhite: #ddd;
-$c_mydimwhite: #888;
+// $c_mywhite: #ddd;
+// $c_mydimwhite: #888;
 $c_neonblue: #4d4dff;
 $c_neongreen: #49fb35;
 
 $c_selected: #b51629;
 $c_countdownfg: #b51629;
-$c_countdownbg: #2F0308;
+$c_countdownbg: #710E1A;
 $c_scrollbg: #082A02;
 $c_scrollfg: #1A8A09;

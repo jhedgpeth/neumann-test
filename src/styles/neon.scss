@@ -5,9 +5,12 @@ and wedged into this game :/
 thanks!
 */
 
+@import "./colors.scss";
+
+
 // Change the colors
-$color1: #4d4dff;
-$color2: #49fb35;
+$color1: $c_neonblue;
+$color2: $c_neongreen;
 
 .text-effect {
   overflow: hidden;
@@ -66,7 +69,9 @@ $color2: #49fb35;
 
 // Add the colors
 .gradient {
-  background: linear-gradient(45deg, $color1, $color2);
+  // background: linear-gradient(45deg, $color1, $color2);
+  background: linear-gradient($color1, $color2);
+
 
   // Multiply mode will paint only the white text
   mix-blend-mode: multiply;
