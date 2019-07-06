@@ -5,6 +5,16 @@ let Decimal = require('decimal.js');
 
 export default class ComputeFunc {
 
+    static availMaxUpgrade(num) {
+        if (num >= 100) {
+            return Math.floor(num / 100) * 100;
+        } else if (num >= 50) {
+            return 50;
+        } else {
+            return 25;
+        }
+    }
+
     static timeMilestoneIdx(num) {
         // console.log("testing new milestone:", num);
         let retIdx = -1;
@@ -18,9 +28,9 @@ export default class ComputeFunc {
     }
 
     static getMilestone(idx) {
-        const hardcodeMax = HelperConst.timeMilestones.length-1;
-        if (idx<=hardcodeMax) { return HelperConst.timeMilestones[idx]};
-        const diff = (idx-hardcodeMax);
+        const hardcodeMax = HelperConst.timeMilestones.length - 1;
+        if (idx <= hardcodeMax) { return HelperConst.timeMilestones[idx] };
+        const diff = (idx - hardcodeMax);
         return (100 * diff);
     }
 
@@ -128,47 +138,10 @@ export default class ComputeFunc {
 
         switch (purchaseAmt) {
             case "Max":
-                if (maxbuys.Max <= 0) {
-                    numBuy = 1;
-                } else {
-                    numBuy = maxbuys.Max;
-                }
-                break;
             case "Max OCD":
-                // console.log(maxbuys);
-                for (const key of ["max100", "max25"]) {
-                    // console.log("maxbuys[" + key + "] = " + maxbuys[key]);
-                    if (maxbuys[key] > 0
-                        && numBuy < maxbuys[key]
-                        && maxbuys[key] <= maxbuys.Max) { numBuy = maxbuys[key]; }
-                };
-                if (numBuy === 0) {
-                    numBuy = 25 - (item.owned % 25);
-                }
-                // console.log("numBuy = " + numBuy);
-                break;
             case "Max Upg":
-                // item.name === "Lemonade Stand" && console.log(maxbuys);
-                const limit100 = (item.owned >= 100 || (item.owned + maxbuys.Max) >= 100) ? true : false;
-                const checkOpts = limit100 ? ["max100"] : ["max25"];
-                for (const key of checkOpts) {
-                    if (maxbuys[key] > 0 && numBuy < maxbuys[key]) { numBuy = maxbuys[key]; }
-                };
-                if (numBuy === 0) {
-                    if (limit100) {
-                        numBuy = 100 - (item.owned % 100);
-                    } else {
-                        numBuy = 25 - (item.owned % 25);
-                    }
-                }
-                // console.log("numBuy = " + numBuy);
-                break;
             case "PrimeTime":
-                if (maxbuys.PrimeTime <= 0) {
-                    numBuy = this.nextPrime(item.owned) - item.owned;
-                } else {
-                    numBuy = maxbuys.PrimeTime;
-                }
+                numBuy = maxbuys[purchaseAmt];
                 break;
             default:
                 numBuy = purchaseAmt;
@@ -179,8 +152,7 @@ export default class ComputeFunc {
             num: parseInt(numBuy, 10),
             cost: item.costBase.times(
                 Math.pow(item.costCoef, item.owned) * (Math.pow(item.costCoef, numBuy) - 1)
-            )
-                .div(item.costCoef - 1),
+            ).div(item.costCoef - 1),
         }
     }
 
@@ -195,32 +167,33 @@ export default class ComputeFunc {
                 )
         ).plus(1).log(item.costCoef).floor(), 10);
 
-        let max100 = (Math.floor((max + item.owned) / 100) * 100)
-            - item.owned;
-        max100 = max100 >= 0 ? max100 : 0;
+        const maxUpg = this.availMaxUpgrade(max + item.owned) - item.owned;
 
-        let max25 = (Math.floor((max + item.owned) / 25) * 25)
+        let maxOcd = (Math.floor((max + item.owned) / 25) * 25)
             - item.owned;
-        max25 = max25 >= 0 ? max25 : 0;
+        maxOcd = maxOcd >= 0 ? maxOcd : 25 - item.owned;
 
         const primes = this.primeFactors();
         let primeTime = 0;
 
         // console.time('primeidx');
+        const primeCheck = item.owned +max;
         for (const idx in primes) {
-            const diff = primes[idx] - item.owned;
-            if (diff > 0 && diff < max) {
-                primeTime = primes[idx] - item.owned;
+            if (primeCheck>=primes[idx]) {
+                primeTime = primes[idx];
             }
-            if (diff > max) { break; }
+            if (primes[idx]>primeCheck) {
+                break;
+            }
         }
+        primeTime -= item.owned;
         // console.timeEnd('primeidx');
 
         return ({
-            Max: max,
+            Max: max>0 ? max : 1,
+            "Max OCD": maxOcd,
+            "Max Upg": maxUpg,
             PrimeTime: primeTime,
-            max25: max25,
-            max100: max100,
         });
     }
 

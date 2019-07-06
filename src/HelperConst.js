@@ -22,7 +22,7 @@ export default class HelperConst {
     static prestigeSymbolSpan() { return (<span className="prestigeSymbol">{this.prestigeSymbol}</span>); };
     static multiplySymbolSpan() { return (<span className="multiplySymbol">{this.multiplySymbol}</span>);}
 
-    static purchaseOpts = ["1", "10", "25", "Max", "Max OCD", "Max Upg", "PrimeTime"];
+    static purchaseOpts = ["1", "10", "25", "100", "Max", "Max OCD", "Max Upg", "PrimeTime"];
     static purchaseOptsNum = this.purchaseOpts.filter(item => item.match(/\d/));
     static purchaseOptsSpecial = this.purchaseOpts.filter(item => !item.match(/\d/));
     
