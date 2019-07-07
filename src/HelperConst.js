@@ -17,6 +17,7 @@ export default class HelperConst {
     // static multiplySymbol = '\u2718';
     static multiplySymbol = '\u2a2f';
 
+    static thumbsUpSymbol = '👍';
 
     static moneySymbolSpan() { return (<span className="moneySymbol">{this.moneySymbol}</span>); };
     static knowledgeSymbolSpan() { return (<span className="knowledgeSymbol">{this.knowledgeSymbol}</span>); };

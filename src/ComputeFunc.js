@@ -9,7 +9,7 @@ export default class ComputeFunc {
         const maxPoss = owned + max;
         if (maxPoss >= 100) {
             const maxCheck = Math.floor(maxPoss / 100) * 100;
-            return (maxCheck === owned) ? maxCheck + 100 : maxCheck;
+            return (maxCheck <= owned) ? maxCheck + 100 : maxCheck;
         } else if (maxPoss >= 50) {
             return (owned >= 50) ? 100 : 50;
         } else {

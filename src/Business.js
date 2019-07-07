@@ -83,7 +83,6 @@ export default class Business extends React.Component {
                         </span> {n}
                     </button>
                     <div key={n + "owned"} className="business-owned">{HelperConst.showInt(item.owned)}</div>
-                    {/* </div> */}
 
                     <div key={n + "cost-wrapper"} className={costClass}>
                         <div key={n + "cost-money"} className="business-cost-money">{HelperConst.moneySymbolSpan()}{HelperConst.showNum(myCost.cost)}</div>

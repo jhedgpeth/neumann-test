@@ -8,15 +8,15 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import Income from './Income';
 import Business from './Business.js';
 // import Probe from './Probe.js';
-// import NeumannInit from './objInit/NeumannInit';
-import BusinessInit from './objInit/BusinessInit';
-import ProbeInit from './objInit/ProbeInit';
-import UpgradeInit from './objInit/UpgradeInit';
+import NeumannInit from './objInit/NeumannInit';
+// import BusinessInit from './objInit/BusinessInit';
+// import ProbeInit from './objInit/ProbeInit';
+// import UpgradeInit from './objInit/UpgradeInit';
 import ComputeFunc from './ComputeFunc';
 import HelperConst from './HelperConst';
 import Upgrades from './Upgrades';
 import Announce from './Announce';
-const Decimal = require('decimal.js');
+// const Decimal = require('decimal.js');
 
 // =====================================================
 export default class Neumann extends React.Component {
@@ -24,25 +24,12 @@ export default class Neumann extends React.Component {
     constructor(props) {
         super(props);
 
-
-        this.state = {
-            money: new Decimal(1),
-            knowledge: new Decimal(0),
-            businesses: [],
-            probes: [],
-            upgrades: [],
-            purchaseAmt: "1",
-            prestige: { num: new Decimal(0), val: 5 },
-            prestigeNext: new Decimal(0),
-            lifetimeEarnings: new Decimal(0),
-            lifetimeLearning: new Decimal(0),
-            timeMilestone: 0,
-            tabIndex: 0,
-            bonuses: [],
-        };
+        this.state = { ...NeumannInit.freshState() };
 
         this.timeInterval = 100;
         this.timeMultiplier = this.timeInterval / 1000;
+
+        this.announceCt = 0;
 
         // this._business = React.createRef();
         this.restart = this.restart.bind(this);
@@ -54,8 +41,10 @@ export default class Neumann extends React.Component {
         this.updateGame = this.updateGame.bind(this);
         this.clickBusiness = this.clickBusiness.bind(this);
         this.clickUpgrade = this.clickUpgrade.bind(this);
+        this.clickAnnouncement = this.clickAnnouncement.bind(this);
         this.purchaseAmtDropDownHandler = this.purchaseAmtDropDownHandler.bind(this);
         this.announce = this.announce.bind(this);
+
 
         /* cheats */
         this.prestigeCheat = this.prestigeCheat.bind(this);
@@ -70,7 +59,6 @@ export default class Neumann extends React.Component {
         this.cleanState = { ...this.state };
         delete this.cleanState.purchaseAmt;
         console.log(HelperConst.purchaseOptsSpecial);
-        // this.bonusitvl = setInterval(this.createBonus,1000 );
     }
 
     componentWillUnmount() {
@@ -87,20 +75,9 @@ export default class Neumann extends React.Component {
     resetAll() {
         this.pause();
         this.setState((state) => ({
-            money: new Decimal(1),
-            knowledge: new Decimal(0),
-            businesses: BusinessInit(),
-            probes: ProbeInit(),
-            upgrades: UpgradeInit(),
-            purchaseAmt: "1",
-            prestige: { num: new Decimal(0), val: 5 },
-            prestigeNext: new Decimal(0),
-            lifetimeEarnings: new Decimal(0),
-            lifetimeLearning: new Decimal(0),
-            timeMilestone: 0,
-            tabIndex: 0,
-            bonuses: [],
+            ...NeumannInit.freshState()
         }));
+        this.announceCt = 0;
         this.resume();
     }
 
@@ -108,12 +85,7 @@ export default class Neumann extends React.Component {
         this.pause();
         this.setState(this.cleanState);
         this.setState((state) => ({
-            businesses: BusinessInit(),
-            probes: ProbeInit(),
-            upgrades: UpgradeInit(),
-            money: new Decimal(0),
-            timeMilestone: 0,
-            bonuses: [],
+            ...NeumannInit.coreObjOnly()
         }));
         this.resume();
     }
@@ -136,6 +108,8 @@ export default class Neumann extends React.Component {
         if (!this.prestigeIntervalId) {
             this.prestigeIntervalId = setInterval(this.updatePrestigeEarned, 1000);
         }
+        this.bonusitvl = setInterval(this.announce("testing"), 7000);
+
     }
 
     updatePrestigeEarned() {
@@ -185,7 +159,7 @@ export default class Neumann extends React.Component {
     }
 
 
-    incrementTimeCounters() {
+    incrementBusinessCounters() {
         let changed = false;
         const newBusinesses = this.state.businesses.map(item => {
             let newItem = { ...item };
@@ -214,8 +188,33 @@ export default class Neumann extends React.Component {
         }
     }
 
+    incrementAnnouncementCounters() {
+        const valid = this.state.announcements.reduce((result, item) => {
+            if (!item.ack || (item.ack && item.counter < item.fadeout)) {
+                result.push(item);
+            }
+            return result;
+        }, []);
+        // console.log("valid:", valid);
+        const newAnnouncements = valid.map(item => {
+            let newAnn = { ...item };
+            newAnn.counter += this.timeMultiplier;
+            if (newAnn.counter >= newAnn.expire) {
+                newAnn.ack = true;
+                newAnn.counter = 0;
+            }
+            return newAnn;
+        });
+        // console.log("newAnnouncements:", newAnnouncements);
+        this.setState((state) => ({
+            announcements: newAnnouncements,
+        }))
+    }
+
+
     updateGame() {
-        this.incrementTimeCounters();
+        this.incrementBusinessCounters();
+        this.incrementAnnouncementCounters();
 
         const payoutMoneyThisTick = ComputeFunc.totalPayout(this.state.businesses, this.state.prestige);
         const newLifetimeEarnings = this.state.lifetimeEarnings.plus(payoutMoneyThisTick);
@@ -352,22 +351,36 @@ export default class Neumann extends React.Component {
 
     }
 
-    clickBonus(bonus) {
-        console.log("bonus click ", bonus.name);
-
-        const idx = this.state.bonuses.findIndex(btest => btest.name === bonus.name);
+    clickAnnouncement(a) {
+        console.log("announcement click ", a.id, a.text);
+        const idx = this.state.announcements.findIndex(atest => atest.id === a.id);
         this.setState({
-            upgrades: update(this.state.bonuses, {
+            announcements: update(this.state.announcements, {
                 [idx]: {
                     ack: { $set: true },
+                    counter: { $set: 0 },
                 }
             }),
         });
 
+
     }
 
-    announce() {
-        
+    announce(text) {
+        console.log("announce ", text);
+        const today = new Date();
+        const time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds() + "." + today.getMilliseconds();
+        this.setState((state) => ({
+            announcements: [...state.announcements, {
+                id: this.announceCt++,
+                createTime: time,
+                text: text,
+                counter: 0,
+                expire: 3,
+                fadeout: 0.4,
+                ack: false,
+            },],
+        }))
     }
 
     render() {
@@ -433,7 +446,7 @@ export default class Neumann extends React.Component {
                                 onClick={this.prestige}>Prestige</button>
                             {/* <button className="test-give-prestige"
                                 onClick={this.prestigeCheat}>+{this.cheatPrestigeVal} prestige</button> */}
-
+                            <button className="announce-button" onClick={() => this.announce("great job winning!")}>Announce</button>
                         </div>
 
                         <div id="content">
@@ -474,8 +487,6 @@ export default class Neumann extends React.Component {
                                 className="prestige-button"
                                 disabled={this.state.prestigeNext.gt(0) ? false : true}
                                 onClick={this.prestige}>Prestige</button>
-                            {/* <button className="test-give-prestige"
-                                onClick={this.prestigeCheat}>+{this.cheatPrestigeVal} prestige</button> */}
 
                         </div>
 
@@ -497,8 +508,11 @@ export default class Neumann extends React.Component {
 
                 </div>
 
-                <div id="announce">
-                    <Announce announcements={this.state.announcements} />
+                <div id="announcements">
+                    <Announce
+                        announcements={this.state.announcements}
+                        onClick={this.clickAnnouncement}
+                    />
                 </div>
             </div>
 

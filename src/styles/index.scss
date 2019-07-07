@@ -356,11 +356,13 @@ body {
 }
 .upgrade-buy.money:active:enabled {
   background-color: $c_moneybuy !important;
-  transform: translateY(2px);
+  // transform: translateY(2px);
+  box-shadow: inset 5px 5px 10px $c_moneybg;
 }
 .upgrade-buy.knowledge:active:enabled {
   background-color: $c_knowledgebuy !important;
-  transform: translateY(2px);
+  // transform: translateY(2px);
+  box-shadow: inset 5px 5px 15px $c_knowledgebg;
 }
 
 .upgrade-buy-progress-pct {
@@ -596,7 +598,7 @@ body {
 }
 .business-buy:active:enabled {
   background-color: $c_moneybuy !important;
-  transform: translateY(2px);
+  box-shadow: inset 3px 3px 10px $c_moneybg;
 }
 .business-buy-progress {
   border-radius: 5px 0 0 0;
@@ -747,18 +749,17 @@ body {
   // max-width: 790px;
 }
 
-
 /* bonuses 
 -----------------------------------------------------------------------------*/
 
-#announce {
+#announcements {
   position: relative;
   background: transparent;
-  border: 1px dashed red;
-  width: 250px;
+  // border: 1px dashed red;
+  width: 500px;
   height: 545px;
   top: -585px;
-  left: 387px;
+  left: 262px;
   z-index: 2;
   pointer-events: none;
   overflow: hidden;
@@ -769,15 +770,56 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
+  align-items: center;
   overflow: hidden;
-
 }
 
 .announcement {
-  width: 250px;
-  // height: 80px;
-  border-radius: 25px;
-  border: 1px solid red;
+  width: 248px;
+  // max-width: 250px;
+  height: 60px;
+  line-height: 60px;
+  // border-radius: 30px;
+  border: 1px solid yellow;
   flex-basis: 50px;
-  margin-top: 20px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  text-align: center;
+  background: $c_announcebg;
+  // opacity: 0.8;
+  // box-shadow: 0 0 5px 2px white, 0 0 10px 7px $c_goldglow;
+  pointer-events: all;
+}
+
+.announce-text {
+  // height: 100%;
+  padding: 0 5px;
+  display: inline-block;
+  vertical-align: middle;
+  line-height: normal;
+  font-size: 1rem;
+  font-weight: bold;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
+    1px 1px 0 #000;
+
+  &::before {
+    content: "👍  ";
+  }
+}
+
+.announce-fadeout {
+  visibility: hidden;
+  // opacity: 0;
+  // background: transparent;
+  transform: scale(0);
+  // height: 0;
+  // width: 0;
+  // transform: translateY(+300px);
+  // transform: scale(0.1);
+  opacity: 0;
+  transition: all 0.4s linear;
+  // transition: transform 0.7s linear, opacity 0.5s linear, height 0.7s linear;
+  // transition:
+  //   transform 1s,
+  //   opacity 1.5s .5s,
 }
