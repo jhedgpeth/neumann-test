@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/neumann-test/static/css/main.e8eb9f56.chunk.css",
-    "main.js": "/neumann-test/static/js/main.1b725a88.chunk.js",
-    "main.js.map": "/neumann-test/static/js/main.1b725a88.chunk.js.map",
-    "runtime~main.js": "/neumann-test/static/js/runtime~main.869e5942.js",
-    "runtime~main.js.map": "/neumann-test/static/js/runtime~main.869e5942.js.map",
-    "static/js/2.ebfa7b39.chunk.js": "/neumann-test/static/js/2.ebfa7b39.chunk.js",
-    "static/js/2.ebfa7b39.chunk.js.map": "/neumann-test/static/js/2.ebfa7b39.chunk.js.map",
-    "index.html": "/neumann-test/index.html",
-    "precache-manifest.6c2a83a67acbfc0be987f5605bb31678.js": "/neumann-test/precache-manifest.6c2a83a67acbfc0be987f5605bb31678.js",
-    "service-worker.js": "/neumann-test/service-worker.js",
-    "static/css/main.e8eb9f56.chunk.css.map": "/neumann-test/static/css/main.e8eb9f56.chunk.css.map"
+    "main.css": "/games/brainspank/neumann_preview/static/css/main.e8eb9f56.chunk.css",
+    "main.js": "/games/brainspank/neumann_preview/static/js/main.1b725a88.chunk.js",
+    "main.js.map": "/games/brainspank/neumann_preview/static/js/main.1b725a88.chunk.js.map",
+    "runtime~main.js": "/games/brainspank/neumann_preview/static/js/runtime~main.73abe8c6.js",
+    "runtime~main.js.map": "/games/brainspank/neumann_preview/static/js/runtime~main.73abe8c6.js.map",
+    "static/js/2.ebfa7b39.chunk.js": "/games/brainspank/neumann_preview/static/js/2.ebfa7b39.chunk.js",
+    "static/js/2.ebfa7b39.chunk.js.map": "/games/brainspank/neumann_preview/static/js/2.ebfa7b39.chunk.js.map",
+    "index.html": "/games/brainspank/neumann_preview/index.html",
+    "precache-manifest.308ce81ab2b818b718c600da65ebf676.js": "/games/brainspank/neumann_preview/precache-manifest.308ce81ab2b818b718c600da65ebf676.js",
+    "service-worker.js": "/games/brainspank/neumann_preview/service-worker.js",
+    "static/css/main.e8eb9f56.chunk.css.map": "/games/brainspank/neumann_preview/static/css/main.e8eb9f56.chunk.css.map"
   }
 }
