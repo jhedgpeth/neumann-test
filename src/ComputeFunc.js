@@ -1,7 +1,7 @@
 // import { Decimal } from 'decimal.js';
 import './styles/fonts.css';
 import HelperConst from './HelperConst';
-let Decimal = require('decimal.js');
+const Decimal = require('decimal.js');
 
 export default class ComputeFunc {
 

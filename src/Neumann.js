@@ -4,18 +4,19 @@ import Dropdown from 'react-dropdown'
 import './styles/fonts.css';
 import './styles/index.scss';
 import './styles/dropdown.scss'
-// import { Decimal } from 'decimal.js';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import Income from './Income';
 import Business from './Business.js';
 // import Probe from './Probe.js';
+// import NeumannInit from './objInit/NeumannInit';
 import BusinessInit from './objInit/BusinessInit';
 import ProbeInit from './objInit/ProbeInit';
 import UpgradeInit from './objInit/UpgradeInit';
 import ComputeFunc from './ComputeFunc';
 import HelperConst from './HelperConst';
 import Upgrades from './Upgrades';
-let Decimal = require('decimal.js');
+import Announce from './Announce';
+const Decimal = require('decimal.js');
 
 // =====================================================
 export default class Neumann extends React.Component {
@@ -37,6 +38,7 @@ export default class Neumann extends React.Component {
             lifetimeLearning: new Decimal(0),
             timeMilestone: 0,
             tabIndex: 0,
+            bonuses: [],
         };
 
         this.timeInterval = 100;
@@ -53,6 +55,7 @@ export default class Neumann extends React.Component {
         this.clickBusiness = this.clickBusiness.bind(this);
         this.clickUpgrade = this.clickUpgrade.bind(this);
         this.purchaseAmtDropDownHandler = this.purchaseAmtDropDownHandler.bind(this);
+        this.announce = this.announce.bind(this);
 
         /* cheats */
         this.prestigeCheat = this.prestigeCheat.bind(this);
@@ -65,9 +68,9 @@ export default class Neumann extends React.Component {
         this.resetAll();
 
         this.cleanState = { ...this.state };
-        delete this.cleanState.pauseText;
         delete this.cleanState.purchaseAmt;
         console.log(HelperConst.purchaseOptsSpecial);
+        // this.bonusitvl = setInterval(this.createBonus,1000 );
     }
 
     componentWillUnmount() {
@@ -96,6 +99,7 @@ export default class Neumann extends React.Component {
             lifetimeLearning: new Decimal(0),
             timeMilestone: 0,
             tabIndex: 0,
+            bonuses: [],
         }));
         this.resume();
     }
@@ -109,6 +113,7 @@ export default class Neumann extends React.Component {
             upgrades: UpgradeInit(),
             money: new Decimal(0),
             timeMilestone: 0,
+            bonuses: [],
         }));
         this.resume();
     }
@@ -347,6 +352,24 @@ export default class Neumann extends React.Component {
 
     }
 
+    clickBonus(bonus) {
+        console.log("bonus click ", bonus.name);
+
+        const idx = this.state.bonuses.findIndex(btest => btest.name === bonus.name);
+        this.setState({
+            upgrades: update(this.state.bonuses, {
+                [idx]: {
+                    ack: { $set: true },
+                }
+            }),
+        });
+
+    }
+
+    announce() {
+        
+    }
+
     render() {
 
         return (
@@ -474,8 +497,8 @@ export default class Neumann extends React.Component {
 
                 </div>
 
-                <div id="bonus">
-                    
+                <div id="announce">
+                    <Announce announcements={this.state.announcements} />
                 </div>
             </div>
 

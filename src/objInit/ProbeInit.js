@@ -1,5 +1,5 @@
 // import {Decimal} from 'decimal.js';
-let Decimal = require('decimal.js');
+const Decimal = require('decimal.js');
 
 export default function ProbeInit() {
 

@@ -751,14 +751,33 @@ body {
 /* bonuses 
 -----------------------------------------------------------------------------*/
 
-#bonus {
+#announce {
   position: relative;
   background: transparent;
-  // border: 1px dashed red;
+  border: 1px dashed red;
   width: 250px;
   height: 545px;
   top: -585px;
   left: 387px;
   z-index: 2;
   pointer-events: none;
+  overflow: hidden;
+}
+
+.announce-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow: hidden;
+
+}
+
+.announcement {
+  width: 250px;
+  // height: 80px;
+  border-radius: 25px;
+  border: 1px solid red;
+  flex-basis: 50px;
+  margin-top: 20px;
 }
