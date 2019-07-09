@@ -21,6 +21,7 @@ export default function BusinessInit() {
             upgradeMult: 1,
             upgradeAdd: 0,
             revealed: false,
+            overlays: [],
         }, {
             name: "Newspaper Delivery",
             desc: "desc2",
@@ -38,6 +39,7 @@ export default function BusinessInit() {
             upgradeMult: 1,
             upgradeAdd: 0,
             revealed: false,
+            overlays: [],
         }, {
             name: "Car Wash",
             desc: "desc2",
@@ -55,6 +57,7 @@ export default function BusinessInit() {
             upgradeMult: 1,
             upgradeAdd: 0,
             revealed: false,
+            overlays: [],
         }, {
             name: "Pizza Delivery",
             desc: "desc1",
@@ -72,6 +75,7 @@ export default function BusinessInit() {
             upgradeMult: 1,
             upgradeAdd: 0,
             revealed: false,
+            overlays: [],
         }, {
             name: "Donut Shop",
             desc: "desc2",
@@ -89,6 +93,7 @@ export default function BusinessInit() {
             upgradeMult: 1,
             upgradeAdd: 0,
             revealed: false,
+            overlays: [],
         }, {
             name: "Shrimp Boat",
             desc: "desc2",
@@ -106,6 +111,7 @@ export default function BusinessInit() {
             upgradeMult: 1,
             upgradeAdd: 0,
             revealed: false,
+            overlays: [],
         }, {
             name: "Hockey Team",
             desc: "desc2",
@@ -123,6 +129,7 @@ export default function BusinessInit() {
             upgradeMult: 1,
             upgradeAdd: 0,
             revealed: false,
+            overlays: [],
         }, {
             name: "Movie Studio",
             desc: "desc1",
@@ -140,6 +147,7 @@ export default function BusinessInit() {
             upgradeMult: 1,
             upgradeAdd: 0,
             revealed: false,
+            overlays: [],
         }, {
             name: "Bank",
             desc: "desc2",
@@ -157,6 +165,7 @@ export default function BusinessInit() {
             upgradeMult: 1,
             upgradeAdd: 0,
             revealed: false,
+            overlays: [],
         }, {
             name: "Oil Company",
             desc: "desc2",
@@ -174,6 +183,7 @@ export default function BusinessInit() {
             upgradeMult: 1,
             upgradeAdd: 0,
             revealed: false,
+            overlays: [],
         }
     ]);
 

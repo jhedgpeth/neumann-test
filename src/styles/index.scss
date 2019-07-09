@@ -14,6 +14,7 @@ body {
 #wrapper {
   width: 1024px;
   max-width: 1024px;
+  height: 684px;
   display: grid;
   grid-template-columns: 1024px;
   grid-template-areas:
@@ -668,6 +669,27 @@ body {
     -1px 1px 0 $c_selected, 1px 1px 0 $c_selected;
 }
 
+.overlays-wrapper {
+  grid-column: 1/3;
+  grid-row: 1;
+  height: 100%;
+  z-index: 3;
+  outline: 1px solid blue;
+  pointer-events: none;
+
+}
+.overlay-text {
+  font-size: 2rem;
+  font-weight: bold;
+  color: red;
+  // outline: 1px solid red;
+  text-align: center;
+  left: 5rem;
+  position: absolute;
+  pointer-events: none;
+
+}
+
 .business-owned {
   font-size: 1.1rem;
   font-weight: bold;
@@ -760,7 +782,7 @@ body {
   height: 545px;
   top: -585px;
   left: 262px;
-  z-index: 2;
+  z-index: 4;
   pointer-events: none;
   overflow: hidden;
 }

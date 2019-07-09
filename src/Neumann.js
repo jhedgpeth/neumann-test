@@ -1,6 +1,6 @@
 import React from 'react';
 import update from 'immutability-helper';
-import Dropdown from 'react-dropdown'
+import Dropdown from 'react-dropdown';
 import './styles/fonts.css';
 import './styles/index.scss';
 import './styles/dropdown.scss'
@@ -179,6 +179,14 @@ export default class Neumann extends React.Component {
                 changed = true;
                 // console.log(newItem.name, " timeCounter:", newItem.timeCounter, " payout:",newItem.payout);
             }
+            // const activeOverlays = newItem.overlays.filter(o => o.counter < o.expire+3);
+            const activeOverlays = newItem.overlays.filter(o => o.counter >=0);
+
+            newItem.overlays = activeOverlays.map((o) => {
+                o.counter = o.counter + this.timeMultiplier;
+                return o;
+            })
+            // newItem.overlays.length > 0 && console.log("newItem:", newItem);
             return newItem;
         });
         if (changed) {
@@ -383,6 +391,26 @@ export default class Neumann extends React.Component {
         }))
     }
 
+    addOverlay(bus,text) {
+
+        console.log("addOverlay click ", text, bus);
+        const idx = this.state.businesses.findIndex(test => test.name === bus.name);
+        console.log("idx:",idx);
+        this.setState({
+            businesses: update(this.state.businesses, {
+                [idx]: {
+                    overlays: {
+                        $push: [{
+                            counter: 0,
+                            expire: 0.8,
+                            text: text,
+                        }]
+                    }
+                },
+            }),
+        });
+    }
+
     render() {
 
         return (
@@ -447,6 +475,7 @@ export default class Neumann extends React.Component {
                             {/* <button className="test-give-prestige"
                                 onClick={this.prestigeCheat}>+{this.cheatPrestigeVal} prestige</button> */}
                             <button className="announce-button" onClick={() => this.announce("great job winning!")}>Announce</button>
+                            <button className="overlay-button" onClick={() => this.addOverlay({name: "Newspaper Delivery"},"X2")}>Overlay</button>
                         </div>
 
                         <div id="content">
@@ -471,22 +500,6 @@ export default class Neumann extends React.Component {
 
                         <div id="right-sidebar">
 
-                            <div className="purchaseAmts">
-
-                                <span className="buyx-prefix">Buy {HelperConst.multiplySymbol}</span>
-                                <Dropdown
-                                    options={HelperConst.purchaseOpts}
-                                    onChange={this.purchaseAmtDropDownHandler}
-                                    value={this.state.purchaseAmt}
-                                    placeholder="Select an option" />
-                            </div>
-                            <button className="pause-button" onClick={this.pause}>Pause</button>
-                            <button className="pause-button" onClick={this.resume}>Resume</button>
-                            <button className="reset-button" onClick={this.resetAll}>RESET</button>
-                            <button
-                                className="prestige-button"
-                                disabled={this.state.prestigeNext.gt(0) ? false : true}
-                                onClick={this.prestige}>Prestige</button>
 
                         </div>
 

@@ -1,5 +1,7 @@
 import React from 'react';
 import update from 'immutability-helper';
+// import styled from 'styled-components';
+import { Motion, spring } from 'react-motion';
 import ComputeFunc from './ComputeFunc';
 import HelperConst from './HelperConst';
 import './styles/fonts.css';
@@ -16,10 +18,67 @@ export default class Business extends React.Component {
     static getAdjustedTimeBase(bus, milestone) {
         const mults = ComputeFunc.timeMilestoneIdx(milestone);
         // console.log("mults:",mults);
-        if (mults>=0) {
-            return bus.timeBase / Math.pow(2,mults);
+        if (mults >= 0) {
+            return bus.timeBase / Math.pow(2, mults);
         }
         return bus.timeBase;
+    }
+
+    genOverlays(bus) {
+        let textClass = "overlay-text ";
+        return (
+            bus.overlays.map((o, idx) => {
+                console.log("showing overlay for:",bus.name);
+                let rows = [];
+                let expired = false;
+                let ovClass = textClass;
+                if (o.counter > o.expire) {
+                    ovClass += "expired ";
+                    expired = true;
+                }
+                if (!expired) {
+                    rows.push(
+                        <Motion key={"overlay-text " + idx}
+                            defaultStyle={{
+                                y: 0,
+                                opacity: 1,
+                            }}
+                            style={{
+                                y: spring(-80),
+                                opacity: 1,
+                            }}
+                        >
+                            {style => (
+                                <div key={"overlay-text " + idx} className={ovClass} style={{
+                                    transform: `translateY(${style.y}px)`,
+                                }} >{o.text}</div>
+                            )}
+                        </Motion>
+                    );
+                } else {
+                    rows.push(
+                        <Motion key={"overlay-text " + idx}
+                            defaultStyle={{
+                                y: -80,
+                                opacity: 1,
+                            }}
+                            style={{
+                                y: -80,
+                                opacity: spring(0),
+                            }}
+                        >
+                            {style => (
+                                <div key={"overlay-text " + idx} className={ovClass} style={{
+                                    transform: `translateY(${style.y}px)`,
+                                    opacity: style.opacity,
+                                }} >{o.text}</div>
+                            )}
+                        </Motion>
+                    );
+                }
+                return rows;
+            })
+        )
     }
 
 
@@ -32,6 +91,7 @@ export default class Business extends React.Component {
         }, []);
 
         const totalEarningPerSec = ComputeFunc.computeTotalEarningPerSec(this.props.businesses, this.props.prestige);
+
 
         const rows = sources.map((item) => {
             const n = item.name;
@@ -61,8 +121,15 @@ export default class Business extends React.Component {
             const myEarningPct = ComputeFunc.getEarningPct(myEarningPerSec, totalEarningPerSec);
 
 
+
+            const overlayItems = this.genOverlays(item);
+            // console.log("overlayItems:",overlayItems);
+
             return (
                 <div key={n + "business"} className={"business " + bgClass} >
+                    <div className="overlays-wrapper">
+                        {overlayItems}
+                    </div>
                     <div className={"business-buy-progress " + bgClass}>
                         <div className={"business-buy-progress-pct " + bgClass} style={buyPctStyle}>
                             <span ></span>
