@@ -676,15 +676,16 @@ body {
   z-index: 3;
   outline: 1px solid blue;
   pointer-events: none;
-
+  // text-align:center;
 }
 .overlay-text {
   font-size: 2rem;
   font-weight: bold;
-  color: red;
-  outline: 1px solid red;
+  // color: red;
+  // outline: 1px solid red;
   position: absolute;
   pointer-events: none;
+  // display: inline-block;
 }
 
 .business-owned {

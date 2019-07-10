@@ -36,35 +36,40 @@ export default class Business extends React.Component {
         return (
             bus.overlays.map((o, idx) => {
                 // console.log("showing overlay for:", bus.name);
-                let rows = [];
-                // let expired = false;
                 let ovClass = textClass;
+                let curLeft = parseInt(bus.domRef.current.offsetLeft,10) + 80;
                 if (o.counter > o.expire) {
                     ovClass += "expired ";
-                    // expired = true;
                 }
-                rows.push(
-                    <Motion key={"overlay-text " + idx}
+                return (
+                    <Motion key={"overlay-text " + o.id}
                         defaultStyle={{
                             top: 0,
+                            left: curLeft,
                             opacity: 1,
                         }}
                         style={{
-                            top: spring(-80),
-                            opacity: spring(0, {stiffness: 5}),
+                            top: spring(-40 + o.yTarget),
+                            left: spring(curLeft + o.xTarget),
+                            opacity: spring(0, { stiffness: 15, damping: 14 }),
                         }}
                     >
+
                         {style => (
-                            <div key={"overlay-text " + idx} className={ovClass} style={{
+                            <div key={"overlay-text " + o.id} className={ovClass + "rainbow_text_animated "} style={{
                                 // transform: `translateY(${style.y}px)`,
                                 top: style.top,
+                                left: style.left,
                                 opacity: style.opacity,
                             }} >{o.text}</div>
                         )}
+
                     </Motion>
+
+
                 );
 
-                return rows;
+                // return rows;
             })
         )
     }

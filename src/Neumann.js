@@ -4,7 +4,8 @@ import update from 'immutability-helper';
 import Dropdown from 'react-dropdown';
 import './styles/fonts.css';
 import './styles/index.scss';
-import './styles/dropdown.scss'
+import './styles/dropdown.scss';
+import './styles/effects.scss';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import Income from './Income';
 import Business from './Business.js';
@@ -31,6 +32,7 @@ export default class Neumann extends React.Component {
         this.timeMultiplier = this.timeInterval / 1000;
 
         this.announceCt = 0;
+        this.overlayCt = 0;
 
         // this._business = React.createRef();
         this.restart = this.restart.bind(this);
@@ -180,14 +182,17 @@ export default class Neumann extends React.Component {
                 changed = true;
                 // console.log(newItem.name, " timeCounter:", newItem.timeCounter, " payout:",newItem.payout);
             }
+
+            // overlays
             const activeOverlays = newItem.overlays.filter(o => o.counter < o.expire);
             // const activeOverlays = newItem.overlays.filter(o => o.counter >= 0);
 
-            newItem.overlays = activeOverlays.map((o) => {
+            newItem.overlays = activeOverlays.map((o, i) => {
                 o.counter = o.counter + this.timeMultiplier;
+                // console.log("o.counter: #" + i, o.counter);
                 return o;
             })
-            // newItem.overlays.length > 0 && console.log("newItem:", newItem);
+            // newItem.overlays.length > 0 && console.log(item.name,"overlays:", newItem.overlays.length);
             return newItem;
         });
         if (changed) {
@@ -397,13 +402,18 @@ export default class Neumann extends React.Component {
         console.log("addOverlay click ", text, bus);
         const idx = this.state.businesses.findIndex(test => test.name === bus.name);
         console.log("idx:", idx);
+        const xAdj = (Math.random() * 40) - 20;
+        const yAdj = (Math.random() * 20) - 10;
         this.setState({
             businesses: update(this.state.businesses, {
                 [idx]: {
                     overlays: {
                         $push: [{
+                            id: this.overlayCt++,
                             counter: 0,
-                            expire: 0.8,
+                            expire: 1,
+                            xTarget: xAdj,
+                            yTarget: yAdj,
                             text: text,
                         }]
                     }
@@ -479,6 +489,8 @@ export default class Neumann extends React.Component {
                             <button className="overlay-button" onClick={() => this.addOverlay({ name: "Odd Jobs" }, "X2")}>Odd Jobs Overlay</button>
                             <button className="overlay-button" onClick={() => this.addOverlay({ name: "Newspaper Delivery" }, "X2")}>Newspaper Overlay</button>
                             <button className="ref-button" onClick={() => console.log("domRef:", this.state.businesses[0].domRef)}>Odd Job domRef</button>
+                            <button className="ref-button" onClick={() => console.log("domRef2:", this.state.businesses[1].domRef)}>Newspaper domRef</button>
+
                             <button className="ref-button" onClick={() => console.log("getRect:", Business.getPosition(this.state.businesses[0].domRef))}>getRect</button>
                         </div>
 
