@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom'
 import update from 'immutability-helper';
 // import styled from 'styled-components';
 import { Motion, spring } from 'react-motion';
@@ -24,58 +25,45 @@ export default class Business extends React.Component {
         return bus.timeBase;
     }
 
+    static getPosition(reactRef) {
+        return ReactDOM
+            .findDOMNode(reactRef.current)
+            .getBoundingClientRect();
+    }
+
     genOverlays(bus) {
         let textClass = "overlay-text ";
         return (
             bus.overlays.map((o, idx) => {
-                console.log("showing overlay for:",bus.name);
+                // console.log("showing overlay for:", bus.name);
                 let rows = [];
-                let expired = false;
+                // let expired = false;
                 let ovClass = textClass;
                 if (o.counter > o.expire) {
                     ovClass += "expired ";
-                    expired = true;
+                    // expired = true;
                 }
-                if (!expired) {
-                    rows.push(
-                        <Motion key={"overlay-text " + idx}
-                            defaultStyle={{
-                                y: 0,
-                                opacity: 1,
-                            }}
-                            style={{
-                                y: spring(-80),
-                                opacity: 1,
-                            }}
-                        >
-                            {style => (
-                                <div key={"overlay-text " + idx} className={ovClass} style={{
-                                    transform: `translateY(${style.y}px)`,
-                                }} >{o.text}</div>
-                            )}
-                        </Motion>
-                    );
-                } else {
-                    rows.push(
-                        <Motion key={"overlay-text " + idx}
-                            defaultStyle={{
-                                y: -80,
-                                opacity: 1,
-                            }}
-                            style={{
-                                y: -80,
-                                opacity: spring(0),
-                            }}
-                        >
-                            {style => (
-                                <div key={"overlay-text " + idx} className={ovClass} style={{
-                                    transform: `translateY(${style.y}px)`,
-                                    opacity: style.opacity,
-                                }} >{o.text}</div>
-                            )}
-                        </Motion>
-                    );
-                }
+                rows.push(
+                    <Motion key={"overlay-text " + idx}
+                        defaultStyle={{
+                            top: 0,
+                            opacity: 1,
+                        }}
+                        style={{
+                            top: spring(-80),
+                            opacity: spring(0, {stiffness: 5}),
+                        }}
+                    >
+                        {style => (
+                            <div key={"overlay-text " + idx} className={ovClass} style={{
+                                // transform: `translateY(${style.y}px)`,
+                                top: style.top,
+                                opacity: style.opacity,
+                            }} >{o.text}</div>
+                        )}
+                    </Motion>
+                );
+
                 return rows;
             })
         )
@@ -126,7 +114,7 @@ export default class Business extends React.Component {
             // console.log("overlayItems:",overlayItems);
 
             return (
-                <div key={n + "business"} className={"business " + bgClass} >
+                <div key={n + "business"} className={"business " + bgClass} ref={item.domRef} >
                     <div className="overlays-wrapper">
                         {overlayItems}
                     </div>

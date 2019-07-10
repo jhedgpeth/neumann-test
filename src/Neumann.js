@@ -1,4 +1,5 @@
 import React from 'react';
+// import ReactDOM from 'react-dom'
 import update from 'immutability-helper';
 import Dropdown from 'react-dropdown';
 import './styles/fonts.css';
@@ -179,8 +180,8 @@ export default class Neumann extends React.Component {
                 changed = true;
                 // console.log(newItem.name, " timeCounter:", newItem.timeCounter, " payout:",newItem.payout);
             }
-            // const activeOverlays = newItem.overlays.filter(o => o.counter < o.expire+3);
-            const activeOverlays = newItem.overlays.filter(o => o.counter >=0);
+            const activeOverlays = newItem.overlays.filter(o => o.counter < o.expire);
+            // const activeOverlays = newItem.overlays.filter(o => o.counter >= 0);
 
             newItem.overlays = activeOverlays.map((o) => {
                 o.counter = o.counter + this.timeMultiplier;
@@ -391,11 +392,11 @@ export default class Neumann extends React.Component {
         }))
     }
 
-    addOverlay(bus,text) {
+    addOverlay(bus, text) {
 
         console.log("addOverlay click ", text, bus);
         const idx = this.state.businesses.findIndex(test => test.name === bus.name);
-        console.log("idx:",idx);
+        console.log("idx:", idx);
         this.setState({
             businesses: update(this.state.businesses, {
                 [idx]: {
@@ -475,7 +476,10 @@ export default class Neumann extends React.Component {
                             {/* <button className="test-give-prestige"
                                 onClick={this.prestigeCheat}>+{this.cheatPrestigeVal} prestige</button> */}
                             <button className="announce-button" onClick={() => this.announce("great job winning!")}>Announce</button>
-                            <button className="overlay-button" onClick={() => this.addOverlay({name: "Newspaper Delivery"},"X2")}>Overlay</button>
+                            <button className="overlay-button" onClick={() => this.addOverlay({ name: "Odd Jobs" }, "X2")}>Odd Jobs Overlay</button>
+                            <button className="overlay-button" onClick={() => this.addOverlay({ name: "Newspaper Delivery" }, "X2")}>Newspaper Overlay</button>
+                            <button className="ref-button" onClick={() => console.log("domRef:", this.state.businesses[0].domRef)}>Odd Job domRef</button>
+                            <button className="ref-button" onClick={() => console.log("getRect:", Business.getPosition(this.state.businesses[0].domRef))}>getRect</button>
                         </div>
 
                         <div id="content">
