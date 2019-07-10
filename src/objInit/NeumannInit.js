@@ -12,6 +12,8 @@ export default class NeumannInit extends React.Component {
         prestige: { num: new Decimal(0), val: 5 },
         lifetimeEarnings: new Decimal(0),
         lifetimeLearning: new Decimal(0),
+        curMaxMoney: new Decimal(0),
+        curTotalClicks: 0,
         tabIndex: 0,
     });
 

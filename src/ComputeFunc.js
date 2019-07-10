@@ -36,6 +36,14 @@ export default class ComputeFunc {
         return (100 * diff);
     }
 
+    static getMilestonesAttained(fromIdx, toIdx) {
+        let milestones=[];
+        for (let c=fromIdx+1; c<=toIdx; c++) {
+            milestones.push([this.getMilestone(c)]);
+        }
+        return milestones;
+    }
+
     static affordable(item, money, knowledge) {
         if (item.watchType === "money" && item.watchValue.lte(money)) {
             return true;
@@ -130,6 +138,10 @@ export default class ComputeFunc {
 
     static calcPrestigeEarned(revenue) {
         return Decimal.sqrt(revenue.div(Math.pow(10, 9))).times(150).floor();
+    }
+
+    static calcPrestigeEarnedFromMax(maxEarnings) {
+        return maxEarnings.div(Math.pow(10,12)).times(8).plus(1).sqrt().minus(1).div(2);
     }
 
     static getCost(item, purchaseAmt, resource) {
