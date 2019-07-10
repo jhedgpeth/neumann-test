@@ -44,15 +44,6 @@ export default class ComputeFunc {
         return milestones;
     }
 
-    static affordable(item, money, knowledge) {
-        if (item.watchType === "money" && item.watchValue.lte(money)) {
-            return true;
-        };
-        if (item.watchType === "knowledge" && item.watchValue.lte(knowledge)) {
-            return true;
-        };
-    }
-
     static buyPct(num, resource) {
         const pct = resource.div(num).times(100).toNumber()
         return pct > 100 ? 100 : pct;

@@ -34,11 +34,18 @@ export default class Neumann extends React.Component {
         this.announceCt = 0;
         this.overlayCt = 0;
 
+        this.gameIntervalId = null;
+        this.prestigeIntervalId = null;
+        this.gameSaveIntervalId = null;
+
+        this.domRefs = [];
+
         // this._business = React.createRef();
         this.restart = this.restart.bind(this);
         this.resetAll = this.resetAll.bind(this);
         this.pause = this.pause.bind(this);
         this.resume = this.resume.bind(this);
+        this.saveGame = this.saveGame.bind(this);
         this.prestige = this.prestige.bind(this);
         this.updatePrestigeEarned = this.updatePrestigeEarned.bind(this);
         this.updateGame = this.updateGame.bind(this);
@@ -68,6 +75,7 @@ export default class Neumann extends React.Component {
         console.log("game willunmount");
         clearInterval(this.gameIntervalId);
         clearInterval(this.prestigeIntervalId);
+        clearInterval(this.gameSaveIntervalId);
     }
 
     componentDidUpdate() {
@@ -102,6 +110,10 @@ export default class Neumann extends React.Component {
             clearInterval(this.prestigeIntervalId);
             delete (this.prestigeIntervalId)
         }
+        if (this.gameSaveIntervalId) {
+            clearInterval(this.gameSaveIntervalId);
+            delete (this.gameSaveIntervalId)
+        }
     }
 
     resume() {
@@ -111,8 +123,17 @@ export default class Neumann extends React.Component {
         if (!this.prestigeIntervalId) {
             this.prestigeIntervalId = setInterval(this.updatePrestigeEarned, 1000);
         }
-        this.bonusitvl = setInterval(this.announce("testing"), 7000);
+        if (!this.gameSaveIntervalId) {
+            // this.gameSaveIntervalId = setInterval(this.saveGame, 20000);
+        }
 
+    }
+
+    saveGame() {
+        // localStorage.setItem('neumann_save',JSON.stringify(this.state));
+        console.log(JSON.stringify(this.state));
+
+        this.announce("game saved");
     }
 
     updatePrestigeEarned() {
@@ -207,7 +228,7 @@ export default class Neumann extends React.Component {
 
     incrementAnnouncementCounters() {
         const valid = this.state.announcements.reduce((result, item) => {
-            if (!item.ack || (item.ack && item.counter < item.fadeout) ) {
+            if (!item.ack || (item.ack && item.counter < item.fadeout)) {
                 result.push(item);
             }
             return result;
@@ -295,6 +316,7 @@ export default class Neumann extends React.Component {
             let newItem = { ...item };
             if (newItem.name === bus.name) {
                 newItem.owned += busCost.num;
+                newItem.overlays = Business.getNewOverlay(item, "+" + busCost.num);
                 console.log("adding", busCost.num, "to", newItem.name);
             }
             return newItem;
@@ -319,10 +341,10 @@ export default class Neumann extends React.Component {
                 console.log(newItem.name, "timeAdjusted now", newItem.timeAdjusted);
                 return newItem;
             });
-            ComputeFunc.getMilestonesAttained(curIdx,newIdx).forEach((num) => {
-                this.announce(num+" all businesses! Speed Doubled!");
+            ComputeFunc.getMilestonesAttained(curIdx, newIdx).forEach((num) => {
+                this.announce(num + " all businesses! Speed Doubled!");
             })
-            
+
         }
 
         this.setState((state, props) => ({
@@ -415,13 +437,13 @@ export default class Neumann extends React.Component {
 
     addOverlay(bus, text) {
 
-        console.log("addOverlay click ", text, bus);
+        console.log("addOverlay click ", text, bus.name);
         const idx = this.state.businesses.findIndex(test => test.name === bus.name);
         console.log("idx:", idx);
-        const xAdj = (Math.random() * 40) - 20;
+        const xAdj = (Math.random() * 30) - 15;
         const yAdj = (Math.random() * 20) - 10;
-        this.setState({
-            businesses: update(this.state.businesses, {
+        this.setState((state, props) => ({
+            businesses: update(state.businesses, {
                 [idx]: {
                     overlays: {
                         $push: [{
@@ -435,7 +457,7 @@ export default class Neumann extends React.Component {
                     }
                 },
             }),
-        });
+        }));
     }
 
     render() {
@@ -492,22 +514,25 @@ export default class Neumann extends React.Component {
                                     value={this.state.purchaseAmt}
                                     placeholder="Select an option" />
                             </div>
-                            <button className="pause-button" onClick={this.pause}>Pause</button>
-                            <button className="pause-button" onClick={this.resume}>Resume</button>
-                            <button className="reset-button" onClick={this.resetAll}>RESET</button>
+                            <button className="testbutton pause-button" onClick={this.pause}>Pause</button>
+                            <button className="testbutton pause-button" onClick={this.resume}>Resume</button>
+                            <button className="testbutton reset-button" onClick={this.resetAll}>RESET</button>
                             <button
-                                className="prestige-button"
+                                className="testbutton prestige-button"
                                 disabled={this.state.prestigeNext.gt(0) ? false : true}
                                 onClick={this.prestige}>Prestige</button>
-                            <button className="test-give-prestige"
+                            <button className="testbutton test-give-prestige"
                                 onClick={this.prestigeCheat}>+{this.cheatPrestigeVal} prestige</button>
-                            <button className="announce-button" onClick={() => this.announce("great job winning!  oh boy this is just super.")}>Announce</button>
-                            <button className="overlay-button" onClick={() => this.addOverlay({ name: "Odd Jobs" }, "X2")}>Odd Jobs Overlay</button>
-                            <button className="overlay-button" onClick={() => this.addOverlay({ name: "Newspaper Delivery" }, "X2")}>Newspaper Overlay</button>
-                            <button className="ref-button" onClick={() => console.log("domRef:", this.state.businesses[0].domRef)}>Odd Job domRef</button>
-                            <button className="ref-button" onClick={() => console.log("domRef2:", this.state.businesses[1].domRef)}>Newspaper domRef</button>
+                            <button className="testbutton announce-button" onClick={() => this.announce("great job winning!  oh boy this is just super.")}>Announce</button>
+                            <button className="testbutton overlay-button" onClick={() => this.addOverlay({ name: "Odd Jobs" }, "X2")}>Odd Jobs Overlay</button>
+                            <button className="testbutton overlay-button" onClick={() => this.addOverlay({ name: "Newspaper Delivery" }, "X2")}>Newspaper Overlay</button>
+                            <button className="testbutton ref-button" onClick={() => console.log("domRef:", this.state.businesses[0].domRef)}>Odd Job domRef</button>
+                            <button className="testbutton ref-button" onClick={() => console.log("domRef2:", this.state.businesses[1].domRef)}>Newspaper domRef</button>
 
-                            <button className="ref-button" onClick={() => console.log("getRect:", Business.getPosition(this.state.businesses[0].domRef))}>getRect</button>
+                            <button className="testbutton ref-button" onClick={() => console.log("getRect:", Business.getPosition(this.state.businesses[0].domRef))}>getRect</button>
+
+                            <button className="testbutton save-button" onClick={this.saveGame}>SAVE</button>
+
                         </div>
 
                         <div id="content">

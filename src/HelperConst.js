@@ -29,7 +29,7 @@ export default class HelperConst {
     static purchaseOptsSpecial = this.purchaseOpts.filter(item => !item.match(/\d/));
     
     // set all-business milestones for time boost, including all 100's
-    static timeMilestones = [1, 10, 25, 50];
+    static timeMilestones = [10, 25, 50];
 
     static showNum(num) {
         return HelperConst.myFormatterNum().format(num);

@@ -10,6 +10,8 @@ import './styles/fonts.css';
 
 export default class Business extends React.Component {
 
+    static overlayCt = 0;
+
     static applyMultiplier(bus, mult) {
         return update(bus, {
             upgradeMult: { $set: bus.upgradeMult * mult },
@@ -31,25 +33,40 @@ export default class Business extends React.Component {
             .getBoundingClientRect();
     }
 
+    static getNewOverlay(bus, text) {
+        console.log("addOverlay called:", text, bus.name);
+        const xAdj = (Math.random() * 40) - 20;
+        const yAdj = (Math.random() * 20) - 10;
+        return [...bus.overlays, {
+            id: "bus" + this.overlayCt++,
+            counter: 0,
+            expire: 1,
+            xTarget: xAdj,
+            yTarget: yAdj,
+            text: text,
+        }];
+    }
+
     genOverlays(bus) {
         let textClass = "overlay-text ";
         return (
             bus.overlays.map((o, idx) => {
                 // console.log("showing overlay for:", bus.name);
                 let ovClass = textClass;
-                let curLeft = parseInt(bus.domRef.current.offsetLeft,10) + 80;
+                let curLeft = parseInt(bus.domRef.current.offsetLeft, 10) + 80;
+                let curTop = parseInt(bus.domRef.current.offsetTop, 10) - 15;
                 if (o.counter > o.expire) {
                     ovClass += "expired ";
                 }
                 return (
                     <Motion key={"overlay-text " + o.id}
                         defaultStyle={{
-                            top: 0,
+                            top: curTop,
                             left: curLeft,
                             opacity: 1,
                         }}
                         style={{
-                            top: spring(-40 + o.yTarget),
+                            top: spring(curTop - 40 + o.yTarget),
                             left: spring(curLeft + o.xTarget),
                             opacity: spring(0, { stiffness: 15, damping: 14 }),
                         }}
@@ -69,7 +86,6 @@ export default class Business extends React.Component {
 
                 );
 
-                // return rows;
             })
         )
     }

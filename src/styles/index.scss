@@ -481,23 +481,21 @@ body {
   color: $c_selected;
   width: 30%;
   text-align: right;
+  
 }
 
-.pause-button,
-.reset-button,
-.prestige-button {
+.testbutton {
   background: $c_mainbg;
   color: $c_mainfg;
   border: 1px solid $c_selected;
+  display: block;
 }
-.pause-button:hover,
-.reset-button:hover,
-.prestige-button:hover {
+.testbutton:hover {
   box-shadow: inset 0 0 0 3px $c_selected;
 }
 
 .prestige-button {
-  margin: 20px 0 0 0;
+  margin: 20px 0;
 }
 
 /* Business content
