@@ -1,4 +1,4 @@
-import React from 'react';
+// import React from 'react';
 const Decimal = require('decimal.js');
 
 export default function BusinessInit() {

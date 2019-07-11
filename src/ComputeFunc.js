@@ -37,8 +37,8 @@ export default class ComputeFunc {
     }
 
     static getMilestonesAttained(fromIdx, toIdx) {
-        let milestones=[];
-        for (let c=fromIdx+1; c<=toIdx; c++) {
+        let milestones = [];
+        for (let c = fromIdx + 1; c <= toIdx; c++) {
             milestones.push([this.getMilestone(c)]);
         }
         return milestones;
@@ -50,7 +50,7 @@ export default class ComputeFunc {
     }
 
     static earnPct(item) {
-        if (item.timeAdjusted < 0.2 || (item.timeAdjusted - item.timeCounter)<0.1) {
+        if (item.timeAdjusted < 0.2 || (item.timeAdjusted - item.timeCounter) < 0.1) {
             return 100;
         }
         return (item.timeCounter / item.timeAdjusted) * 100;
@@ -132,7 +132,7 @@ export default class ComputeFunc {
     }
 
     static calcPrestigeEarnedFromMax(maxEarnings) {
-        return maxEarnings.div(Math.pow(10,12)).times(8).plus(1).sqrt().minus(1).div(2);
+        return maxEarnings.div(Math.pow(10, 12)).times(8).plus(1).sqrt().minus(1).div(2);
     }
 
     static getCost(item, purchaseAmt, resource) {
@@ -177,20 +177,21 @@ export default class ComputeFunc {
 
         let maxOcd = (Math.floor((max + item.owned) / 25) * 25)
             - item.owned;
-        maxOcd = maxOcd >= 0 ? maxOcd : 25 - item.owned;
+        maxOcd = maxOcd > 0 ? maxOcd : 25 - (item.owned % 25);
+        console.log("maxOcd:", maxOcd, " owned remainder:", (item.owned % 25));
 
         const primes = this.primeFactors();
         let primeTime = 0;
 
         // console.time('primeidx');
-        const primeCheck = item.owned + max;
+        const myMaxPrime = item.owned + max;
         for (const idx in primes) {
-            if (primeCheck >= primes[idx]) {
-                primeTime = primes[idx];
-            }
-            if (primes[idx] > primeCheck) {
+            if (primes[idx] <= item.owned) continue;
+            if (primes[idx] <= myMaxPrime) primeTime = primes[idx];
+            if (primes[idx] > myMaxPrime) {
+                if (primeTime === 0) primeTime = primes[idx];
                 break;
-            }
+            };
         }
         primeTime -= item.owned;
         // console.timeEnd('primeidx');
