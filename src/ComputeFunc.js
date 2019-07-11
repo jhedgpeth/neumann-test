@@ -178,7 +178,7 @@ export default class ComputeFunc {
         let maxOcd = (Math.floor((max + item.owned) / 25) * 25)
             - item.owned;
         maxOcd = maxOcd > 0 ? maxOcd : 25 - (item.owned % 25);
-        console.log("maxOcd:", maxOcd, " owned remainder:", (item.owned % 25));
+        // console.log("maxOcd:", maxOcd, " owned remainder:", (item.owned % 25));
 
         const primes = this.primeFactors();
         let primeTime = 0;
