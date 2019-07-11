@@ -33,24 +33,10 @@ export default class Business extends React.Component {
             .getBoundingClientRect();
     }
 
-    static getNewOverlay(bus, text) {
-        console.log("addOverlay called:", text, bus.name);
-        const xAdj = (Math.random() * 40) - 20;
-        const yAdj = (Math.random() * 20) - 10;
-        return [...bus.overlays, {
-            id: "bus" + this.overlayCt++,
-            counter: 0,
-            expire: 1,
-            xTarget: xAdj,
-            yTarget: yAdj,
-            text: text,
-        }];
-    }
-
     getDomRef(name) {
-        const idx = this.props.domRefs.findIndex(ref => ref.name  === name);
-        if (idx<0) return undefined;
-        const ref =this.props.domRefs[idx].domRef;
+        const idx = this.props.domRefs.findIndex(ref => ref.name === name);
+        if (idx < 0) return undefined;
+        const ref = this.props.domRefs[idx].domRef;
         return ref;
     }
 
@@ -60,10 +46,23 @@ export default class Business extends React.Component {
             bus.overlays.map((o, idx) => {
                 // console.log("showing overlay for:", bus.name);
                 let ovClass = textClass;
-                let curLeft = parseInt(this.getDomRef(bus.name).current.offsetLeft, 10) + 80;
-                let curTop = parseInt(this.getDomRef(bus.name).current.offsetTop, 10) - 15;
+                const domLeft = parseInt(this.getDomRef(bus.name).current.offsetLeft, 10);
+                const domTop = parseInt(this.getDomRef(bus.name).current.offsetTop, 10);
+                // console.log("domLeft:", domLeft, " domTop:", domTop);
+                let curLeft = domLeft + 80;
+                let curTop = domTop - 15;
                 if (o.counter > o.expire) {
                     ovClass += "expired ";
+                }
+                let topChg = 0;
+                let leftChg = 0;
+                switch (o.ovType) {
+                    case "ownedBonus":
+                        leftChg = 100;
+                        break;
+                    default:
+                        topChg = -40;
+                        break;
                 }
                 return (
                     <Motion key={"overlay-text " + o.id}
@@ -73,19 +72,21 @@ export default class Business extends React.Component {
                             opacity: 1,
                         }}
                         style={{
-                            top: spring(curTop - 40 + o.yTarget),
-                            left: spring(curLeft + o.xTarget),
+                            top: spring(curTop + topChg + o.yTarget),
+                            left: spring(curLeft + leftChg + o.xTarget),
                             opacity: spring(0, { stiffness: 15, damping: 14 }),
                         }}
                     >
 
                         {style => (
-                            <div key={"overlay-text " + o.id} className={ovClass + "rainbow_text_animated "} style={{
-                                // transform: `translateY(${style.y}px)`,
-                                top: style.top,
-                                left: style.left,
-                                opacity: style.opacity,
-                            }} >{o.text}</div>
+                            <div
+                                key={"overlay-text " + o.id}
+                                className={ovClass + "rainbow_text_animated "}
+                                style={{
+                                    top: style.top,
+                                    left: style.left,
+                                    opacity: style.opacity,
+                                }} >{o.text}</div>
                         )}
 
                     </Motion>

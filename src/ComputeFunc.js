@@ -29,19 +29,38 @@ export default class ComputeFunc {
         return (retIdx + num100s);
     }
 
-    static getMilestone(idx) {
+    static getTimeMilestone(idx) {
         const hardcodeMax = HelperConst.timeMilestones.length - 1;
         if (idx <= hardcodeMax) { return HelperConst.timeMilestones[idx] };
         const diff = (idx - hardcodeMax);
         return (100 * diff);
     }
 
-    static getMilestonesAttained(fromIdx, toIdx) {
+    static getTimeMilestonesAttained(fromIdx, toIdx) {
         let milestones = [];
         for (let c = fromIdx + 1; c <= toIdx; c++) {
-            milestones.push([this.getMilestone(c)]);
+            milestones.push([this.getTimeMilestone(c)]);
         }
         return milestones;
+    }
+
+    static getOwnedMilestonesAttained(fromCt, toCt) {
+        const from25s = Math.floor(fromCt / 25) > 2 ? 2 : Math.floor(fromCt / 25);
+        const to25s = Math.floor(toCt / 25) > 2 ? 2 : Math.floor(toCt / 25);
+        const from100s = Math.floor(fromCt / 100);
+        const to100s = Math.floor(toCt / 100);
+        let retArr = [];
+        if (from25s < to25s) {
+            for (let n=from25s+1; n<=to25s; n++) {
+                retArr.push(n*25);
+            }
+        }
+        if (from100s < to100s) {
+            for (let n=from100s+1; n<=to100s; n++) {
+                retArr.push(n*100);
+            }
+        }
+        return retArr;
     }
 
     static buyPct(num, resource) {

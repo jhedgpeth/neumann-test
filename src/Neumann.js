@@ -136,7 +136,7 @@ export default class Neumann extends React.Component {
             this.prestigeIntervalId = setInterval(this.updatePrestigeEarned, 1000);
         }
         if (!this.gameSaveIntervalId) {
-            this.gameSaveIntervalId = setInterval(this.saveGame, 10000);
+            // this.gameSaveIntervalId = setInterval(this.saveGame, 10000);
         }
 
     }
@@ -146,10 +146,10 @@ export default class Neumann extends React.Component {
     }
 
     saveGame() {
-        
-        console.log("retrieve jeff cookie:", cookie.load('jeff'));
-        // console.log("retrieve money cookie:", cookie.load('money'));
-        console.log("retrieve businesses cookie:", cookie.load('businesses'));
+
+        // console.log("retrieve jeff cookie:", cookie.load('jeff'));
+        // // console.log("retrieve money cookie:", cookie.load('money'));
+        // console.log("retrieve businesses cookie:", cookie.load('businesses'));
 
         this.announce("game saved");
     }
@@ -331,9 +331,15 @@ export default class Neumann extends React.Component {
         let newBusinesses = this.state.businesses.map(item => {
             let newItem = { ...item };
             if (newItem.name === bus.name) {
+                let bonusArr = [];
+                const ownedMilestones = ComputeFunc.getOwnedMilestonesAttained(item.owned, item.owned + busCost.num);
+                ownedMilestones.forEach((milestone) => {
+                    bonusArr.push(this.genOverlayObj("X2!", "ownedBonus"));
+                })
                 newItem.owned += busCost.num;
-                newItem.overlays = Business.getNewOverlay(item, "+" + busCost.num);
+                newItem.overlays = this.genOverlayArr(item.overlays, "+" + busCost.num).concat(bonusArr);
                 console.log("adding", busCost.num, "to", newItem.name);
+                
             }
             return newItem;
         });
@@ -349,7 +355,7 @@ export default class Neumann extends React.Component {
 
         /* apply time modifiers if new time milestone reached */
         if (newIdx > curIdx) {
-            newMilestone = ComputeFunc.getMilestone(newIdx);
+            newMilestone = ComputeFunc.getTimeMilestone(newIdx);
             console.log("new owned milestone:", newMilestone);
             newBusinesses = newBusinesses.map(item => {
                 let newItem = { ...item };
@@ -357,7 +363,7 @@ export default class Neumann extends React.Component {
                 console.log(newItem.name, "timeAdjusted now", newItem.timeAdjusted);
                 return newItem;
             });
-            ComputeFunc.getMilestonesAttained(curIdx, newIdx).forEach((num) => {
+            ComputeFunc.getTimeMilestonesAttained(curIdx, newIdx).forEach((num) => {
                 this.announce(num + " all businesses! Speed Doubled!");
             })
 
@@ -451,25 +457,35 @@ export default class Neumann extends React.Component {
         }))
     }
 
-    addOverlay(bus, text) {
+    genOverlayObj(text, ovType = "generic") {
+        const xAdj = Math.floor((Math.random() * 40)) - 20;
+        const yAdj = Math.floor((Math.random() * 20)) - 10;
+        return {
+            id: "overlay" + this.overlayCt++,
+            expire: 1,
+            counter: 0,
+            ovType: ovType,
+            xTarget: xAdj,
+            yTarget: yAdj,
+            text: text,
+        }
+    }
 
-        console.log("addOverlay click ", text, bus.name);
-        const idx = this.state.businesses.findIndex(test => test.name === bus.name);
+    genOverlayArr(origOverlay, text, ovType="generic") {
+        console.log("addOverlay called:", text);
+        return [...origOverlay, this.genOverlayObj(text, ovType)];
+    }
+
+    addOverlay(busName, text) {
+
+        console.log("addOverlay click ", text, busName);
+        const idx = this.state.businesses.findIndex(test => test.name === busName);
         console.log("idx:", idx);
-        const xAdj = (Math.random() * 30) - 15;
-        const yAdj = (Math.random() * 20) - 10;
         this.setState((state, props) => ({
             businesses: update(state.businesses, {
                 [idx]: {
                     overlays: {
-                        $push: [{
-                            id: this.overlayCt++,
-                            counter: 0,
-                            expire: 1,
-                            xTarget: xAdj,
-                            yTarget: yAdj,
-                            text: text,
-                        }]
+                        $set: this.genOverlayArr(state.businesses[idx].overlays, text),
                     }
                 },
             }),
