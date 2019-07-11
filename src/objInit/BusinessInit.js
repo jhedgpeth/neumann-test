@@ -22,7 +22,6 @@ export default function BusinessInit() {
             upgradeAdd: 0,
             revealed: false,
             overlays: [],
-            domRef: React.createRef(),
         }, {
             name: "Newspaper Delivery",
             desc: "desc2",
@@ -41,7 +40,6 @@ export default function BusinessInit() {
             upgradeAdd: 0,
             revealed: false,
             overlays: [],
-            domRef: React.createRef(),
         }, {
             name: "Car Wash",
             desc: "desc2",
@@ -60,7 +58,6 @@ export default function BusinessInit() {
             upgradeAdd: 0,
             revealed: false,
             overlays: [],
-            domRef: React.createRef(),
         }, {
             name: "Pizza Delivery",
             desc: "desc1",
@@ -79,7 +76,6 @@ export default function BusinessInit() {
             upgradeAdd: 0,
             revealed: false,
             overlays: [],
-            domRef: React.createRef(),
         }, {
             name: "Donut Shop",
             desc: "desc2",
@@ -98,7 +94,6 @@ export default function BusinessInit() {
             upgradeAdd: 0,
             revealed: false,
             overlays: [],
-            domRef: React.createRef(),
         }, {
             name: "Shrimp Boat",
             desc: "desc2",
@@ -117,7 +112,6 @@ export default function BusinessInit() {
             upgradeAdd: 0,
             revealed: false,
             overlays: [],
-            domRef: React.createRef(),
         }, {
             name: "Hockey Team",
             desc: "desc2",
@@ -136,7 +130,6 @@ export default function BusinessInit() {
             upgradeAdd: 0,
             revealed: false,
             overlays: [],
-            domRef: React.createRef(),
         }, {
             name: "Movie Studio",
             desc: "desc1",
@@ -155,7 +148,6 @@ export default function BusinessInit() {
             upgradeAdd: 0,
             revealed: false,
             overlays: [],
-            domRef: React.createRef(),
         }, {
             name: "Bank",
             desc: "desc2",
@@ -174,7 +166,6 @@ export default function BusinessInit() {
             upgradeAdd: 0,
             revealed: false,
             overlays: [],
-            domRef: React.createRef(),
         }, {
             name: "Oil Company",
             desc: "desc2",
@@ -193,7 +184,6 @@ export default function BusinessInit() {
             upgradeAdd: 0,
             revealed: false,
             overlays: [],
-            domRef: React.createRef(),
         }
     ]);
 

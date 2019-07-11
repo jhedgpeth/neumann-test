@@ -8,13 +8,12 @@ export default class NeumannInit extends React.Component {
 
     static freshState = () => ({
         ...this.coreObjOnly(),
-        purchaseAmt: "1",
         prestige: { num: new Decimal(0), val: 5 },
+        prestigeNext: new Decimal(0),
         lifetimeEarnings: new Decimal(0),
         lifetimeLearning: new Decimal(0),
         curMaxMoney: new Decimal(0),
         curTotalClicks: 0,
-        tabIndex: 0,
     });
 
     static coreObjOnly = () => ({
@@ -23,7 +22,6 @@ export default class NeumannInit extends React.Component {
         businesses: BusinessInit(),
         probes: ProbeInit(),
         upgrades: UpgradeInit(),
-        prestigeNext: new Decimal(0),
         timeMilestone: 0,
         announcements: [],
     })

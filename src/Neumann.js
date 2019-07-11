@@ -2,6 +2,7 @@ import React from 'react';
 // import ReactDOM from 'react-dom'
 import update from 'immutability-helper';
 import Dropdown from 'react-dropdown';
+import cookie from 'react-cookies';
 import './styles/fonts.css';
 import './styles/index.scss';
 import './styles/dropdown.scss';
@@ -39,8 +40,11 @@ export default class Neumann extends React.Component {
         this.gameSaveIntervalId = null;
 
         this.domRefs = [];
+        this.purchaseAmt = "1";
+        this.tabIndex = 0;
 
         // this._business = React.createRef();
+        this.populateBusDomRefs = this.populateDomRefs.bind(this);
         this.restart = this.restart.bind(this);
         this.resetAll = this.resetAll.bind(this);
         this.pause = this.pause.bind(this);
@@ -55,19 +59,18 @@ export default class Neumann extends React.Component {
         this.purchaseAmtDropDownHandler = this.purchaseAmtDropDownHandler.bind(this);
         this.announce = this.announce.bind(this);
 
-
         /* cheats */
         this.prestigeCheat = this.prestigeCheat.bind(this);
         this.cheatPrestigeVal = "1e9";
 
     }
 
+
+
     componentDidMount() {
         console.log("game didmount");
         this.resetAll();
 
-        this.cleanState = { ...this.state };
-        delete this.cleanState.purchaseAmt;
         console.log(HelperConst.purchaseOptsSpecial);
     }
 
@@ -83,21 +86,30 @@ export default class Neumann extends React.Component {
 
     }
 
+    populateDomRefs() {
+        this.state.businesses.forEach((bus) => {
+            console.log("creating domRef for", bus.name);
+            this.domRefs.push({ name: bus.name, domRef: React.createRef() });
+        })
+        console.log("populated domRefs:", this.domRefs);
+    }
+
     resetAll() {
         this.pause();
         this.setState((state) => ({
             ...NeumannInit.freshState()
         }));
         this.announceCt = 0;
+        this.populateDomRefs();
         this.resume();
     }
 
     restart() {
         this.pause();
-        this.setState(this.cleanState);
         this.setState((state) => ({
             ...NeumannInit.coreObjOnly()
         }));
+        this.populateDomRefs();
         this.resume();
     }
 
@@ -124,14 +136,20 @@ export default class Neumann extends React.Component {
             this.prestigeIntervalId = setInterval(this.updatePrestigeEarned, 1000);
         }
         if (!this.gameSaveIntervalId) {
-            // this.gameSaveIntervalId = setInterval(this.saveGame, 20000);
+            this.gameSaveIntervalId = setInterval(this.saveGame, 10000);
         }
 
     }
 
+    loadGame() {
+
+    }
+
     saveGame() {
-        // localStorage.setItem('neumann_save',JSON.stringify(this.state));
-        console.log(JSON.stringify(this.state));
+        
+        console.log("retrieve jeff cookie:", cookie.load('jeff'));
+        // console.log("retrieve money cookie:", cookie.load('money'));
+        console.log("retrieve businesses cookie:", cookie.load('businesses'));
 
         this.announce("game saved");
     }
@@ -167,10 +185,8 @@ export default class Neumann extends React.Component {
 
     updatePurchaseAmt(amt) {
         console.log("received new purchaseAmt:", amt);
-        if (HelperConst.purchaseOpts.indexOf(amt) !== -1 && this.state.purchaseAmt !== amt) {
-            this.setState({
-                purchaseAmt: amt,
-            })
+        if (HelperConst.purchaseOpts.indexOf(amt) !== -1 && this.purchaseAmt !== amt) {
+            this.purchaseAmt = amt;
             console.log("new purchaseAmt:", amt);
         }
         // console.log(this.state.businesses);
@@ -310,7 +326,7 @@ export default class Neumann extends React.Component {
 
     clickBusiness(bus) {
         console.log("business click ", bus.name);
-        const busCost = ComputeFunc.getCost(bus, this.state.purchaseAmt, this.state.money);
+        const busCost = ComputeFunc.getCost(bus, this.purchaseAmt, this.state.money);
 
         let newBusinesses = this.state.businesses.map(item => {
             let newItem = { ...item };
@@ -479,8 +495,8 @@ export default class Neumann extends React.Component {
 
                 <Tabs
                     className="react-tabs-container"
-                    selectedIndex={this.state.tabIndex}
-                    onSelect={tabIndex => this.setState({ tabIndex })}>
+                    selectedIndex={this.tabIndex}
+                    onSelect={idx => this.tabIndex = idx}>
 
                     <div id="tabs">
                         <TabList className="tab-list">
@@ -511,7 +527,7 @@ export default class Neumann extends React.Component {
                                 <Dropdown
                                     options={HelperConst.purchaseOpts}
                                     onChange={this.purchaseAmtDropDownHandler}
-                                    value={this.state.purchaseAmt}
+                                    value={this.purchaseAmt}
                                     placeholder="Select an option" />
                             </div>
                             <button className="testbutton pause-button" onClick={this.pause}>Pause</button>
@@ -540,10 +556,11 @@ export default class Neumann extends React.Component {
 
                                 <Business
                                     businesses={this.state.businesses}
-                                    purchaseAmt={this.state.purchaseAmt}
+                                    purchaseAmt={this.purchaseAmt}
                                     money={this.state.money}
                                     prestige={this.state.prestige}
                                     onClick={this.clickBusiness}
+                                    domRefs={this.domRefs}
                                 />
 
 
@@ -574,7 +591,7 @@ export default class Neumann extends React.Component {
 
                 <div id="footer">
 
-                    footer
+                    v. 0.0.1
 
                 </div>
 

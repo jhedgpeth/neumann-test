@@ -47,14 +47,21 @@ export default class Business extends React.Component {
         }];
     }
 
+    getDomRef(name) {
+        const idx = this.props.domRefs.findIndex(ref => ref.name  === name);
+        if (idx<0) return undefined;
+        const ref =this.props.domRefs[idx].domRef;
+        return ref;
+    }
+
     genOverlays(bus) {
         let textClass = "overlay-text ";
         return (
             bus.overlays.map((o, idx) => {
                 // console.log("showing overlay for:", bus.name);
                 let ovClass = textClass;
-                let curLeft = parseInt(bus.domRef.current.offsetLeft, 10) + 80;
-                let curTop = parseInt(bus.domRef.current.offsetTop, 10) - 15;
+                let curLeft = parseInt(this.getDomRef(bus.name).current.offsetLeft, 10) + 80;
+                let curTop = parseInt(this.getDomRef(bus.name).current.offsetTop, 10) - 15;
                 if (o.counter > o.expire) {
                     ovClass += "expired ";
                 }
@@ -135,7 +142,7 @@ export default class Business extends React.Component {
             // console.log("overlayItems:",overlayItems);
 
             return (
-                <div key={n + "business"} className={"business " + bgClass} ref={item.domRef} >
+                <div key={n + "business"} className={"business " + bgClass} ref={this.getDomRef(n)} >
                     <div className="overlays-wrapper">
                         {overlayItems}
                     </div>

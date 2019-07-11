@@ -7,6 +7,7 @@
     "immutability-helper": "^3.0.1",
     "node-sass": "^4.12.0",
     "react": "^16.8.6",
+    "react-cookies": "^0.1.1",
     "react-dom": "^16.8.6",
     "react-dropdown": "^1.6.4",
     "react-motion": "^0.5.2",
@@ -44,6 +45,5 @@
   "devDependencies": {
     "gh-pages": "^2.0.1"
   },
-  "homepage": "https://jhedgpeth.github.io/neumann-test",
-  "homepage_kong": "."
+  "homepage": "https://jhedgpeth.github.io/neumann-test"
 }
