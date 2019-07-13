@@ -2,12 +2,16 @@ import React from 'react';
 // import ReactDOM from 'react-dom'
 import update from 'immutability-helper';
 import Dropdown from 'react-dropdown';
-import cookie from 'react-cookies';
+// import cookie, { save } from 'react-cookies';
+import { compress as lzStringCompress, decompress as lzStringDecompresss } from 'lz-string';
 import './styles/fonts.css';
 import './styles/index.scss';
 import './styles/dropdown.scss';
 import './styles/effects.scss';
+import './styles/space.scss';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import Konva, { Ellipse } from 'react-konva';
+import { Stage, Layer, Rect, Text, Circle, Line, Star } from 'react-konva';
 import Income from './Income';
 import Business from './Business.js';
 // import Probe from './Probe.js';
@@ -20,6 +24,8 @@ import HelperConst from './HelperConst';
 import Upgrades from './Upgrades';
 import Announce from './Announce';
 // const Decimal = require('decimal.js');
+const vec3 = require('gl-vec3');
+
 
 // =====================================================
 export default class Neumann extends React.Component {
@@ -41,7 +47,7 @@ export default class Neumann extends React.Component {
 
         this.domRefs = [];
         this.purchaseAmt = "1";
-        this.tabIndex = 0;
+        this.tabIndex = 1;
 
         // this._business = React.createRef();
         this.populateBusDomRefs = this.populateDomRefs.bind(this);
@@ -65,7 +71,11 @@ export default class Neumann extends React.Component {
 
     }
 
-
+    setTitle() {
+        document.title = "NEUMANN $"
+            + HelperConst.showNum(this.state.money)
+            + " " + this.state.version;
+    }
 
     componentDidMount() {
         console.log("game didmount");
@@ -90,7 +100,9 @@ export default class Neumann extends React.Component {
         this.state.businesses.forEach((bus) => {
             console.log("creating domRef for", bus.name);
             this.domRefs.push({ name: bus.name, domRef: React.createRef() });
-        })
+        });
+        this.probeDivRef = React.createRef();
+
         console.log("populated domRefs:", this.domRefs);
     }
 
@@ -146,7 +158,10 @@ export default class Neumann extends React.Component {
     }
 
     saveGame() {
-
+        const saveString = lzStringCompress(JSON.stringify(this.state));
+        console.log("saveString length:", saveString.length);
+        localStorage.setItem('neumann_game_save', saveString);
+        // console.log("saveString:",saveString);
         // console.log("retrieve jeff cookie:", cookie.load('jeff'));
         // // console.log("retrieve money cookie:", cookie.load('money'));
         // console.log("retrieve businesses cookie:", cookie.load('businesses'));
@@ -322,6 +337,8 @@ export default class Neumann extends React.Component {
             lifetimeEarnings: newLifetimeEarnings,
             curMaxMoney: newMax,
         }));
+
+        this.setTitle();
     }
 
     clickBusiness(bus) {
@@ -339,7 +356,7 @@ export default class Neumann extends React.Component {
                 newItem.owned += busCost.num;
                 newItem.overlays = this.genOverlayArr(item.overlays, "+" + busCost.num).concat(bonusArr);
                 console.log("adding", busCost.num, "to", newItem.name);
-                
+
             }
             return newItem;
         });
@@ -471,7 +488,7 @@ export default class Neumann extends React.Component {
         }
     }
 
-    genOverlayArr(origOverlay, text, ovType="generic") {
+    genOverlayArr(origOverlay, text, ovType = "generic") {
         console.log("addOverlay called:", text);
         return [...origOverlay, this.genOverlayObj(text, ovType)];
     }
@@ -492,8 +509,25 @@ export default class Neumann extends React.Component {
         }));
     }
 
-    render() {
 
+    probeTest() {
+        // if (this.probeDivRef) {
+        //     // console.log("probeRef:", this.probeDivRef);
+        //     const canvasEl = document.getElementsByTagName("canvas");
+        //     if (canvasEl[0]) {
+        //         this.canvas = canvasEl[0];
+        //         this.ctx = this.canvas.getContext('2d');
+
+        //         this.ctx.fillStyle = 'black';
+        //         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+        //     }
+        // }
+
+    }
+
+    render() {
+        this.probeTest();
         return (
             <div id="wrapper">
                 <div id="header">
@@ -589,18 +623,46 @@ export default class Neumann extends React.Component {
                     <TabPanel className="react-tabs__tab-panel probe-tab-panel">
 
                         <div id="right-sidebar">
-
-
-                        </div>
-
-                        <div id="probecontent">
-                            <div className="probecontainer">
-
-                                text for panel 2
-
-                            </div>
+                            sidebar text
 
                         </div>
+
+                        <div id="probecontent" ref={this.probeDivRef}  >
+                            <div className="stars"></div>
+                            <div className="stars"></div>
+                            <div className="stars"></div>
+                            <div className="stars"></div>
+                            <div className="stars"></div>
+                                <Stage width="794" height="538" className="jefftest" id="jeffid">
+                                    <Layer className="jefftest2">
+                                        <Text text="Some text on canvas" fontSize={15} />
+                                        <Star
+                                            x={100}
+                                            y={100}
+                                            numPoints={5}
+                                            innerRadius={20}
+                                            outerRadius={40}
+                                            fill="#89b717"
+                                            opacity={0.8}
+                                            draggable
+                                            rotation={180}
+                                            shadowColor="black"
+                                            shadowBlur={10}
+                                            shadowOpacity={0.6}
+                                        />
+                                        <Ellipse
+                                            x={400}
+                                            y={250}
+                                            radiusX={300}
+                                            radiusY={200}
+                                            stroke="white"
+                                            zIndex={2}
+                                        />
+                                    </Layer>
+                                </Stage>
+                            
+                        </div>
+
                     </TabPanel>
 
                 </Tabs>

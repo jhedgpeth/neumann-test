@@ -1,6 +1,6 @@
 import React from 'react';
 import BusinessInit from './BusinessInit';
-import ProbeInit from './ProbeInit';
+// import ProbeInit from './ProbeInit';
 import UpgradeInit from './UpgradeInit';
 const Decimal = require('decimal.js');
 
@@ -17,13 +17,14 @@ export default class NeumannInit extends React.Component {
     });
 
     static coreObjOnly = () => ({
-        money: new Decimal(1),
+        money: new Decimal(0),
         knowledge: new Decimal(0),
         businesses: BusinessInit(),
-        probes: ProbeInit(),
+        probes: [],
         upgrades: UpgradeInit(),
         timeMilestone: 0,
         announcements: [],
+        version: "0.0.1",
     })
 
 }

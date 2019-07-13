@@ -53,7 +53,7 @@ body {
 }
 
 .probe-tab-panel {
-  background: #333;
+  background: #000;
   grid-area: "panel-main";
   // max-height: 600px;
   max-width: 1024px;
@@ -481,7 +481,6 @@ body {
   color: $c_selected;
   width: 30%;
   text-align: right;
-  
 }
 
 .testbutton {
@@ -732,23 +731,27 @@ body {
 -----------------------------------------------------------------------------*/
 
 #probecontent {
-  background-color: #311;
+  // background-color: #000;
+  background: radial-gradient(circle at bottom, rgb(5, 5, 110) 0, black 100%);
   grid-area: content;
   position: relative;
-  width: 794px;
+  // width: 794px;
   // width: 100%;
   /* min-height: 400px; */
+  // height: 538px;
+  // padding: 5px;
+  width: 800px;
   height: 538px;
-  padding: 5px;
-  margin: auto;
+  margin: 5px auto 0 auto;
+  overflow: hidden;
 }
 
-.probecontainer {
-  width: 774px;
-  margin: 5px 10px;
-  // min-width: 780px;
-  // max-width: 790px;
-}
+// .probecontainer {
+//   width: 774px;
+//   margin: 5px 10px;
+//   // min-width: 780px;
+//   // max-width: 790px;
+// }
 
 /* bonuses 
 -----------------------------------------------------------------------------*/

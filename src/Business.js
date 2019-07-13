@@ -114,6 +114,7 @@ export default class Business extends React.Component {
             const n = item.name;
             const myCost = ComputeFunc.getCost(item, this.props.purchaseAmt, this.props.money);
             // console.log(myCost);
+            const nextPayout = ComputeFunc.computeNextPayoutValueMoney(item, this.props.prestige, myCost.num);
 
             const buyPct = ComputeFunc.buyPct(myCost.cost, this.props.money);
             const buyPctStyle = { width: buyPct + '%' };
@@ -134,7 +135,8 @@ export default class Business extends React.Component {
             }
 
             const myEarningPerSec = ComputeFunc.computeEarningPerSec(item, this.props.prestige);
-            const myPayout = ComputeFunc.computePayoutValueMoney(item, this.props.prestige);
+            let curPayout = ComputeFunc.computePayoutValueMoney(item, this.props.prestige);
+            const myPayout = curPayout.gt(0) ? curPayout : nextPayout;
             const myEarningPct = ComputeFunc.getEarningPct(myEarningPerSec, totalEarningPerSec);
 
 

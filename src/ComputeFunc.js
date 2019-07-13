@@ -51,13 +51,13 @@ export default class ComputeFunc {
         const to100s = Math.floor(toCt / 100);
         let retArr = [];
         if (from25s < to25s) {
-            for (let n=from25s+1; n<=to25s; n++) {
-                retArr.push(n*25);
+            for (let n = from25s + 1; n <= to25s; n++) {
+                retArr.push(n * 25);
             }
         }
         if (from100s < to100s) {
-            for (let n=from100s+1; n<=to100s; n++) {
-                retArr.push(n*100);
+            for (let n = from100s + 1; n <= to100s; n++) {
+                retArr.push(n * 100);
             }
         }
         return retArr;
@@ -75,15 +75,16 @@ export default class ComputeFunc {
         return (item.timeCounter / item.timeAdjusted) * 100;
     }
 
-    static computePayoutValueMoney(item, prestige) {
-        const num25s = Math.floor(item.owned / 25);
+    static computeNextPayoutValueMoney(item, prestige, buyNum) {
+        const nextOwned = item.owned + buyNum;
+        const num25s = Math.floor(nextOwned / 25);
         // 25, 50, 100, 200, ...
         const mult25 = num25s > 2 ? 2 : num25s;
-        const mult100 = Math.floor(item.owned / 100);
+        const mult100 = Math.floor(nextOwned / 100);
         const prestigeMultiplier = prestige.num.times(prestige.val).div(100).plus(1);
         let revenue = new Decimal(
             item.incomeBase
-                .times(item.owned)
+                .times(nextOwned)
                 .times(Math.pow(2, mult25))
                 .times(Math.pow(2, mult100))
                 .times(item.upgradeMult)
@@ -91,6 +92,11 @@ export default class ComputeFunc {
         );
         return revenue;
     }
+
+    static computePayoutValueMoney(item, prestige) {
+        return this.computeNextPayoutValueMoney(item, prestige, 0);
+    }
+
 
     static computePayoutValueKnowledge(item, prestige) {
         return item.incomeBase
