@@ -2,17 +2,17 @@ import React from 'react';
 // import ReactDOM from 'react-dom'
 import update from 'immutability-helper';
 import Dropdown from 'react-dropdown';
-// import { Portal } from 'react-portal';
-import MyPortal from './MyPortal';
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import Slider from 'rc-slider';
 import { compress as lzStringCompress, decompress as lzStringDecompresss } from 'lz-string';
+
 import './styles/fonts.css';
 import './styles/index.scss';
 import './styles/dropdown.scss';
 import './styles/effects.scss';
 import './styles/space.scss';
-import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
-import Konva from 'konva';
-import { Stage, Layer, Text, Circle, Star, Ellipse } from 'react-konva';
+
+import Space from './Space';
 import Income from './Income';
 import Business from './Business.js';
 // import Probe from './Probe.js';
@@ -45,30 +45,7 @@ export default class Neumann extends React.Component {
         this.purchaseAmt = "1";
         this.tabIndex = 1;
 
-        this.spaceZoom = false;
-        this.ellipseMetrics = {
-            x: 4/3,
-            y: 2/3,
-            base: 225,
-        }
-        this.centerCanvas = {
-            x: 400,
-            y: 250,
-        };
-        this.pulseRadius = {
-            x: 0,
-            y: 0,
-        };
-        this.innerRadius = {
-            x: this.ellipseMetrics.base * this.ellipseMetrics.x,
-            y: this.ellipseMetrics.base * this.ellipseMetrics.y,
-        };
-        this.outerRadius = {
-            x: this.ellipseMetrics.base * this.ellipseMetrics.x * 3,
-            y: this.ellipseMetrics.base * this.ellipseMetrics.y * 3,
-        }
-        
-        this.planetRadius = 10;
+        this.zoomLevel = 0;
 
         // this._business = React.createRef();
         this.populateBusDomRefs = this.populateDomRefs.bind(this);
@@ -85,6 +62,8 @@ export default class Neumann extends React.Component {
         this.clickAnnouncement = this.clickAnnouncement.bind(this);
         this.purchaseAmtDropDownHandler = this.purchaseAmtDropDownHandler.bind(this);
         this.announce = this.announce.bind(this);
+        this.probeTestNextZoom = this.probeTestNextZoom.bind(this);
+        this.setSpaceZoomLevel = this.setSpaceZoomLevel.bind(this);
 
         /* cheats */
         this.prestigeCheat = this.prestigeCheat.bind(this);
@@ -103,6 +82,7 @@ export default class Neumann extends React.Component {
         this.resetAll();
 
         console.log(HelperConst.purchaseOptsSpecial);
+        console.log(HelperConst.spaceZoomLevels.map(n => HelperConst.showInt(n)));
     }
 
     componentWillUnmount() {
@@ -186,6 +166,7 @@ export default class Neumann extends React.Component {
     saveGame() {
         const saveString = lzStringCompress(JSON.stringify(this.state));
         console.log("saveString length:", saveString.length);
+        localStorage.setItem('neumann_game_save_time', Date.now());
         localStorage.setItem('neumann_game_save', saveString);
         // console.log("saveString:",saveString);
         // console.log("retrieve jeff cookie:", cookie.load('jeff'));
@@ -354,9 +335,6 @@ export default class Neumann extends React.Component {
             newMax = newMoney;
             // console.log("newMax:",newMax.toFixed());
         }
-
-        this.processSpaceMap();
-
 
         this.setState((state) => ({
             money: newMoney,
@@ -538,104 +516,19 @@ export default class Neumann extends React.Component {
         }));
     }
 
-    resetProbeZoom() {
-        this.outerEllipseRef.setAttrs({
-            'radiusX': this.outerRadius.x,
-            'radiusY': this.outerRadius.y,
-        })
-        this.innerEllipseRef.setAttrs({
-            'radiusX': this.innerRadius.x,
-            'radiusY': this.innerRadius.y,
-        })
-        this.planetRadius = 3;
-        this.pulsePause = false;
-    }
-    probeOuterZoomFinished() {
-        this.outerEllipseMoving = false;
-        !this.innerEllipseMoving && this.resetProbeZoom();
-
-    }
-    probeInnerZoomFinished() {
-        this.innerEllipseMoving = false;
-        !this.outerEllipseMoving && this.resetProbeZoom();
-    }
-
-    stopProbePulse() {
-        if (this.tween) {
-            this.tween.destroy();
-        }
-        if (this.pulseMoving) {
-            this.probePulseFinished();
-        }
-    }
-    probePulseFinished() {
-        this.pulseMoving = false;
-        if (this.pulseRef) {
-            this.pulseRef.setAttrs({
-                'radiusX': this.pulseRadius.x,
-                'radiusY': this.pulseRadius.y,
-            })
-        }
-    }
-
-    processSpaceMap() {
-
-        /* perform probe distance pulse */
-        if (this.pulseRef) {
-            if (!this.pulseMoving && !this.pulsePause) {
-                if (this.tween) this.tween.destroy();
-                this.pulseMoving = true;
-                this.tween = new Konva.Tween({
-                    node: this.pulseRef,
-                    duration: 10,
-                    radiusX: this.innerRadius.x,
-                    radiusY: this.innerRadius.y,
-                    onFinish: () => {
-                        this.stopProbePulse();
-                    },
-                }).play();
-            }
-        }
-
-        /* "zoom" space map if probes reach the edge */
-        if (this.spaceZoom && this.outerEllipseRef && this.innerEllipseRef) {
-            this.spaceZoom = false;
-            this.pulsePause = true;
-            this.stopProbePulse();
-            if (this.centerPlanetRef.getAttr('radius') !== 3) {
-                console.log("shrinking planet");
-                this.centerPlanetRef.to({
-                    duration: 1,
-                    radius: 3
-                })
-            }
-            if (!this.outerEllipseMoving) {
-                console.log("anim starting");
-                this.outerEllipseMoving = true;
-                this.outerEllipseRef.to({
-                    duration: 1,
-                    radiusX: this.innerRadius.x,
-                    radiusY: this.innerRadius.y,
-                    onFinish: () => {
-                        this.probeOuterZoomFinished();
-                    },
-                });
-                this.innerEllipseMoving = true;
-                this.innerEllipseRef.to({
-                    duration: 1,
-                    radiusX: 0,
-                    radiusY: 0,
-                    onFinish: () => {
-                        this.probeInnerZoomFinished();
-                    },
-                })
-            }
-        }
-    }
-
     changeTabs(idx) {
-        this.stopProbePulse();
         this.tabIndex = idx;
+    }
+
+    probeTestNextZoom() {
+        this.setState((state, props) => ({
+            probeDistance: HelperConst.spaceZoomLevels[HelperConst.getSpaceZoomLevelIdx(this.state.probeDistance)]
+        }));
+    }
+
+    setSpaceZoomLevel(n) {
+        console.log("n:", n);
+        this.zoomLevel = n;
     }
 
     render() {
@@ -734,88 +627,23 @@ export default class Neumann extends React.Component {
                     <TabPanel className="react-tabs__tab-panel probe-tab-panel">
 
                         <div id="right-sidebar">
-                            <button className="testbutton space-button" onClick={() => { this.spaceZoom = true; }}>Space Zoom</button>
+                            Probe Distance: {HelperConst.showNum(this.state.probeDistance)}<br />
+                            Map Distance: {HelperConst.showNum(HelperConst.spaceZoomLevels[HelperConst.getSpaceZoomLevelIdx(this.state.probeDistance)])}<br />
+                            Zoom Index: {HelperConst.getSpaceZoomLevelIdx(this.state.probeDistance)}<br />
+                            <button
+                                className="testbutton space-button"
+                                onClick={this.probeTestNextZoom}>
+                                Space Zoom
+                            </button>
 
                         </div>
 
-                        <div id="probecontent" ref={this.probeDivRef}  >
-                            <div className="stars"></div>
-                            <div className="stars"></div>
-                            <div className="stars"></div>
-                            <div className="stars"></div>
-                            <div className="stars"></div>
-                            <Stage width={794} height={538} className="dynamic-layer" >
-
-                                <Layer hitGraphEnabled={false}>
-
-                                    <Ellipse
-                                        id='pulse'
-                                        x={this.centerCanvas.x}
-                                        y={this.centerCanvas.y}
-                                        radiusX={this.pulseRadius.x}
-                                        radiusY={this.pulseRadius.y}
-                                        stroke="#555"
-                                        ref={node => {
-                                            this.pulseRef = node;
-                                        }}
-                                    />
-                                    <Ellipse
-                                        id='innerEllipse'
-                                        x={this.centerCanvas.x}
-                                        y={this.centerCanvas.y}
-                                        radiusX={this.innerRadius.x}
-                                        radiusY={this.innerRadius.y}
-                                        stroke="white"
-                                        ref={node => {
-                                            this.innerEllipseRef = node;
-                                        }}
-                                    />
-                                    <Ellipse
-                                        id='outerEllipse'
-                                        x={this.centerCanvas.x}
-                                        y={this.centerCanvas.y}
-                                        radiusX={this.outerRadius.x}
-                                        radiusY={this.outerRadius.y}
-                                        stroke="white"
-                                        ref={node => {
-                                            this.outerEllipseRef = node;
-                                        }}
-                                    />
-                                    <Circle
-                                        id='centerPlanet'
-                                        x={this.centerCanvas.x}
-                                        y={this.centerCanvas.y}
-                                        radius={this.planetRadius}
-                                        fill="green"
-                                        ref={node => {
-                                            this.centerPlanetRef = node;
-                                        }}
-                                    />
-                                </Layer>
-                                <Layer className="static-layer" hitGraphEnabled={true}>
-                                    <Text text="Some text on canvas" fontSize={15} />
-                                    <MyPortal>
-                                        <button id="portal-button">button</button>
-                                    </MyPortal>
-                                    <Star
-                                        x={100}
-                                        y={100}
-                                        numPoints={5}
-                                        innerRadius={20}
-                                        outerRadius={40}
-                                        fill="#89b717"
-                                        opacity={0.8}
-                                        draggable
-                                        rotation={15}
-                                        shadowColor="black"
-                                        shadowBlur={10}
-                                        shadowOpacity={0.6}
-                                    />
-
-                                </Layer>
-                            </Stage>
-
-                        </div>
+                        <Space
+                            probeDistance={this.state.probeDistance}
+                            timeMultiplier={this.timeMultiplier}
+                            zoomLevel={this.zoomLevel}
+                            setSpaceZoomLevel={this.setSpaceZoomLevel}
+                        />
 
                     </TabPanel>
 

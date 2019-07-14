@@ -1,13 +1,14 @@
 import React from 'react';
-import Konva from 'konva';
-import { Stage, Layer, Text, Circle, Star, Ellipse } from 'react-konva';
-
+// import Konva from 'konva';
+import { Stage, Layer, Circle, Ellipse, Line } from 'react-konva';
+// import MyPortal from './MyPortal';
+import HelperConst from './HelperConst';
 
 export default class Space extends React.Component {
     constructor(props) {
         super(props);
 
-        this.spaceZoom = false;
+
         this.ellipseMetrics = {
             x: 4 / 3,
             y: 2 / 3,
@@ -29,8 +30,24 @@ export default class Space extends React.Component {
             x: this.ellipseMetrics.base * this.ellipseMetrics.x * 3,
             y: this.ellipseMetrics.base * this.ellipseMetrics.y * 3,
         }
+        this.moonLocation = {
+            x: this.centerCanvas.x + 130,
+            y: this.centerCanvas.y - 135,
+        }
 
-        this.planetRadius = 10;
+        if (this.props.zoomLevel === 0) {
+            this.planetRadius = 10;
+        } else if (this.props.zoomLevel === 1) {
+            this.planetRadius = 3;
+        } else {
+            this.planetRadius = 0;
+        }
+
+        this.zoomShown = this.props.zoomLevel;
+
+        this.pulseColor = "#222";
+        this.pulseColorCt = 0;
+
     }
 
     resetProbeZoom() {
@@ -55,49 +72,62 @@ export default class Space extends React.Component {
         !this.outerEllipseMoving && this.resetProbeZoom();
     }
 
-    stopProbePulse() {
-        if (this.tween) {
-            this.tween.destroy();
-        }
-        if (this.pulseMoving) {
-            this.probePulseFinished();
-        }
+    calcProbePulseRadius() {
+        const zoomDistance = HelperConst.spaceZoomLevels[this.props.zoomLevel];
+        const x = this.props.probeDistance
+            .div(zoomDistance)
+            .times(this.innerRadius.x)
+            .floor()
+            .plus(this.planetRadius)
+            .plus(1)
+            .toNumber();
+        const y = this.props.probeDistance
+            .div(zoomDistance)
+            .times(this.innerRadius.y)
+            .floor()
+            .plus(this.planetRadius)
+            .plus(1)
+            .toNumber();
+        return { x: x, y: y };
     }
-    probePulseFinished() {
-        this.pulseMoving = false;
-        if (this.pulseRef) {
-            this.pulseRef.setAttrs({
-                'radiusX': this.pulseRadius.x,
-                'radiusY': this.pulseRadius.y,
-            })
-        }
-    }
+
 
     processSpaceMap() {
 
-        /* perform probe distance pulse */
-        if (this.pulseRef) {
-            if (!this.pulseMoving && !this.pulsePause) {
-                if (this.tween) this.tween.destroy();
-                this.pulseMoving = true;
-                this.tween = new Konva.Tween({
-                    node: this.pulseRef,
-                    duration: 10,
-                    radiusX: this.innerRadius.x,
-                    radiusY: this.innerRadius.y,
-                    onFinish: () => {
-                        this.stopProbePulse();
-                    },
-                }).play();
-            }
+        /* at what zoom do we need to be? */
+        const newZoomLevel = HelperConst.getSpaceZoomLevelIdx(this.props.probeDistance);
+        if (newZoomLevel > this.props.zoomLevel) {
+            this.props.setSpaceZoomLevel(newZoomLevel);
         }
 
+        /* perform probe distance pulse */
+        if (this.pulseRef) {
+            const probeRadius = (
+                this.props.probeDistance.eq(0)
+                || (this.props.zoomLevel !== this.zoomShown)
+                || this.outerEllipseMoving
+                || this.innerEllipseMoving)
+                ? { x: 0, y: 0 }
+                : this.calcProbePulseRadius();
+            this.pulseRef.setAttrs({
+                'radiusX': probeRadius.x,
+                'radiusY': probeRadius.y,
+            })
+        }
+        /* set pulse color */
+        this.pulseColorCt = (this.pulseColorCt + this.props.timeMultiplier);
+        // this.pulseColor = this.pulseColors[Math.floor(this.pulseColorCt % this.pulseColors.length)];
+        this.pulseColor = "rgba(85,85,85," + (((Math.sin(this.pulseColorCt) + 1) / 4) + 0.5).toFixed(1) + ")"
+        // console.log("pulseColor:",this.pulseColor);
+
         /* "zoom" space map if probes reach the edge */
-        if (this.spaceZoom && this.outerEllipseRef && this.innerEllipseRef) {
-            this.spaceZoom = false;
-            this.pulsePause = true;
-            this.stopProbePulse();
-            if (this.centerPlanetRef.getAttr('radius') !== 3) {
+        if ((this.zoomShown < this.props.zoomLevel)
+            && this.outerEllipseRef
+            && this.innerEllipseRef
+            && !this.outerEllipseMoving) {
+            console.log("spaceZoom:", this.zoomShown);
+            this.zoomShown += 1;
+            if (this.props.zoomLevel < 2) {
                 console.log("shrinking planet");
                 this.centerPlanetRef.to({
                     duration: 1,
@@ -105,7 +135,7 @@ export default class Space extends React.Component {
                 })
             }
             if (!this.outerEllipseMoving) {
-                console.log("anim starting");
+                console.log("ring anim starting");
                 this.outerEllipseMoving = true;
                 this.outerEllipseRef.to({
                     duration: 1,
@@ -128,7 +158,152 @@ export default class Space extends React.Component {
         }
     }
 
+    generateSpaceRender() {
+        let rows = [];
+        rows.push(
+            <Ellipse
+                id='pulse'
+                x={this.centerCanvas.x}
+                y={this.centerCanvas.y}
+                radiusX={this.pulseRadius.x}
+                radiusY={this.pulseRadius.y}
+                stroke={this.pulseColor}
+                fill="rgba(85,85,85,0.2)"
+                ref={node => {
+                    this.pulseRef = node;
+                }}
+            />
+        );
+        rows.push(
+            <Ellipse
+                id='innerEllipse'
+                x={this.centerCanvas.x}
+                y={this.centerCanvas.y}
+                radiusX={this.innerRadius.x}
+                radiusY={this.innerRadius.y}
+                stroke="#d55"
+                dash={[5, 5]}
+                ref={node => {
+                    this.innerEllipseRef = node;
+                }}
+            />
+        );
+        rows.push(
+            <Ellipse
+                id='outerEllipse'
+                x={this.centerCanvas.x}
+                y={this.centerCanvas.y}
+                radiusX={this.outerRadius.x}
+                radiusY={this.outerRadius.y}
+                stroke="#d55"
+                dash={[5, 5]}
+                ref={node => {
+                    this.outerEllipseRef = node;
+                }}
+            />
+        );
+        if (this.props.zoomLevel === 0) {
+            rows.push(
+                <Circle
+                    id='moon'
+                    x={this.moonLocation.x}
+                    y={this.moonLocation.y}
+                    radius={5}
+                    fillRadialGradientStartPoint={{
+                        x: -5,
+                        y: -5,
+                    }}
+                    fillRadialGradientStartRadius={1}
+                    fillRadialGradientEndPoint={{
+                        x: -5,
+                        y: -5,
+                    }}
+                    fillRadialGradientEndRadius={8}
+                    fillRadialGradientColorStops={[0.4, '#ddd', 0.9, '#aaa', 1, '#333']}
+                />
+            );
+        }
+        switch (this.props.zoomLevel) {
+            case 0:
+                /* the big planet */
+                rows.push(
+                    <Circle
+                        id='centerPlanet'
+                        x={this.centerCanvas.x}
+                        y={this.centerCanvas.y}
+                        radius={10}
+                        // fill="green"
+                        fillRadialGradientStartPoint={{
+                            x: -10,
+                            y: -10,
+                        }}
+                        fillRadialGradientStartRadius={1}
+                        fillRadialGradientEndPoint={{
+                            x: -10,
+                            y: -10,
+                        }}
+                        fillRadialGradientEndRadius={30}
+                        fillRadialGradientColorStops={[0.4, 'green', 0.9, 'blue', 1, '#333']}
+                        ref={node => {
+                            this.centerPlanetRef = node;
+                        }}
+                    />
+                );
+                break;
+            case 1:
+                /* just a dot... */
+                rows.push(
+                    <Circle
+                        id='centerPlanet'
+                        x={this.centerCanvas.x}
+                        y={this.centerCanvas.y}
+                        radius={3}
+                        fill="green"
+                        ref={node => {
+                            this.centerPlanetRef = node;
+                        }}
+                    />
+                );
+                break;
+            default:
+                /*  reticle only */
+                rows.push(
+                    <React.Fragment>
+                        <Ellipse
+                            id='centerPlanet'
+                            x={this.centerCanvas.x}
+                            y={this.centerCanvas.y}
+                            radiusX={20 * this.ellipseMetrics.x}
+                            radiusY={20 * this.ellipseMetrics.y}
+                            stroke="#d55"
+                            dash={[5, 1]}
+                            ref={node => {
+                                this.centerPlanetRef = node;
+                            }}
+                        />
+                        <Line
+                            points={[this.centerCanvas.x - 5, this.centerCanvas.y, this.centerCanvas.x + 5, this.centerCanvas.y]}
+                            stroke="#d55"
+                            strokeWidth={1}
+                        />
+                        <Line
+                            points={[this.centerCanvas.x, this.centerCanvas.y - 5, this.centerCanvas.x, this.centerCanvas.y + 5]}
+                            stroke="#d55"
+                            strokeWidth={1}
+                        />
+                    </React.Fragment>
+                );
+                break;
+        }
+
+        return rows;
+    }
+
+
     render() {
+        this.processSpaceMap();
+        const rows = this.generateSpaceRender();
+
         return (
             <div id="probecontent" ref={this.probeDivRef}  >
                 <div className="stars"></div>
@@ -140,69 +315,13 @@ export default class Space extends React.Component {
 
                     <Layer hitGraphEnabled={false}>
 
-                        <Ellipse
-                            id='pulse'
-                            x={this.centerCanvas.x}
-                            y={this.centerCanvas.y}
-                            radiusX={this.pulseRadius.x}
-                            radiusY={this.pulseRadius.y}
-                            stroke="#555"
-                            ref={node => {
-                                this.pulseRef = node;
-                            }}
-                        />
-                        <Ellipse
-                            id='innerEllipse'
-                            x={this.centerCanvas.x}
-                            y={this.centerCanvas.y}
-                            radiusX={this.innerRadius.x}
-                            radiusY={this.innerRadius.y}
-                            stroke="white"
-                            ref={node => {
-                                this.innerEllipseRef = node;
-                            }}
-                        />
-                        <Ellipse
-                            id='outerEllipse'
-                            x={this.centerCanvas.x}
-                            y={this.centerCanvas.y}
-                            radiusX={this.outerRadius.x}
-                            radiusY={this.outerRadius.y}
-                            stroke="white"
-                            ref={node => {
-                                this.outerEllipseRef = node;
-                            }}
-                        />
-                        <Circle
-                            id='centerPlanet'
-                            x={this.centerCanvas.x}
-                            y={this.centerCanvas.y}
-                            radius={this.planetRadius}
-                            fill="green"
-                            ref={node => {
-                                this.centerPlanetRef = node;
-                            }}
-                        />
+                        {rows}
                     </Layer>
-                    <Layer className="static-layer" hitGraphEnabled={true}>
-                        <Text text="Some text on canvas" fontSize={15} />
-                        <MyPortal>
-                            <button id="portal-button">button</button>
-                        </MyPortal>
-                        <Star
-                            x={100}
-                            y={100}
-                            numPoints={5}
-                            innerRadius={20}
-                            outerRadius={40}
-                            fill="#89b717"
-                            opacity={0.8}
-                            draggable
-                            rotation={15}
-                            shadowColor="black"
-                            shadowBlur={10}
-                            shadowOpacity={0.6}
-                        />
+                    <Layer className="static-layer" hitGraphEnabled={false}>
+                        {/* <MyPortal>
+                            <button id="portal-button" disabled={true}>{HelperConst.showNum(HelperConst.spaceZoomLevels[this.zoomShown])}</button>
+                        </MyPortal> */}
+
 
                     </Layer>
                 </Stage>
