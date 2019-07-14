@@ -732,7 +732,7 @@ body {
 
 #probecontent {
   // background-color: #000;
-  background: radial-gradient(circle at bottom, rgb(5, 5, 110) 0, black 100%);
+  background: radial-gradient(circle at bottom, rgb(5, 5, 70) 0, black 100%);
   grid-area: content;
   position: relative;
   // width: 794px;
@@ -752,6 +752,12 @@ body {
 //   // min-width: 780px;
 //   // max-width: 790px;
 // }
+
+#portal-button {
+  position: absolute;
+  top: 600px;
+  left: 300px;
+}
 
 /* bonuses 
 -----------------------------------------------------------------------------*/

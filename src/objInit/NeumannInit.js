@@ -23,6 +23,7 @@ export default class NeumannInit extends React.Component {
         probes: [],
         upgrades: UpgradeInit(),
         timeMilestone: 0,
+        probeDistance: 0,
         announcements: [],
         version: "0.0.1",
     })
