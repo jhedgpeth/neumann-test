@@ -63,7 +63,7 @@ export default class Neumann extends React.Component {
         this.purchaseAmtDropDownHandler = this.purchaseAmtDropDownHandler.bind(this);
         this.announce = this.announce.bind(this);
         this.probeTestNextZoom = this.probeTestNextZoom.bind(this);
-        this.setSpaceZoomLevel = this.setSpaceZoomLevel.bind(this);
+        this.zoomLevelCallback = this.zoomLevelCallback.bind(this);
 
         /* cheats */
         this.prestigeCheat = this.prestigeCheat.bind(this);
@@ -526,7 +526,7 @@ export default class Neumann extends React.Component {
         }));
     }
 
-    setSpaceZoomLevel(n) {
+    zoomLevelCallback(n) {
         console.log("n:", n);
         this.zoomLevel = n;
     }
@@ -635,6 +635,8 @@ export default class Neumann extends React.Component {
                                 onClick={this.probeTestNextZoom}>
                                 Space Zoom
                             </button>
+                            <button className="testbutton announce-button" onClick={() => this.announce("great job winning!  oh boy this is just super.")}>Announce</button>
+
 
                         </div>
 
@@ -642,7 +644,7 @@ export default class Neumann extends React.Component {
                             probeDistance={this.state.probeDistance}
                             timeMultiplier={this.timeMultiplier}
                             zoomLevel={this.zoomLevel}
-                            setSpaceZoomLevel={this.setSpaceZoomLevel}
+                            zoomLevelCallback={this.zoomLevelCallback}
                         />
 
                     </TabPanel>

@@ -1,6 +1,6 @@
 import React from 'react';
-// import Konva from 'konva';
-import { Stage, Layer, Circle, Ellipse, Line } from 'react-konva';
+import Konva from 'konva';
+import { Stage, Layer, Circle, Ellipse, Line, Text } from 'react-konva';
 // import MyPortal from './MyPortal';
 import HelperConst from './HelperConst';
 
@@ -48,6 +48,10 @@ export default class Space extends React.Component {
         this.pulseColor = "#222";
         this.pulseColorCt = 0;
 
+        this.starClass = "stars starpause";
+
+        this.buildNewZoomText = this.buildNewZoomText.bind(this);
+
     }
 
     resetProbeZoom() {
@@ -61,6 +65,7 @@ export default class Space extends React.Component {
         })
         this.planetRadius = 3;
         this.pulsePause = false;
+        this.starClass = "stars starpause";
     }
     probeOuterZoomFinished() {
         this.outerEllipseMoving = false;
@@ -91,14 +96,34 @@ export default class Space extends React.Component {
         return { x: x, y: y };
     }
 
+    buildNewZoomText() {
+        return (
+            <Text
+                x={this.centerCanvas.x - 80}
+                y={this.centerCanvas.y + this.innerRadius.y + 24}
+                text={"Zoom lvl: " + HelperConst.showInt(HelperConst.spaceZoomLevels[this.props.zoomLevel]) + "km"}
+                fontSize={16}
+                fill="green"
+            />
+        );
+        // const textWidth = this.zoomText.width();
+        // const textHeight = this.zoomText.height();
+        // this.zoomText.x(this.centerCanvas.x - (textWidth / 2));
+        // this.zoomText.y(this.centerCanvas.y + this.innerRadius.y + 24 - (textHeight / 2));
+    }
 
     processSpaceMap() {
 
+        if (!this.zoomText) {
+            this.buildNewZoomText();
+        }
         /* at what zoom do we need to be? */
         const newZoomLevel = HelperConst.getSpaceZoomLevelIdx(this.props.probeDistance);
         if (newZoomLevel > this.props.zoomLevel) {
-            this.props.setSpaceZoomLevel(newZoomLevel);
+            this.props.zoomLevelCallback(newZoomLevel);
+            // this.buildNewZoomText();
         }
+
 
         /* perform probe distance pulse */
         if (this.pulseRef) {
@@ -124,8 +149,10 @@ export default class Space extends React.Component {
         if ((this.zoomShown < this.props.zoomLevel)
             && this.outerEllipseRef
             && this.innerEllipseRef
-            && !this.outerEllipseMoving) {
+            && !this.outerEllipseMoving
+            && !this.innerEllipseMoving) {
             console.log("spaceZoom:", this.zoomShown);
+            this.starClass = "stars starzoom";
             this.zoomShown += 1;
             if (this.props.zoomLevel < 2) {
                 console.log("shrinking planet");
@@ -202,6 +229,8 @@ export default class Space extends React.Component {
                 }}
             />
         );
+
+        /* moon only for closest zoom */
         if (this.props.zoomLevel === 0) {
             rows.push(
                 <Circle
@@ -223,6 +252,8 @@ export default class Space extends React.Component {
                 />
             );
         }
+
+        /* compute for center planet representation */
         switch (this.props.zoomLevel) {
             case 0:
                 /* the big planet */
@@ -250,7 +281,7 @@ export default class Space extends React.Component {
                     />
                 );
                 break;
-            case 1:
+            case "none":
                 /* just a dot... */
                 rows.push(
                     <Circle
@@ -269,18 +300,18 @@ export default class Space extends React.Component {
                 /*  reticle only */
                 rows.push(
                     <React.Fragment>
-                        <Ellipse
+                        {/* <Ellipse
                             id='centerPlanet'
                             x={this.centerCanvas.x}
                             y={this.centerCanvas.y}
                             radiusX={20 * this.ellipseMetrics.x}
                             radiusY={20 * this.ellipseMetrics.y}
                             stroke="#d55"
-                            dash={[5, 1]}
+                            dash={[4, 4]}
                             ref={node => {
                                 this.centerPlanetRef = node;
                             }}
-                        />
+                        /> */}
                         <Line
                             points={[this.centerCanvas.x - 5, this.centerCanvas.y, this.centerCanvas.x + 5, this.centerCanvas.y]}
                             stroke="#d55"
@@ -306,18 +337,48 @@ export default class Space extends React.Component {
 
         return (
             <div id="probecontent" ref={this.probeDivRef}  >
-                <div className="stars"></div>
-                <div className="stars"></div>
-                <div className="stars"></div>
-                <div className="stars"></div>
-                <div className="stars"></div>
+                <div className={this.starClass} />
+                <div className={this.starClass} />
+                <div className={this.starClass} />
+                <div className={this.starClass} />
+                <div className={this.starClass} />
+
                 <Stage width={794} height={538} className="dynamic-layer" >
 
                     <Layer hitGraphEnabled={false}>
-
                         {rows}
                     </Layer>
                     <Layer className="static-layer" hitGraphEnabled={false}>
+
+                        <Line
+                            points={[this.centerCanvas.x - this.innerRadius.x, this.centerCanvas.y + this.innerRadius.y + 10, this.centerCanvas.x - this.innerRadius.x, this.centerCanvas.y + this.innerRadius.y + 50]}
+                            stroke="#d55"
+                            strokeWidth={1}
+                        />
+                        <Line
+                            points={[this.centerCanvas.x - this.innerRadius.x, this.centerCanvas.y + this.innerRadius.y + 30, this.centerCanvas.x - 90, this.centerCanvas.y + this.innerRadius.y + 30]}
+                            stroke="#d55"
+                            strokeWidth={1}
+                        />
+                        <Text
+                            x={this.centerCanvas.x - 80}
+                            y={this.centerCanvas.y + this.innerRadius.y + 24}
+                            width={160}
+                            text={HelperConst.showInt(HelperConst.spaceZoomLevels[this.props.zoomLevel]) + " km"}
+                            fontSize={16}
+                            align="center"
+                            fill="green"
+                        />
+                        <Line
+                            points={[this.centerCanvas.x + 90, this.centerCanvas.y + this.innerRadius.y + 30, this.centerCanvas.x + this.innerRadius.x, this.centerCanvas.y + this.innerRadius.y + 30]}
+                            stroke="#d55"
+                            strokeWidth={1}
+                        />
+                        <Line
+                            points={[this.centerCanvas.x + this.innerRadius.x, this.centerCanvas.y + this.innerRadius.y + 10, this.centerCanvas.x + this.innerRadius.x, this.centerCanvas.y + this.innerRadius.y + 50]}
+                            stroke="#d55"
+                            strokeWidth={1}
+                        />
                         {/* <MyPortal>
                             <button id="portal-button" disabled={true}>{HelperConst.showNum(HelperConst.spaceZoomLevels[this.zoomShown])}</button>
                         </MyPortal> */}

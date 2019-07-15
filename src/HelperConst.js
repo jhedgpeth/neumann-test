@@ -37,7 +37,7 @@ export default class HelperConst {
         new Decimal("9.5e17"),  //  milky way (diameter)
         new Decimal("14.09555e+17"),  // Segue 1
         new Decimal("14.66319e+17"), // Sagittarius Dwarf
-        new Decimal("18.27152e+17"),  // Ursa Major II
+        new Decimal("1.827152e+18"),  // Ursa Major II
         new Decimal("2.078523e+18"),  // Segue 2
         new Decimal("2.135288e+18"),  // Willman 1
         new Decimal("2.94891e+18"),  // Small Magellanic Cloud
