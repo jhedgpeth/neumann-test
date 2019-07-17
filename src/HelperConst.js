@@ -4,8 +4,11 @@ import './styles/fonts.css';
 const Decimal = require('decimal.js');
 const numberformat = require('swarm-numberformat');
 
-export default class HelperConst {
+const DEBUG = true;
 
+
+export default class HelperConst {
+    
     static moneySymbol = "$";
     // static knowledgeSymbol = "𓂀";
     static knowledgeSymbol = '\u29a8';
@@ -33,27 +36,17 @@ export default class HelperConst {
 
     // in kilometers
     static spaceZoomLevels = [
-        new Decimal("2.8746e11"), // solar system
-        new Decimal("9.5e17"),  //  milky way (diameter)
-        new Decimal("14.09555e+17"),  // Segue 1
-        new Decimal("14.66319e+17"), // Sagittarius Dwarf
-        new Decimal("1.827152e+18"),  // Ursa Major II
-        new Decimal("2.078523e+18"),  // Segue 2
-        new Decimal("2.135288e+18"),  // Willman 1
-        new Decimal("2.94891e+18"),  // Small Magellanic Cloud
-        new Decimal("3.122041e+18"),  // Carina Dwarf
-        new Decimal("1.3623452e+19"),  // Phoenix Dwarf
-        new Decimal("2.0151356e+19"),  // Andromeda II
-        new Decimal("2.8382191e+19"),  // Pegasus Dwarf Irregular
-        new Decimal("4.0775748e+19"),  // Sextans A
-        new Decimal("5.7426634e+19"),  // KKR 25
+        new Decimal("384400"),  // moon
+        // new Decimal("2.8746e11"), // solar system
+        // new Decimal("9.5e17"),  //  milky way (diameter)
+        // new Decimal("1.11e20"),  // NGC 4945
         new Decimal("440e24"),  // observable universe
-        new Decimal("Infinity"),
+        // new Decimal("Infinity"),
     ];
 
-    static getSpaceZoomLevelIdx(d) {
-        for (let n=0; n<this.spaceZoomLevels.length; n++) {
-            if (this.spaceZoomLevels[n].gt(d))  return n;
+    static DebugLog() {
+        if (DEBUG) {
+            console.log.apply(console, arguments);
         }
     }
 
@@ -87,7 +80,6 @@ export default class HelperConst {
 
     static myFormatterNum() {
         if (!this.myNumFormat) {
-            console.log("entered defining area");
             this.myNumFormat = new numberformat.Formatter(HelperConst.myNumCfg());
         }
         return this.myNumFormat;

@@ -3,6 +3,8 @@ import React from 'react';
 // import HelperConst from './HelperConst';
 import './styles/fonts.css';
 import './styles/colors.scss';
+// import HelperConst from './HelperConst';
+// const mylog = HelperConst.DebugLog;
 
 
 export default class Announce extends React.Component {

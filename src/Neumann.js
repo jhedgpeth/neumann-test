@@ -4,13 +4,16 @@ import update from 'immutability-helper';
 import Dropdown from 'react-dropdown';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import Slider from 'rc-slider';
-import { compress as lzStringCompress, decompress as lzStringDecompresss } from 'lz-string';
+
+// import { compress as lzStringCompress, decompress as lzStringDecompresss } from 'lz-string';
+import { compress as lzStringCompress } from 'lz-string';
 
 import './styles/fonts.css';
 import './styles/index.scss';
 import './styles/dropdown.scss';
 import './styles/effects.scss';
 import './styles/space.scss';
+import 'rc-slider/assets/index.css';
 
 import Space from './Space';
 import Income from './Income';
@@ -21,7 +24,12 @@ import ComputeFunc from './ComputeFunc';
 import HelperConst from './HelperConst';
 import Upgrades from './Upgrades';
 import Announce from './Announce';
+// import Decimal from 'decimal.js';
 
+const mylog = HelperConst.DebugLog;
+const createSliderWithTooltip = Slider.createSliderWithTooltip;
+const MyRange = createSliderWithTooltip(Slider.Range);
+const MySlider = createSliderWithTooltip(Slider);
 
 // =====================================================
 export default class Neumann extends React.Component {
@@ -46,6 +54,16 @@ export default class Neumann extends React.Component {
         this.tabIndex = 1;
 
         this.zoomLevel = 0;
+        this.mapDistance = HelperConst.spaceZoomLevels[0];
+
+        this.distribRange = [0, 33,66,100];
+        this.sliderMarks = {
+            0: '0',
+            25: '25',
+            50: '50',
+            75: '75',
+            100: '100%'
+        }
 
         // this._business = React.createRef();
         this.populateBusDomRefs = this.populateDomRefs.bind(this);
@@ -63,7 +81,9 @@ export default class Neumann extends React.Component {
         this.purchaseAmtDropDownHandler = this.purchaseAmtDropDownHandler.bind(this);
         this.announce = this.announce.bind(this);
         this.probeTestNextZoom = this.probeTestNextZoom.bind(this);
-        this.zoomLevelCallback = this.zoomLevelCallback.bind(this);
+        this.sliderChange = this.sliderChange.bind(this);
+        this.rangeChange = this.rangeChange.bind(this);
+
 
         /* cheats */
         this.prestigeCheat = this.prestigeCheat.bind(this);
@@ -78,28 +98,28 @@ export default class Neumann extends React.Component {
     }
 
     componentDidMount() {
-        console.log("game didmount");
+        mylog("game didmount");
         this.resetAll();
 
-        console.log(HelperConst.purchaseOptsSpecial);
-        console.log(HelperConst.spaceZoomLevels.map(n => HelperConst.showInt(n)));
+        mylog(HelperConst.purchaseOptsSpecial);
+        mylog(HelperConst.spaceZoomLevels.map(n => HelperConst.showInt(n)));
     }
 
     componentWillUnmount() {
-        console.log("game willunmount");
+        mylog("game willunmount");
         clearInterval(this.gameIntervalId);
         clearInterval(this.prestigeIntervalId);
         clearInterval(this.gameSaveIntervalId);
     }
 
     componentDidUpdate() {
-        // console.log("game didupdate");
+        // mylog("game didupdate");
 
     }
 
     populateDomRefs() {
         this.state.businesses.forEach((bus) => {
-            console.log("creating domRef for", bus.name);
+            mylog("creating domRef for", bus.name);
             this.domRefs.push({ name: bus.name, domRef: React.createRef() });
         });
         this.probeDivRef = React.createRef();
@@ -107,18 +127,21 @@ export default class Neumann extends React.Component {
         this.innerEllipseRef = null;
         this.outerEllipseRef = null;
         this.centerPlanetRef = null;
-        console.log("populated domRefs:", this.domRefs);
+        mylog("populated domRefs:", this.domRefs);
     }
 
     resetAll() {
         this.pause();
-        this.setState((state) => ({
+        this.setState((state, props) => ({
             ...NeumannInit.freshState()
         }));
         this.announceCt = 0;
         this.populateDomRefs();
         this.outerEllipseMoving = false;
         this.pulseMoving = false;
+        const conv = ComputeFunc.convertDistanceToSpace(0);
+        this.mapDistance = conv.dist;
+        this.zoomLevel = conv.idx;
         this.resume();
     }
 
@@ -128,6 +151,9 @@ export default class Neumann extends React.Component {
             ...NeumannInit.coreObjOnly()
         }));
         this.populateDomRefs();
+        const conv = ComputeFunc.convertDistanceToSpace(0);
+        this.mapDistance = conv.dist;
+        this.zoomLevel = conv.idx;
         this.resume();
     }
 
@@ -165,13 +191,13 @@ export default class Neumann extends React.Component {
 
     saveGame() {
         const saveString = lzStringCompress(JSON.stringify(this.state));
-        console.log("saveString length:", saveString.length);
+        mylog("saveString length:", saveString.length);
         localStorage.setItem('neumann_game_save_time', Date.now());
         localStorage.setItem('neumann_game_save', saveString);
-        // console.log("saveString:",saveString);
-        // console.log("retrieve jeff cookie:", cookie.load('jeff'));
-        // // console.log("retrieve money cookie:", cookie.load('money'));
-        // console.log("retrieve businesses cookie:", cookie.load('businesses'));
+        // mylog("saveString:",saveString);
+        // mylog("retrieve jeff cookie:", cookie.load('jeff'));
+        // // mylog("retrieve money cookie:", cookie.load('money'));
+        // mylog("retrieve businesses cookie:", cookie.load('businesses'));
 
         this.announce("game saved");
     }
@@ -180,14 +206,14 @@ export default class Neumann extends React.Component {
         // const newPrestigeNext = ComputeFunc.calcPrestigeEarned(this.state.lifetimeEarnings);
         const newPrestigeNext = ComputeFunc.calcPrestigeEarnedFromMax(this.state.curMaxMoney).minus(this.state.prestige.num);
         if (newPrestigeNext.gt(0) && !newPrestigeNext.eq(this.state.prestigeNext)) {
-            // console.log("newPrestigeNext:",newPrestigeNext.toFixed(9),"prestigeNext:",this.state.prestigeNext.toFixed(9));
+            // mylog("newPrestigeNext:",newPrestigeNext.toFixed(9),"prestigeNext:",this.state.prestigeNext.toFixed(9));
             this.setState({
                 prestigeNext: newPrestigeNext,
             })
         }
-        // console.log("maxMoney:",this.state.curMaxMoney.toFixed());
-        // console.log("lifetime:",this.state.lifetimeEarnings.toFixed(),"  newprestige:",newPrestigeNext.toFixed());
-        // console.log(Decimal.sqrt(this.state.lifetimeEarnings.div(Math.pow(10, 6))).times(150));
+        // mylog("maxMoney:",this.state.curMaxMoney.toFixed());
+        // mylog("lifetime:",this.state.lifetimeEarnings.toFixed(),"  newprestige:",newPrestigeNext.toFixed());
+        // mylog(Decimal.sqrt(this.state.lifetimeEarnings.div(Math.pow(10, 6))).times(150));
     }
 
     prestige() {
@@ -206,18 +232,18 @@ export default class Neumann extends React.Component {
     }
 
     updatePurchaseAmt(amt) {
-        console.log("received new purchaseAmt:", amt);
+        mylog("received new purchaseAmt:", amt);
         if (HelperConst.purchaseOpts.indexOf(amt) !== -1 && this.purchaseAmt !== amt) {
             this.purchaseAmt = amt;
-            console.log("new purchaseAmt:", amt);
+            mylog("new purchaseAmt:", amt);
         }
-        // console.log(this.state.businesses);
-        // console.log(this.state.businesses[0]);
-        // console.log(ComputeFunc.maxBuy(this.state.businesses[0], this.state.money).max25);
+        // mylog(this.state.businesses);
+        // mylog(this.state.businesses[0]);
+        // mylog(ComputeFunc.maxBuy(this.state.businesses[0], this.state.money).max25);
     }
 
     prestigeCheat() {
-        console.log("CHEAT: adding", this.cheatPrestigeVal, "prestige");
+        mylog("CHEAT: adding", this.cheatPrestigeVal, "prestige");
         this.setState((state) => ({
             prestige: { num: state.prestige.num.plus(this.cheatPrestigeVal), val: state.prestige.val },
         }));
@@ -232,7 +258,7 @@ export default class Neumann extends React.Component {
                 if (item.revealed && item.timeCounter !== 0) {
                     newItem.timeCounter = 0;
                     changed = true;
-                    console.log("resetting ", item.name, " to timeCounter ", newItem.timeCounter);
+                    mylog("resetting ", item.name, " to timeCounter ", newItem.timeCounter);
                 }
             } else {
                 newItem.payout = false;
@@ -242,7 +268,7 @@ export default class Neumann extends React.Component {
                     newItem.timeCounter = 0;
                 }
                 changed = true;
-                // console.log(newItem.name, " timeCounter:", newItem.timeCounter, " payout:",newItem.payout);
+                // mylog(newItem.name, " timeCounter:", newItem.timeCounter, " payout:",newItem.payout);
             }
 
             // overlays
@@ -251,10 +277,10 @@ export default class Neumann extends React.Component {
 
             newItem.overlays = activeOverlays.map((o, i) => {
                 o.counter = o.counter + this.timeMultiplier;
-                // console.log("o.counter: #" + i, o.counter);
+                // mylog("o.counter: #" + i, o.counter);
                 return o;
             })
-            // newItem.overlays.length > 0 && console.log(item.name,"overlays:", newItem.overlays.length);
+            // newItem.overlays.length > 0 && mylog(item.name,"overlays:", newItem.overlays.length);
             return newItem;
         });
         if (changed) {
@@ -264,6 +290,17 @@ export default class Neumann extends React.Component {
         }
     }
 
+    incrementProbeDistance() {
+        this.setState((state, props) => ({
+            probeDistance: state.probeDistance.plus(this.mapDistance.times(.001))
+        }));
+        const conv = ComputeFunc.convertDistanceToSpace(this.state.probeDistance);
+        // mylog("convertDistanceToSpace:",conv.idx,conv.dist.toNumber());
+
+        this.mapDistance = conv.dist;
+        this.zoomLevel = conv.idx;
+    }
+
     incrementAnnouncementCounters() {
         const valid = this.state.announcements.reduce((result, item) => {
             if (!item.ack || (item.ack && item.counter < item.fadeout)) {
@@ -271,7 +308,7 @@ export default class Neumann extends React.Component {
             }
             return result;
         }, []);
-        // console.log("valid:", valid);
+        // mylog("valid:", valid);
         const newAnnouncements = valid.map(item => {
             let newAnn = { ...item };
             newAnn.counter += this.timeMultiplier;
@@ -281,75 +318,15 @@ export default class Neumann extends React.Component {
             }
             return newAnn;
         });
-        // console.log("newAnnouncements:", newAnnouncements);
+        // mylog("newAnnouncements:", newAnnouncements);
         this.setState((state) => ({
             announcements: newAnnouncements,
         }))
     }
 
 
-    updateGame() {
-        this.incrementBusinessCounters();
-        this.incrementAnnouncementCounters();
-
-        const payoutMoneyThisTick = ComputeFunc.totalPayout(this.state.businesses, this.state.prestige);
-        const newLifetimeEarnings = this.state.lifetimeEarnings.plus(payoutMoneyThisTick);
-        // console.log("payoutMoneyThisTick:",payoutMoneyThisTick.toFixed());
-
-        const payoutKnowledgeThisTick = ComputeFunc.totalPayout(this.state.probes, this.state.prestige);
-
-        /* reveal businesses if money reached */
-        const newBusinesses = this.state.businesses.map(item => {
-            let newItem = { ...item };
-            if (!item.revealed) {
-                if (item.costType === "money" && item.initialVisible.lte(this.state.money)) {
-                    newItem.revealed = true;
-                    console.log("revealed business", item.name);
-                };
-                if (item.costType === "knowledge" && item.initialVisible.lte(this.state.knowledge)) {
-                    newItem.revealed = true;
-                    console.log("revealed business", item.name);
-                };
-            }
-            return newItem;
-        })
-        /* reveal upgrades if resource reached */
-        const newUpgrades = this.state.upgrades.map(item => {
-            let newItem = { ...item };
-            if (!item.revealed) {
-                if (item.watchType === "money" && item.watchValue.lte(this.state.money)) {
-                    newItem.revealed = true;
-                    console.log("revealed upgrade", item.name);
-                };
-                if (item.watchType === "knowledge" && item.watchValue.lte(this.state.knowledge)) {
-                    newItem.revealed = true;
-                    console.log("revealed upgrade", item.name);
-                };
-            }
-            return newItem;
-        })
-
-        const newMoney = this.state.money.plus(payoutMoneyThisTick);
-        let newMax = this.state.curMaxMoney;
-        if (newMoney.gt(newMax)) {
-            newMax = newMoney;
-            // console.log("newMax:",newMax.toFixed());
-        }
-
-        this.setState((state) => ({
-            money: newMoney,
-            knowledge: state.knowledge.plus(payoutKnowledgeThisTick),
-            businesses: newBusinesses,
-            upgrades: newUpgrades,
-            lifetimeEarnings: newLifetimeEarnings,
-            curMaxMoney: newMax,
-        }));
-
-        this.setTitle();
-    }
-
     clickBusiness(bus) {
-        console.log("business click ", bus.name);
+        mylog("business click ", bus.name);
         const busCost = ComputeFunc.getCost(bus, this.purchaseAmt, this.state.money);
 
         let newBusinesses = this.state.businesses.map(item => {
@@ -357,17 +334,19 @@ export default class Neumann extends React.Component {
             if (newItem.name === bus.name) {
                 let bonusArr = [];
                 const ownedMilestones = ComputeFunc.getOwnedMilestonesAttained(item.owned, item.owned + busCost.num);
+                let busMult = 1;
                 ownedMilestones.forEach((milestone) => {
-                    bonusArr.push(this.genOverlayObj("X2!", "ownedBonus"));
+                    busMult *=2;
                 })
+                bonusArr.push(this.genOverlayObj("X"+busMult+"!", "ownedBonus"));
                 newItem.owned += busCost.num;
                 newItem.overlays = this.genOverlayArr(item.overlays, "+" + busCost.num).concat(bonusArr);
-                console.log("adding", busCost.num, "to", newItem.name);
+                mylog("adding", busCost.num, "to", newItem.name);
 
             }
             return newItem;
         });
-        console.log(bus.name, "owned set to", bus.owned + busCost.num);
+        mylog(bus.name, "owned set to", bus.owned + busCost.num);
 
         let newMilestone = this.state.timeMilestone;
         const curIdx = ComputeFunc.timeMilestoneIdx(this.state.timeMilestone);
@@ -375,16 +354,16 @@ export default class Neumann extends React.Component {
             bus.owned < min ? bus.owned : min,
             Number.MAX_SAFE_INTEGER);
         const newIdx = ComputeFunc.timeMilestoneIdx(newLowest);
-        // console.log("newIdx:",newIdx," curIdx:",curIdx);
+        // mylog("newIdx:",newIdx," curIdx:",curIdx);
 
         /* apply time modifiers if new time milestone reached */
         if (newIdx > curIdx) {
             newMilestone = ComputeFunc.getTimeMilestone(newIdx);
-            console.log("new owned milestone:", newMilestone);
+            mylog("new owned milestone:", newMilestone);
             newBusinesses = newBusinesses.map(item => {
                 let newItem = { ...item };
                 newItem.timeAdjusted = Business.getAdjustedTimeBase(item, newMilestone);
-                console.log(newItem.name, "timeAdjusted now", newItem.timeAdjusted);
+                mylog(newItem.name, "timeAdjusted now", newItem.timeAdjusted);
                 return newItem;
             });
             ComputeFunc.getTimeMilestonesAttained(curIdx, newIdx).forEach((num) => {
@@ -401,7 +380,7 @@ export default class Neumann extends React.Component {
     }
 
     clickUpgrade(upg) {
-        console.log("upgrade click ", upg.name);
+        mylog("upgrade click ", upg.name);
 
         const idx = this.state.upgrades.findIndex(utest => utest.name === upg.name);
         this.setState({
@@ -439,18 +418,18 @@ export default class Neumann extends React.Component {
                         },
                     }),
                 });
-                this.addOverlay(this.state.businesses[busIdx], "x" + upg.rewardValue)
-                console.log(this.state.businesses[busIdx].name, "received multiplier", upg.rewardValue);
+                this.addOverlay(this.state.businesses[busIdx].name, "x" + upg.rewardValue)
+                mylog(this.state.businesses[busIdx].name, "received multiplier", upg.rewardValue);
                 break;
             default:
-                console.log("unknown rewardType");
+                mylog("unknown rewardType");
                 break;
         }
 
     }
 
     clickAnnouncement(a) {
-        console.log("announcement click ", a.id, a.text);
+        mylog("announcement click ", a.id, a.text);
         const idx = this.state.announcements.findIndex(atest => atest.id === a.id);
         this.setState({
             announcements: update(this.state.announcements, {
@@ -465,7 +444,7 @@ export default class Neumann extends React.Component {
     }
 
     announce(text) {
-        console.log("announce ", text);
+        mylog("announce ", text);
         const today = new Date();
         const time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds() + "." + today.getMilliseconds();
         this.setState((state) => ({
@@ -496,15 +475,15 @@ export default class Neumann extends React.Component {
     }
 
     genOverlayArr(origOverlay, text, ovType = "generic") {
-        console.log("addOverlay called:", text);
+        mylog("addOverlay called:", text);
         return [...origOverlay, this.genOverlayObj(text, ovType)];
     }
 
     addOverlay(busName, text) {
 
-        console.log("addOverlay click ", text, busName);
+        mylog("addOverlay click ", text, busName);
         const idx = this.state.businesses.findIndex(test => test.name === busName);
-        console.log("idx:", idx);
+        mylog("idx:", idx);
         this.setState((state, props) => ({
             businesses: update(state.businesses, {
                 [idx]: {
@@ -521,14 +500,81 @@ export default class Neumann extends React.Component {
     }
 
     probeTestNextZoom() {
+        mylog("clicked probeTestNextZoom:", ComputeFunc.getSpaceZoomLevelIdx(this.state.probeDistance) + 1);
         this.setState((state, props) => ({
-            probeDistance: HelperConst.spaceZoomLevels[HelperConst.getSpaceZoomLevelIdx(this.state.probeDistance)]
+            probeDistance: ComputeFunc.getSpaceZoomLevel(this.zoomLevel)
         }));
     }
 
-    zoomLevelCallback(n) {
-        console.log("n:", n);
-        this.zoomLevel = n;
+    sliderChange(value) {
+        mylog("slider change:", value);
+    }
+    rangeChange(value) {
+        mylog("range change:", value);
+        // mylog("range 0:", this.distribRange[0]);
+        this.distribRange = [0, value[1], value[2], 100];
+        mylog("fixed range:",this.distribRange);
+    }
+
+    updateGame() {
+        this.incrementBusinessCounters();
+        this.incrementProbeDistance();
+        this.incrementAnnouncementCounters();
+
+        const payoutMoneyThisTick = ComputeFunc.totalPayout(this.state.businesses, this.state.prestige);
+        const newLifetimeEarnings = this.state.lifetimeEarnings.plus(payoutMoneyThisTick);
+        // mylog("payoutMoneyThisTick:",payoutMoneyThisTick.toFixed());
+
+        const payoutKnowledgeThisTick = ComputeFunc.totalPayout(this.state.probes, this.state.prestige);
+
+        /* reveal businesses if money reached */
+        const newBusinesses = this.state.businesses.map(item => {
+            let newItem = { ...item };
+            if (!item.revealed) {
+                if (item.costType === "money" && item.initialVisible.lte(this.state.money)) {
+                    newItem.revealed = true;
+                    mylog("revealed business", item.name);
+                };
+                if (item.costType === "knowledge" && item.initialVisible.lte(this.state.knowledge)) {
+                    newItem.revealed = true;
+                    mylog("revealed business", item.name);
+                };
+            }
+            return newItem;
+        })
+        /* reveal upgrades if resource reached */
+        const newUpgrades = this.state.upgrades.map(item => {
+            let newItem = { ...item };
+            if (!item.revealed) {
+                if (item.watchType === "money" && item.watchValue.lte(this.state.money)) {
+                    newItem.revealed = true;
+                    mylog("revealed upgrade", item.name);
+                };
+                if (item.watchType === "knowledge" && item.watchValue.lte(this.state.knowledge)) {
+                    newItem.revealed = true;
+                    mylog("revealed upgrade", item.name);
+                };
+            }
+            return newItem;
+        })
+
+        const newMoney = this.state.money.plus(payoutMoneyThisTick);
+        let newMax = this.state.curMaxMoney;
+        if (newMoney.gt(newMax)) {
+            newMax = newMoney;
+            // mylog("newMax:",newMax.toFixed());
+        }
+
+        this.setState((state) => ({
+            money: newMoney,
+            knowledge: state.knowledge.plus(payoutKnowledgeThisTick),
+            businesses: newBusinesses,
+            upgrades: newUpgrades,
+            lifetimeEarnings: newLifetimeEarnings,
+            curMaxMoney: newMax,
+        }));
+
+        this.setTitle();
     }
 
     render() {
@@ -596,10 +642,10 @@ export default class Neumann extends React.Component {
                             <button className="testbutton announce-button" onClick={() => this.announce("great job winning!  oh boy this is just super.")}>Announce</button>
                             <button className="testbutton overlay-button" onClick={() => this.addOverlay({ name: "Odd Jobs" }, "X2")}>Odd Jobs Overlay</button>
                             <button className="testbutton overlay-button" onClick={() => this.addOverlay({ name: "Newspaper Delivery" }, "X2")}>Newspaper Overlay</button>
-                            <button className="testbutton ref-button" onClick={() => console.log("domRef:", this.state.businesses[0].domRef)}>Odd Job domRef</button>
-                            <button className="testbutton ref-button" onClick={() => console.log("domRef2:", this.state.businesses[1].domRef)}>Newspaper domRef</button>
+                            <button className="testbutton ref-button" onClick={() => mylog("domRef:", this.state.businesses[0].domRef)}>Odd Job domRef</button>
+                            <button className="testbutton ref-button" onClick={() => mylog("domRef2:", this.state.businesses[1].domRef)}>Newspaper domRef</button>
 
-                            <button className="testbutton ref-button" onClick={() => console.log("getRect:", Business.getPosition(this.state.businesses[0].domRef))}>getRect</button>
+                            <button className="testbutton ref-button" onClick={() => mylog("getRect:", Business.getPosition(this.state.businesses[0].domRef))}>getRect</button>
 
                             <button className="testbutton save-button" onClick={this.saveGame}>SAVE</button>
 
@@ -628,23 +674,94 @@ export default class Neumann extends React.Component {
 
                         <div id="right-sidebar">
                             Probe Distance: {HelperConst.showNum(this.state.probeDistance)}<br />
-                            Map Distance: {HelperConst.showNum(HelperConst.spaceZoomLevels[HelperConst.getSpaceZoomLevelIdx(this.state.probeDistance)])}<br />
-                            Zoom Index: {HelperConst.getSpaceZoomLevelIdx(this.state.probeDistance)}<br />
+                            Map Distance: {HelperConst.showNum(this.mapDistance)}<br />
+                            Zoom Index: {this.zoomLevel}<br />
+                            <button className="testbutton pause-button" onClick={this.pause}>Pause</button>
+                            <button className="testbutton pause-button" onClick={this.resume}>Resume</button>
+                            <button className="testbutton reset-button" onClick={this.resetAll}>RESET</button>
                             <button
                                 className="testbutton space-button"
                                 onClick={this.probeTestNextZoom}>
                                 Space Zoom
                             </button>
                             <button className="testbutton announce-button" onClick={() => this.announce("great job winning!  oh boy this is just super.")}>Announce</button>
-
-
+                            <p>Percentage to Spend</p>
+                            <div className="sliderContainer">
+                                <MySlider 
+                                    // count={1}
+                                    min={5}
+                                    max={100}
+                                    marks={this.sliderMarks}
+                                    step={5}
+                                    onChange={this.sliderChange}
+                                    defaultValue={5}
+                                    trackStyle={[
+                                        { backgroundColor: '#1A8A09' },
+                                        { backgroundColor: '#555' },
+                                    ]}
+                                    handleStyle={[
+                                        // { backgroundColor: '#1A8A09', border: '0', },
+                                        { backgroundColor: '#1A8A09', border: '0', },
+                                        { backgroundColor: '#555', border: '0', },
+                                    ]}
+                                    dotStyle={{
+                                        backgroundColor: '#bbb',
+                                        border: '0',
+                                        width: '4px',
+                                    }}
+                                    activeDotStyle={{
+                                        backgroundColor: '#1A8A09',
+                                        border: '0',
+                                        width: '4px',
+                                    }}
+                                    allowCross={false}
+                                    // pushable={true}
+                                    tipFormatter={value => value+"%"}
+                                    tipProps={{ placement: 'bottom' }}
+                                />
+                            </div>
+                            <p>Distribute Funds</p>
+                            <div className="sliderContainer">
+                                <MyRange 
+                                    count={3}
+                                    min={0}
+                                    max={100}
+                                    // marks={this.sliderMarks}
+                                    step={2}
+                                    onChange={this.rangeChange}
+                                    defaultValue={[0, 33, 66, 100]}
+                                    value={this.distribRange}
+                                    trackStyle={[
+                                        { backgroundColor: 'gold' },
+                                        { backgroundColor: 'blue' },
+                                        { backgroundColor: 'red' },
+                                    ]}
+                                    handleStyle={[
+                                        { backgroundColor: 'gold', border: '0', },
+                                        { backgroundColor: 'black', border: '1px solid #ddd', },
+                                        { backgroundColor: 'black', border: '1px solid #ddd', },
+                                        { backgroundColor: 'red', border: '0', },
+                                    ]}
+                                    railStyle={{ backgroundColor: 'red' }}
+                                    dotStyle={{
+                                        backgroundColor: '#bbb',
+                                        border: '0',
+                                        width: '4px',
+                                    }}
+                                    allowCross={false}
+                                    // pushable={true}
+                                    tipFormatter={value => value+"%"}
+                                    tipProps={{ placement: 'bottom' }}
+                                />
+                            </div>
+                            <button className="testbutton purchase-button" >Purchase Probe</button>
                         </div>
 
                         <Space
                             probeDistance={this.state.probeDistance}
+                            mapDistance={this.mapDistance}
                             timeMultiplier={this.timeMultiplier}
                             zoomLevel={this.zoomLevel}
-                            zoomLevelCallback={this.zoomLevelCallback}
                         />
 
                     </TabPanel>

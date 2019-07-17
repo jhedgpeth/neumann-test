@@ -6,6 +6,7 @@ import { Motion, spring } from 'react-motion';
 import ComputeFunc from './ComputeFunc';
 import HelperConst from './HelperConst';
 import './styles/fonts.css';
+// const mylog = HelperConst.DebugLog;
 
 
 export default class Business extends React.Component {
@@ -20,7 +21,7 @@ export default class Business extends React.Component {
 
     static getAdjustedTimeBase(bus, milestone) {
         const mults = ComputeFunc.timeMilestoneIdx(milestone);
-        // console.log("mults:",mults);
+        // mylog("mults:",mults);
         if (mults >= 0) {
             return bus.timeBase / Math.pow(2, mults);
         }
@@ -44,11 +45,11 @@ export default class Business extends React.Component {
         let textClass = "overlay-text ";
         return (
             bus.overlays.map((o, idx) => {
-                // console.log("showing overlay for:", bus.name);
+                // mylog("showing overlay for:", bus.name);
                 let ovClass = textClass;
                 const domLeft = parseInt(this.getDomRef(bus.name).current.offsetLeft, 10);
                 const domTop = parseInt(this.getDomRef(bus.name).current.offsetTop, 10);
-                // console.log("domLeft:", domLeft, " domTop:", domTop);
+                // mylog("domLeft:", domLeft, " domTop:", domTop);
                 let curLeft = domLeft + 80;
                 let curTop = domTop - 15;
                 if (o.counter > o.expire) {
@@ -113,7 +114,7 @@ export default class Business extends React.Component {
         const rows = sources.map((item) => {
             const n = item.name;
             const myCost = ComputeFunc.getCost(item, this.props.purchaseAmt, this.props.money);
-            // console.log(myCost);
+            // mylog(myCost);
             const nextPayout = ComputeFunc.computeNextPayoutValueMoney(item, this.props.prestige, myCost.num);
 
             const buyPct = ComputeFunc.buyPct(myCost.cost, this.props.money);
@@ -142,7 +143,7 @@ export default class Business extends React.Component {
 
 
             const overlayItems = this.genOverlays(item);
-            // console.log("overlayItems:",overlayItems);
+            // mylog("overlayItems:",overlayItems);
 
             return (
                 <div key={n + "business"} className={"business " + bgClass} ref={this.getDomRef(n)} >

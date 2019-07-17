@@ -2,6 +2,7 @@
 import './styles/fonts.css';
 import HelperConst from './HelperConst';
 const Decimal = require('decimal.js');
+const mylog = HelperConst.DebugLog;
 
 export default class ComputeFunc {
 
@@ -18,10 +19,10 @@ export default class ComputeFunc {
     }
 
     static timeMilestoneIdx(num) {
-        // console.log("testing new milestone:", num);
+        // mylog("testing new milestone:", num);
         let retIdx = -1;
         HelperConst.timeMilestones.forEach((milestone, idx) => {
-            // console.log("num:",num," milestone:",milestone);
+            // mylog("num:",num," milestone:",milestone);
             if (num >= milestone) { retIdx = idx; }
         });
         // const milestoneMax = HelperConst.timeMilestones.length();
@@ -163,7 +164,7 @@ export default class ComputeFunc {
     static getCost(item, purchaseAmt, resource) {
 
         const maxbuys = this.maxBuy(item, resource);
-        // console.log(maxbuys);
+        // mylog(maxbuys);
         let numBuy = 0;
 
         switch (purchaseAmt) {
@@ -187,7 +188,7 @@ export default class ComputeFunc {
     }
 
     static maxBuy(item, resource) {
-        // console.log("resource is ", typeof (resource), ", ", resource.times(1).toFixed());
+        // mylog("resource is ", typeof (resource), ", ", resource.times(1).toFixed());
         const max = parseInt(new Decimal(
             resource
                 .times(item.costCoef - 1)
@@ -197,13 +198,13 @@ export default class ComputeFunc {
                 )
         ).plus(1).log(item.costCoef).floor(), 10);
 
-        // item.name === "Odd Jobs" && console.log("max:", max, "item.owned:", item.owned, " availmaxupg:", this.availMaxUpgrade(item.owned, max));
+        // item.name === "Odd Jobs" && mylog("max:", max, "item.owned:", item.owned, " availmaxupg:", this.availMaxUpgrade(item.owned, max));
         const maxUpg = this.availMaxUpgrade(item.owned, max) - item.owned;
 
         let maxOcd = (Math.floor((max + item.owned) / 25) * 25)
             - item.owned;
         maxOcd = maxOcd > 0 ? maxOcd : 25 - (item.owned % 25);
-        // console.log("maxOcd:", maxOcd, " owned remainder:", (item.owned % 25));
+        // mylog("maxOcd:", maxOcd, " owned remainder:", (item.owned % 25));
 
         const primes = this.primeFactors();
         let primeTime = 0;
@@ -244,7 +245,7 @@ export default class ComputeFunc {
         }
         var max = 25000;
         var primesFwd = [];
-        console.log("creating primes");
+        mylog("creating primes");
         console.time('prime creation');
         var store = [], i, j;
         for (i = 2; i <= max; ++i) {
@@ -258,8 +259,25 @@ export default class ComputeFunc {
         // this.primes = primesFwd.reverse();
         this.primes = primesFwd;
         console.timeEnd('prime creation');
-        console.log("primes length: " + this.primes.length);
+        mylog("primes length: " + this.primes.length);
         return this.primes;
     }
+
+    static convertDistanceToSpace(d) {
+        const numLevels = HelperConst.spaceZoomLevels.length;
+        for (let n = 0; n < numLevels; n++) {
+            const dist = HelperConst.spaceZoomLevels[n];
+            if (dist.gt(d)) return { idx: n, dist: dist };
+        }
+        const baseE9 = HelperConst.spaceZoomLevels[numLevels - 1].log("1e9").floor().toNumber();
+        const dFloor = d.log("1e9").floor().toNumber();
+        const diff = dFloor-baseE9;
+        // const numE10 = numLevels + dFloor.toNumber() - lvlE10;
+
+        // mylog("dFloor:",dFloor,"baseE9:",baseE9);
+        return { idx: numLevels + diff, dist: new Decimal("1e9").pow(dFloor+1)};
+    }
+
+
 
 }

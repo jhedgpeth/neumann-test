@@ -3,15 +3,16 @@ import HelperConst from './HelperConst';
 import ComputeFunc from './ComputeFunc';
 import './styles/fonts.css';
 import ScrollBar  from 'react-scrollbars-custom';
+const mylog = HelperConst.DebugLog;
 
 export default class Upgrades extends React.Component {
 
     componentDidMount() {
-        console.log("upgrades didmount");
+        mylog("upgrades didmount");
     }
 
     componentWillUnmount() {
-        console.log("upgrades willunmount");
+        mylog("upgrades willunmount");
     }
 
     render() {

@@ -3,6 +3,7 @@ import ComputeFunc from './ComputeFunc';
 import HelperConst from './HelperConst';
 import './styles/fonts.css';
 import './styles/neon.scss';
+// const mylog = HelperConst.DebugLog;
 
 export default class Income extends React.Component {
 
