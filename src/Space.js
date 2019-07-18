@@ -40,6 +40,7 @@ export default class Space extends React.Component {
             this.planetRadius = 0;
         }
 
+        this.zoomDuration = 0.25;
         this.zoomShown = this.props.zoomLevel;
 
         this.pulseColor = "#222";
@@ -60,11 +61,11 @@ export default class Space extends React.Component {
                 handleStyle: [
                     { backgroundColor: 'gold', border: '0', },
                     { backgroundColor: 'black', border: '1px solid #ddd', },
-                    { backgroundColor: 'blue', border: '0', },
+                    { backgroundColor: 'cyan', border: '0', },
                 ],
                 trackStyle: [
                     { backgroundColor: 'gold' },
-                    { backgroundColor: 'blue' },
+                    { backgroundColor: 'cyan' },
                 ],
                 railStyle: { backgroundColor: 'blue' },
 
@@ -82,7 +83,7 @@ export default class Space extends React.Component {
                 ],
                 trackStyle: [
                     { backgroundColor: 'gold' },
-                    { backgroundColor: 'blue' },
+                    { backgroundColor: 'cyan' },
                     { backgroundColor: 'red' },
                 ],
                 railStyle: { backgroundColor: 'red' },
@@ -134,21 +135,6 @@ export default class Space extends React.Component {
         return { x: xRadius, y: yRadius };
     }
 
-    // buildNewZoomText() {
-    //     return (
-    //         <Text
-    //             x={this.centerCanvas.x - 80}
-    //             y={this.centerCanvas.y + this.innerRadius.y + 24}
-    //             text={"Zoom lvl: " + this.props.zoomLevel + "km"}
-    //             fontSize={16}
-    //             fill="green"
-    //         />
-    //     );
-    //     // const textWidth = this.zoomText.width();
-    //     // const textHeight = this.zoomText.height();
-    //     // this.zoomText.x(this.centerCanvas.x - (textWidth / 2));
-    //     // this.zoomText.y(this.centerCanvas.y + this.innerRadius.y + 24 - (textHeight / 2));
-    // }
 
     processSpaceMap() {
 
@@ -169,7 +155,7 @@ export default class Space extends React.Component {
         /* set pulse color */
         this.pulseColorCt = (this.pulseColorCt + this.props.timeMultiplier);
         // this.pulseColor = this.pulseColors[Math.floor(this.pulseColorCt % this.pulseColors.length)];
-        this.pulseColor = "rgba(85,85,85," + (((Math.sin(this.pulseColorCt) + 1) / 4) + 0.5).toFixed(1) + ")"
+        this.pulseColor = "rgba(85,85,0," + (((Math.sin(this.pulseColorCt) + 1) / 4) + 0.5).toFixed(1) + ")"
         // mylog("pulseColor:",this.pulseColor);
 
         if ((this.props.zoomLevel < this.zoomShown)) {
@@ -188,7 +174,7 @@ export default class Space extends React.Component {
             if (this.props.zoomLevel < 2) {
                 mylog("shrinking planet");
                 this.centerPlanetRef.to({
-                    duration: 1,
+                    duration: this.zoomDuration,
                     radius: 3
                 })
             }
@@ -196,7 +182,7 @@ export default class Space extends React.Component {
                 mylog("ring anim starting");
                 this.outerEllipseMoving = true;
                 this.outerEllipseRef.to({
-                    duration: 1,
+                    duration: this.zoomDuration,
                     radiusX: this.innerRadius.x,
                     radiusY: this.innerRadius.y,
                     onFinish: () => {
@@ -205,7 +191,7 @@ export default class Space extends React.Component {
                 });
                 this.innerEllipseMoving = true;
                 this.innerEllipseRef.to({
-                    duration: 1,
+                    duration: this.zoomDuration,
                     radiusX: 0,
                     radiusY: 0,
                     onFinish: () => {

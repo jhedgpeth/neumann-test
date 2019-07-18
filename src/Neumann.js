@@ -53,14 +53,16 @@ export default class Neumann extends React.Component {
         this.purchaseAmt = "1";
         this.tabIndex = 0;
 
-        this.probe = new Probe(new Decimal(0), 0,0,0);
+        this.probe = new Probe(new Decimal(0), 0, 0, 0);
         this.zoomLevel = 0;
         this.zoomName = HelperConst.spaceZoomLevelNames[0];
         this.mapDistance = HelperConst.spaceZoomLevels[0];
 
-        this.rangeSettings = Space.getRangeValues(2);
+        this.rangeCt = 2;
+        this.rangeSettings = Space.getRangeValues(this.rangeCt);
         this.distribRange = this.rangeSettings.distribRange;
-        this.probeSpendPct = 1;
+        this.probePcts = this.reportRangePcts();
+        this.probeSpendPct = 100;
         this.sliderMarks = {
             0: '0',
             25: '25%',
@@ -145,10 +147,10 @@ export default class Neumann extends React.Component {
         this.populateDomRefs();
         this.outerEllipseMoving = false;
         this.pulseMoving = false;
-        const conv = ComputeFunc.convertDistanceToSpace(0);
-        this.mapDistance = conv.dist;
-        this.zoomLevel = conv.idx;
-        this.zoomName = conv.name;
+        this.probe = new Probe(new Decimal(0), 0, 0, 0);
+        this.zoomLevel = 0;
+        this.zoomName = HelperConst.spaceZoomLevelNames[0];
+        this.mapDistance = HelperConst.spaceZoomLevels[0];
         this.resume();
     }
 
@@ -158,10 +160,10 @@ export default class Neumann extends React.Component {
             ...NeumannInit.coreObjOnly()
         }));
         this.populateDomRefs();
-        const conv = ComputeFunc.convertDistanceToSpace(0);
-        this.mapDistance = conv.dist;
-        this.zoomLevel = conv.idx;
-        this.zoomName = conv.name;
+        this.probe = new Probe(new Decimal(0), 0, 0, 0);
+        this.zoomLevel = 0;
+        this.zoomName = HelperConst.spaceZoomLevelNames[0];
+        this.mapDistance = HelperConst.spaceZoomLevels[0];
         this.resume();
     }
 
@@ -522,13 +524,14 @@ export default class Neumann extends React.Component {
         this.probeSpendPct = value;
     }
     rangeChange(value) {
-        mylog("range change:", value);
+        // mylog("range change:", value);
         if (this.rangeSettings.rangeCt === 2) {
             this.distribRange = [0, value[1], 100];
         } else if (this.rangeSettings.rangeCt === 3) {
             this.distribRange = [0, value[1], value[2], 100];
         }
-        mylog("fixed range:", this.distribRange);
+        this.probePcts = this.reportRangePcts();
+        // mylog("fixed range:", this.distribRange);
     }
     reportRangePcts() {
         let pSpeedPct, pQualityPct, pCombatPct = 0;
@@ -548,8 +551,8 @@ export default class Neumann extends React.Component {
         const pCost = ComputeFunc.getPct(this.state.money, this.probeSpendPct);
         const pcts = this.reportRangePcts();
         mylog("probe cost:", pCost.toNumber());
-        mylog("probe attrs - pSpeed:", pcts[0], "pQuality:", pcts[1], "pDefense:",pcts[2]);
-        this.probe = new Probe(pCost, pcts[0],pcts[1],pcts[2])
+        mylog("probe attrs - pSpeed:", pcts[0], "pQuality:", pcts[1], "pCombat:", pcts[2]);
+        this.probe = new Probe(pCost, pcts[0], pcts[1], pcts[2])
 
         // test change to 3 settings
         this.rangeSettings = Space.getRangeValues(3);
@@ -619,6 +622,30 @@ export default class Neumann extends React.Component {
     }
 
     render() {
+        let probeattribs;
+        if (this.rangeCt === 2) {
+            probeattribs =
+            <div className="probe-attribs">
+                <div className="probe-attrib speed-header">Speed</div>
+                <div className="probe-attrib quality-header">Quality</div>
+                <div></div>
+                <div className="probe-attrib probe-speed">{this.probePcts[0]}%</div>
+                <div className="probe-attrib probe-quality">{this.probePcts[1]}%</div>
+                <div></div>
+            </div>
+        } else {
+            probeattribs =
+            <div className="probe-attribs">
+                <div className="probe-attrib speed-header">Speed</div>
+                <div className="probe-attrib quality-header">Quality</div>
+                <div className="probe-attrib combat-header">Combat</div>
+                <div className="probe-attrib probe-speed">{this.probePcts[0]}%</div>
+                <div className="probe-attrib probe-quality">{this.probePcts[1]}%</div>
+                <div className="probe-attrib probe-combat">{this.probePcts[2]}%</div>
+            </div>
+        }
+
+
         return (
             <div id="wrapper">
                 <div id="header">
@@ -726,7 +753,7 @@ export default class Neumann extends React.Component {
                                 Space Zoom
                             </button>
                             <button className="testbutton announce-button" onClick={() => this.announce("great job winning!  oh boy this is just super.")}>Announce</button>
-                            <p>Cost: ${HelperConst.showNum(ComputeFunc.getPct(this.state.money, this.probeSpendPct))}</p>
+                            <div className="sliderHeader">Fund: ${HelperConst.showNum(ComputeFunc.getPct(this.state.money, this.probeSpendPct))}</div>
                             <div className="sliderContainer">
                                 <MySlider
                                     // count={1}
@@ -762,13 +789,14 @@ export default class Neumann extends React.Component {
                                     tipProps={{ placement: 'bottom' }}
                                 />
                             </div>
-                            <p>Distribute Funds</p>
+                            <div className="sliderHeader">Distribute Funds</div>
                             <div className="sliderContainer">
                                 <MyRange
                                     count={this.rangeSettings.rangeCt}
                                     min={0}
                                     max={100}
                                     step={2}
+                                    marks={this.sliderMarks}
                                     onChange={this.rangeChange}
                                     defaultValue={this.rangeSettings.distribRange}
                                     value={this.distribRange}
@@ -780,12 +808,21 @@ export default class Neumann extends React.Component {
                                         border: '0',
                                         width: '4px',
                                     }}
-                                    allowCross={false}
-                                    // pushable={true}
+                                    allowCross={1}
+                                    pushable={true}
                                     tipFormatter={value => value + "%"}
                                     tipProps={{ placement: 'bottom' }}
                                 />
                             </div>
+                            {probeattribs}
+                            {/* <div className="probe-attribs">
+                                <div className="probe-attrib speed-header">Speed</div>
+                                <div className="probe-attrib quality-header">Quality</div>
+                                <div className="probe-attrib combat-header">Combat</div>
+                                <div className="probe-attrib probe-speed">{this.probePcts[0]}%</div>
+                                <div className="probe-attrib probe-quality">{this.probePcts[1]}%</div>
+                                <div className="probe-attrib probe-combat">{this.probePcts[2]}%</div>
+                            </div> */}
                             <button className="testbutton purchase-button" onClick={this.purchaseProbe}>Purchase Probe</button>
                         </div>
 

@@ -165,6 +165,25 @@ body {
   padding: 0 10px;
   margin: auto 0 auto auto;
 }
+.probe-header {
+  grid-column: 1;
+  padding: 0 10px;
+  margin: auto 0 auto auto;
+}
+.probe-distance {
+  grid-column: 2;
+  grid-row: 2;
+  display: flex;
+  align-items: center;
+  justify-content: left;
+}
+.probe-rate {
+  grid-column: 3;
+  grid-row: 2;
+  display: flex;
+  align-items: center;
+  justify-content: left;
+}
 .prestige-units {
   grid-column: 2;
   grid-row: 1;
@@ -766,10 +785,42 @@ body {
   left: 300px;
 }
 
+.sliderHeader {
+  margin: 5px;
+  font-size: 14px;
+}
 .sliderContainer {
   height: 40px;
   width: 180px;
-  margin: 10px;
+  margin: 5px 10px;
+}
+
+.probe-attribs {
+  width: 100%;
+  // background: $c_maindimfg;
+  display: grid;
+  grid-template-columns: 33% 33% 33%;
+  grid-template-rows: auto;
+  justify-items: center;
+  align-items: end;
+  margin-bottom: 10px;
+  font-size: 14px;
+  // text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff,
+  //   1px 1px 0 #fff;
+}
+.probe-attrib {
+  // color: #000;
+  font-weight: bold;
+  margin: auto;
+}
+.probe-speed {
+  color: yellow;
+}
+.probe-quality {
+  color: cyan;
+}
+.probe-combat {
+  color: red;
 }
 
 /* bonuses 

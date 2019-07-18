@@ -58,11 +58,12 @@ export default class HelperConst {
     }
 
     static showNum(num) {
-        return HelperConst.myFormatterNum().format(num);
+        // this.DebugLog("num:",num);
+        return HelperConst.myFormatterNum().format(num).toLowerCase();
     }
 
     static showInt(num) {
-        return HelperConst.myFormatterInt().format(num);
+        return HelperConst.myFormatterInt().format(num).toLowerCase();
     }
 
     static myNumCfg() {

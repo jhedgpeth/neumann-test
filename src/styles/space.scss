@@ -24,7 +24,7 @@
     radial-gradient(2px 2px at 160px 120px, #ddd, rgba(0,0,0,0));
   background-repeat: repeat;
   background-size: 200px 200px;
-  animation: starzoom 500ms infinite reverse;
+  animation: starzoom 250ms infinite reverse;
   opacity: 0;
 }
 .starpause {
@@ -36,11 +36,11 @@
 
 .stars:nth-child(1) {
   background-position: 50% 50%;
-  animation-delay: -400ms;
+  animation-delay: -125ms;
 }
 .stars:nth-child(2) {
   background-position: 20% 60%;
-  animation-delay: -200ms;
+  animation-delay: -62ms;
 }
 .stars:nth-child(3) {
   background-position: -20% -30%;
@@ -48,11 +48,11 @@
 }
 .stars:nth-child(4) {
   background-position: 40% -80%;
-  animation-delay: 2200ms;
+  animation-delay: 62ms;
 }
 .stars:nth-child(5) {
   background-position: -20% 30%;
-  animation-delay: 400ms;
+  animation-delay: 125ms;
 }
 
 @keyframes starzoom {

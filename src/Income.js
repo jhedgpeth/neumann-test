@@ -13,7 +13,6 @@ export default class Income extends React.Component {
         const revenue = ComputeFunc.computeTotalEarningPerSec(this.props.businesses, this.props.prestige);
         // const learning = ComputeFunc.computeTotalEarningPerSec(this.props.probes, this.props.prestige);
         const learning=new Decimal(0);
-        const prestigeMultiplier = this.props.prestige.num.times(this.props.prestige.val);
 
         return (
             <div className="header-wrapper">
@@ -60,11 +59,14 @@ export default class Income extends React.Component {
                         (+ {HelperConst.prestigeSymbolSpan()}{HelperConst.showInt(this.props.prestigeNext)})
                     </div>
 
-                    <div className="prestige-header">
-                        {HelperConst.moneySymbolSpan()}Boost:
+                    <div className="probe-header">
+                        Distance:
                     </div>
-                    <div className="prestige-boost">
-                        {HelperConst.showInt(prestigeMultiplier)}%
+                    <div className="probe-distance">
+                        {HelperConst.showNum(this.props.probe.distance)} km
+                    </div>
+                    <div className="probe-rate">
+                    {HelperConst.showNum(this.props.probe.getDistPerSec())} km/s
                     </div>
 
                 </div>
