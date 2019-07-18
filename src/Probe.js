@@ -25,8 +25,12 @@ export default class Probe  {
         this.distance= this.distance.plus(dist);
     }
 
+    getDistPerTick(timeMultiplier) {
+        return this.value.times(this.speed).times(timeMultiplier);
+    }
+
     update(timeMultiplier) {
-        this.goFarther(this.value.times(this.speed));
+        this.goFarther(this.getDistPerTick(timeMultiplier));
     }
     
 }

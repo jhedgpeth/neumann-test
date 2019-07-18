@@ -51,9 +51,11 @@ export default class Neumann extends React.Component {
 
         this.domRefs = [];
         this.purchaseAmt = "1";
-        this.tabIndex = 1;
+        this.tabIndex = 0;
 
+        this.probe = new Probe(new Decimal(0), 0,0,0);
         this.zoomLevel = 0;
+        this.zoomName = HelperConst.spaceZoomLevelNames[0];
         this.mapDistance = HelperConst.spaceZoomLevels[0];
 
         this.rangeSettings = Space.getRangeValues(2);
@@ -146,6 +148,7 @@ export default class Neumann extends React.Component {
         const conv = ComputeFunc.convertDistanceToSpace(0);
         this.mapDistance = conv.dist;
         this.zoomLevel = conv.idx;
+        this.zoomName = conv.name;
         this.resume();
     }
 
@@ -158,6 +161,7 @@ export default class Neumann extends React.Component {
         const conv = ComputeFunc.convertDistanceToSpace(0);
         this.mapDistance = conv.dist;
         this.zoomLevel = conv.idx;
+        this.zoomName = conv.name;
         this.resume();
     }
 
@@ -295,14 +299,17 @@ export default class Neumann extends React.Component {
     }
 
     incrementProbeDistance() {
-        this.setState((state, props) => ({
-            probeDistance: state.probeDistance.plus(this.mapDistance.times(.001))
-        }));
-        const conv = ComputeFunc.convertDistanceToSpace(this.state.probeDistance);
+        this.probe.update(this.timeMultiplier);
+        // this.setState((state, props) => ({
+        //     probeDistance: state.probeDistance.plus(this.mapDistance.times(.001))
+        // }));
+        // const conv = ComputeFunc.convertDistanceToSpace(this.state.probeDistance);
         // mylog("convertDistanceToSpace:",conv.idx,conv.dist.toNumber());
 
+        const conv = ComputeFunc.convertDistanceToSpace(this.probe.distance);
         this.mapDistance = conv.dist;
         this.zoomLevel = conv.idx;
+        this.zoomName = conv.name;
     }
 
     incrementAnnouncementCounters() {
@@ -480,7 +487,7 @@ export default class Neumann extends React.Component {
 
     genOverlayArr(origOverlay, text, ovType = "generic") {
         mylog("addOverlay called:", text);
-        return [...origOverlay, this.genOverlayObj(text, ovType)];
+        return [...origOverlay, this.genOverlayObj(text, ovType)].slice(-4);
     }
 
     addOverlay(busName, text) {
@@ -504,10 +511,10 @@ export default class Neumann extends React.Component {
     }
 
     probeTestNextZoom() {
-        mylog("clicked probeTestNextZoom:", ComputeFunc.getSpaceZoomLevelIdx(this.state.probeDistance) + 1);
-        this.setState((state, props) => ({
-            probeDistance: ComputeFunc.getSpaceZoomLevel(this.zoomLevel)
-        }));
+        mylog("clicked probeTestNextZoom:", ComputeFunc.getSpaceZoomLevelIdx(this.probe.distance) + 1);
+        // this.setState((state, props) => ({
+        //     probeDistance: ComputeFunc.getSpaceZoomLevel(this.zoomLevel)
+        // }));
     }
 
     sliderChange(value) {
@@ -620,7 +627,7 @@ export default class Neumann extends React.Component {
                         money={this.state.money}
                         knowledge={this.state.knowledge}
                         businesses={this.state.businesses}
-                        probes={this.state.probes}
+                        probe={this.probe}
                         prestige={this.state.prestige}
                         prestigeNext={this.state.prestigeNext}
                     />
@@ -707,7 +714,7 @@ export default class Neumann extends React.Component {
                     <TabPanel className="react-tabs__tab-panel probe-tab-panel">
 
                         <div id="right-sidebar">
-                            Probe Distance: {HelperConst.showNum(this.state.probeDistance)}<br />
+                            Probe Distance: {HelperConst.showNum(this.probe.distance)}<br />
                             Map Distance: {HelperConst.showNum(this.mapDistance)}<br />
                             Zoom Index: {this.zoomLevel}<br />
                             <button className="testbutton pause-button" onClick={this.pause}>Pause</button>
@@ -725,6 +732,7 @@ export default class Neumann extends React.Component {
                                     // count={1}
                                     min={5}
                                     max={100}
+                                    value={this.probeSpendPct}
                                     marks={this.sliderMarks}
                                     step={5}
                                     onChange={this.sliderChange}
@@ -782,10 +790,11 @@ export default class Neumann extends React.Component {
                         </div>
 
                         <Space
-                            probeDistance={this.state.probeDistance}
+                            probe={this.probe}
                             mapDistance={this.mapDistance}
                             timeMultiplier={this.timeMultiplier}
                             zoomLevel={this.zoomLevel}
+                            zoomName={this.zoomName}
                         />
 
                     </TabPanel>

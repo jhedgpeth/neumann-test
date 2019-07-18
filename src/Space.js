@@ -114,7 +114,7 @@ export default class Space extends React.Component {
     }
 
     calcProbePulseRadius() {
-        const pulseFactor = this.props.probeDistance
+        const pulseFactor = this.props.probe.distance
             .div(this.props.mapDistance);
 
         let xRadius = pulseFactor
@@ -152,21 +152,10 @@ export default class Space extends React.Component {
 
     processSpaceMap() {
 
-        // if (!this.zoomText) {
-        //     this.buildNewZoomText();
-        // }
-        // /* at what zoom do we need to be? */
-        // if (this.props.zoomLevel > this.zoomShown) {
-        //     // this.props.zoomLevelCallback(newZoomLevel);
-        //     // this.buildNewZoomText();
-
-        // }
-
-
         /* set probe distance pulse */
         if (this.pulseRef) {
             const probeRadius = (
-                this.props.probeDistance.eq(0)
+                this.props.probe.distance.eq(0)
                 || (this.props.zoomLevel !== this.zoomShown)
                 || this.outerEllipseMoving
                 || this.innerEllipseMoving)
@@ -182,6 +171,10 @@ export default class Space extends React.Component {
         // this.pulseColor = this.pulseColors[Math.floor(this.pulseColorCt % this.pulseColors.length)];
         this.pulseColor = "rgba(85,85,85," + (((Math.sin(this.pulseColorCt) + 1) / 4) + 0.5).toFixed(1) + ")"
         // mylog("pulseColor:",this.pulseColor);
+
+        if ((this.props.zoomLevel < this.zoomShown)) {
+            this.resetProbeZoom();
+        }
 
         /* "zoom" space map if zoom level changes */
         if ((this.props.zoomLevel > this.zoomShown)
@@ -411,6 +404,15 @@ export default class Space extends React.Component {
                             y={this.centerCanvas.y + this.innerRadius.y + 24}
                             width={160}
                             text={"#" + this.props.zoomLevel + ": " + HelperConst.showInt(this.props.mapDistance) + " km"}
+                            fontSize={16}
+                            align="center"
+                            fill="#1A8A09"
+                        />
+                        <Text
+                            x={this.centerCanvas.x - 80}
+                            y={this.centerCanvas.y + this.innerRadius.y + 45}
+                            width={160}
+                            text={this.props.zoomName}
                             fontSize={16}
                             align="center"
                             fill="#1A8A09"

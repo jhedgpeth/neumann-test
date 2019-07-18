@@ -2,7 +2,7 @@ import React from 'react';
 import BusinessInit from './BusinessInit';
 // import ProbeInit from './ProbeInit';
 import UpgradeInit from './UpgradeInit';
-import Probe from '../Probe';
+// import Probe from '../Probe';
 const Decimal = require('decimal.js');
 
 export default class NeumannInit extends React.Component {
@@ -21,10 +21,10 @@ export default class NeumannInit extends React.Component {
         money: new Decimal(0),
         knowledge: new Decimal(0),
         businesses: BusinessInit(),
-        probes: new Probe(new Decimal(0), 0,0,0),
+        // probes: new Probe(new Decimal(0), 0,0,0),
         upgrades: UpgradeInit(),
         timeMilestone: 0,
-        probeDistance: new Decimal(0),
+        // probeDistance: new Decimal(0),
         announcements: [],
         version: "0.0.1",
     })

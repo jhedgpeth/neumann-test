@@ -37,11 +37,18 @@ export default class HelperConst {
     // in kilometers
     static spaceZoomLevels = [
         new Decimal("384400"),  // moon
-        // new Decimal("2.8746e11"), // solar system
-        // new Decimal("9.5e17"),  //  milky way (diameter)
-        // new Decimal("1.11e20"),  // NGC 4945
+        new Decimal("2.8746e11"), // solar system
+        new Decimal("9.5e17"),  //  milky way (diameter)
+        new Decimal("1.11e20"),  // NGC 4945
         new Decimal("440e24"),  // observable universe
         // new Decimal("Infinity"),
+    ];
+    static spaceZoomLevelNames = [
+        "Edge of Observable Universe",
+        "Solar System",
+        "Milky Way",
+        "Galaxy NGC 4945",
+        "Edge of Observable Universe",
     ];
 
     static DebugLog() {

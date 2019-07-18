@@ -278,15 +278,15 @@ export default class ComputeFunc {
         const numLevels = HelperConst.spaceZoomLevels.length;
         for (let n = 0; n < numLevels; n++) {
             const dist = HelperConst.spaceZoomLevels[n];
-            if (dist.gt(d)) return { idx: n, dist: dist };
+            if (dist.gt(d)) return { idx: n, dist: dist, name: HelperConst.spaceZoomLevelNames[n] };
         }
         const baseE9 = HelperConst.spaceZoomLevels[numLevels - 1].log("1e9").floor().toNumber();
         const dFloor = d.log("1e9").floor().toNumber();
         const diff = dFloor-baseE9;
         // const numE10 = numLevels + dFloor.toNumber() - lvlE10;
-
         // mylog("dFloor:",dFloor,"baseE9:",baseE9);
-        return { idx: numLevels + diff, dist: new Decimal("1e9").pow(dFloor+1)};
+
+        return { idx: numLevels + diff, dist: new Decimal("1e9").pow(dFloor+1), name: "Dark Unknown"};
     }
 
 
