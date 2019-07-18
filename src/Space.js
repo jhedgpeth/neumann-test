@@ -51,6 +51,45 @@ export default class Space extends React.Component {
 
     }
 
+    static getRangeValues(n) {
+        if (n === 2) {
+            return ({
+                probeSpendPct: 1,
+                rangeCt: 2,
+                distribRange: [0, 50, 100],
+                handleStyle: [
+                    { backgroundColor: 'gold', border: '0', },
+                    { backgroundColor: 'black', border: '1px solid #ddd', },
+                    { backgroundColor: 'blue', border: '0', },
+                ],
+                trackStyle: [
+                    { backgroundColor: 'gold' },
+                    { backgroundColor: 'blue' },
+                ],
+                railStyle: { backgroundColor: 'blue' },
+
+            })
+        } else if (n === 3) {
+            return ({
+                probeSpendPct: 1,
+                rangeCt: 3,
+                distribRange: [0, 33, 66, 100],
+                handleStyle: [
+                    { backgroundColor: 'gold', border: '0', },
+                    { backgroundColor: 'black', border: '1px solid #ddd', },
+                    { backgroundColor: 'black', border: '1px solid #ddd', },
+                    { backgroundColor: 'red', border: '0', },
+                ],
+                trackStyle: [
+                    { backgroundColor: 'gold' },
+                    { backgroundColor: 'blue' },
+                    { backgroundColor: 'red' },
+                ],
+                railStyle: { backgroundColor: 'red' },
+            })
+        }
+    }
+
     resetProbeZoom() {
         this.outerEllipseRef.setAttrs({
             'radiusX': this.outerRadius.x,

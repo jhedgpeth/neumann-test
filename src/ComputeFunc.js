@@ -6,6 +6,17 @@ const mylog = HelperConst.DebugLog;
 
 export default class ComputeFunc {
 
+    static getPct(value, pct) {
+        const numType = typeof(value);
+        // mylog("Decimal:",value instanceof Decimal);
+        // mylog("typeof value:",numType);
+        if (value instanceof Decimal) {
+            return value.times(pct/100).floor();
+        } else if (numType === "number") {
+            return Math.floor(value*(pct/100));
+        }
+    }
+
     static availMaxUpgrade(owned, max) {
         const maxPoss = owned + max;
         if (maxPoss >= 100) {
