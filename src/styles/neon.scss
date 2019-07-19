@@ -9,9 +9,14 @@ thanks!
 
 
 // Change the colors
-$color1: $c_neonblue;
-$color2: $c_neongreen;
-
+$color1: $c_neongreen;
+$color2: $c_neonblue;
+.von {
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+  color: #1A8A09;
+}
 .text-effect {
   overflow: hidden;
   position: relative;

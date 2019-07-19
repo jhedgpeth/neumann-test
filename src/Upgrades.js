@@ -83,7 +83,7 @@ export default class Upgrades extends React.Component {
                         {n}
                     </button>
                     <div key={n + "upgrade-reward"} className="upgrade-reward">
-                        {item.rewardTarget} x{item.rewardValue}
+                        {this.props.businesses[item.rewardTarget].name} x{item.rewardValue}
                     </div>
                     <div key={n + "upgrade-cost-wrapper"} className={"upgrade-cost-wrapper " + buyClass +bgClass} >
                         {costSymbol}{HelperConst.showNum(item.costValue)}

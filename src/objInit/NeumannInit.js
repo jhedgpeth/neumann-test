@@ -18,7 +18,7 @@ export default class NeumannInit extends React.Component {
     });
 
     static coreObjOnly = () => ({
-        money: new Decimal(0),
+        money: new Decimal("1e9"),
         knowledge: new Decimal(0),
         businesses: BusinessInit(),
         // probes: new Probe(new Decimal(0), 0,0,0),

@@ -58,8 +58,7 @@ export default class Neumann extends React.Component {
         this.zoomName = HelperConst.spaceZoomLevelNames[0];
         this.mapDistance = HelperConst.spaceZoomLevels[0];
 
-        this.rangeCt = 2;
-        this.rangeSettings = Space.getRangeValues(this.rangeCt);
+        this.rangeSettings = Space.getRangeValues(2);
         this.distribRange = this.rangeSettings.distribRange;
         this.probePcts = this.reportRangePcts();
         this.probeSpendPct = 100;
@@ -344,7 +343,7 @@ export default class Neumann extends React.Component {
 
         let newBusinesses = this.state.businesses.map(item => {
             let newItem = { ...item };
-            if (newItem.name === bus.name) {
+            if (newItem.id === bus.id) {
                 let bonusArr = [];
                 const ownedMilestones = ComputeFunc.getOwnedMilestonesAttained(item.owned, item.owned + busCost.num);
                 let busMult = 1;
@@ -421,7 +420,7 @@ export default class Neumann extends React.Component {
 
         switch (upg.rewardType) {
             case "upgradeMult":
-                const busIdx = this.state.businesses.findIndex(utest => utest.name === upg.rewardTarget);
+                const busIdx = this.state.businesses.findIndex(utest => utest.id === upg.rewardTarget);
                 this.setState({
                     businesses: update(this.state.businesses, {
                         [busIdx]: {
@@ -431,7 +430,7 @@ export default class Neumann extends React.Component {
                         },
                     }),
                 });
-                this.addOverlay(this.state.businesses[busIdx].name, "x" + upg.rewardValue)
+                this.addOverlay(this.state.businesses[busIdx].id, "x" + upg.rewardValue)
                 mylog(this.state.businesses[busIdx].name, "received multiplier", upg.rewardValue);
                 break;
             default:
@@ -492,10 +491,9 @@ export default class Neumann extends React.Component {
         return [...origOverlay, this.genOverlayObj(text, ovType)].slice(-4);
     }
 
-    addOverlay(busName, text) {
-
-        mylog("addOverlay click ", text, busName);
-        const idx = this.state.businesses.findIndex(test => test.name === busName);
+    addOverlay(busId, text) {
+        const idx = this.state.businesses.findIndex(test => test.id === busId);
+        mylog("addOverlay click ", text, this.state.businesses[idx].name);
         mylog("idx:", idx);
         this.setState((state, props) => ({
             businesses: update(state.businesses, {
@@ -557,6 +555,7 @@ export default class Neumann extends React.Component {
         // test change to 3 settings
         this.rangeSettings = Space.getRangeValues(3);
         this.distribRange = this.rangeSettings.distribRange;
+        this.probePcts = this.reportRangePcts();
     }
 
     updateGame() {
@@ -623,7 +622,7 @@ export default class Neumann extends React.Component {
 
     render() {
         let probeattribs;
-        if (this.rangeCt === 2) {
+        if (this.rangeSettings.rangeCt === 2) {
             probeattribs =
             <div className="probe-attribs">
                 <div className="probe-attrib speed-header">Speed</div>
@@ -708,8 +707,8 @@ export default class Neumann extends React.Component {
                             <button className="testbutton test-give-prestige"
                                 onClick={this.prestigeCheat}>+{this.cheatPrestigeVal} prestige</button>
                             <button className="testbutton announce-button" onClick={() => this.announce("great job winning!  oh boy this is just super.")}>Announce</button>
-                            <button className="testbutton overlay-button" onClick={() => this.addOverlay({ name: "Odd Jobs" }, "X2")}>Odd Jobs Overlay</button>
-                            <button className="testbutton overlay-button" onClick={() => this.addOverlay({ name: "Newspaper Delivery" }, "X2")}>Newspaper Overlay</button>
+                            <button className="testbutton overlay-button" onClick={() => this.addOverlay({ id: 0 }, "X2")}>Odd Jobs Overlay</button>
+                            <button className="testbutton overlay-button" onClick={() => this.addOverlay({ id: 1 }, "X2")}>Newspaper Overlay</button>
                             <button className="testbutton ref-button" onClick={() => mylog("domRef:", this.state.businesses[0].domRef)}>Odd Job domRef</button>
                             <button className="testbutton ref-button" onClick={() => mylog("domRef2:", this.state.businesses[1].domRef)}>Newspaper domRef</button>
 
@@ -808,8 +807,8 @@ export default class Neumann extends React.Component {
                                         border: '0',
                                         width: '4px',
                                     }}
-                                    allowCross={1}
-                                    pushable={true}
+                                    allowCross={false}
+                                    pushable={false}
                                     tipFormatter={value => value + "%"}
                                     tipProps={{ placement: 'bottom' }}
                                 />

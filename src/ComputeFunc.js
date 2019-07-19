@@ -22,8 +22,10 @@ export default class ComputeFunc {
         if (maxPoss >= 100) {
             const maxCheck = Math.floor(maxPoss / 100) * 100;
             return (maxCheck <= owned) ? maxCheck + 100 : maxCheck;
+        } else if (maxPoss >= 75) {
+            return (owned >= 75) ? 100 : 75;
         } else if (maxPoss >= 50) {
-            return (owned >= 50) ? 100 : 50;
+            return (owned >= 50) ? 75 : 50;
         } else {
             return (owned >= 25) ? 50 : 25;
         }
@@ -90,15 +92,15 @@ export default class ComputeFunc {
     static computeNextPayoutValueMoney(item, prestige, buyNum) {
         const nextOwned = item.owned + buyNum;
         const num25s = Math.floor(nextOwned / 25);
-        // 25, 50, 100, 200, ...
-        const mult25 = num25s > 2 ? 2 : num25s;
+        // 25, 50, 75, 100, 200, ...
+        const mult25 = num25s > 3 ? 3 : num25s;
         const mult100 = Math.floor(nextOwned / 100);
         const prestigeMultiplier = prestige.num.times(prestige.val).div(100).plus(1);
         let revenue = new Decimal(
             item.incomeBase
                 .times(nextOwned)
                 .times(Math.pow(2, mult25))
-                .times(Math.pow(2, mult100))
+                .times(Math.pow(4, mult100))
                 .times(item.upgradeMult)
                 .times(prestigeMultiplier)
         );
@@ -209,7 +211,6 @@ export default class ComputeFunc {
                 )
         ).plus(1).log(item.costCoef).floor(), 10);
 
-        // item.name === "Odd Jobs" && mylog("max:", max, "item.owned:", item.owned, " availmaxupg:", this.availMaxUpgrade(item.owned, max));
         const maxUpg = this.availMaxUpgrade(item.owned, max) - item.owned;
 
         let maxOcd = (Math.floor((max + item.owned) / 25) * 25)

@@ -12,7 +12,7 @@ export default class Income extends React.Component {
     render() {
         const revenue = ComputeFunc.computeTotalEarningPerSec(this.props.businesses, this.props.prestige);
         // const learning = ComputeFunc.computeTotalEarningPerSec(this.props.probes, this.props.prestige);
-        const learning=new Decimal(0);
+        const learning = new Decimal(0);
 
         return (
             <div className="header-wrapper">
@@ -42,10 +42,13 @@ export default class Income extends React.Component {
 
                 </div>
 
-                <div className="text-effect">
-                    <h1 className="neon" data-text="NEUMANN">NEUMANN</h1>
-                    <div className="gradient"></div>
-                    {/* <div className="spotlight"></div> */}
+                <div className="title-wrapper">
+                    <div className="von">von</div>
+                    <div className="text-effect">
+                        <h1 className="neon" data-text="NEUMANN">NEUMANN</h1>
+                        <div className="gradient"></div>
+                        {/* <div className="spotlight"></div> */}
+                    </div>
                 </div>
 
                 <div className="prestige">
@@ -66,7 +69,7 @@ export default class Income extends React.Component {
                         {HelperConst.showNum(this.props.probe.distance)} km
                     </div>
                     <div className="probe-rate">
-                    {HelperConst.showNum(this.props.probe.getDistPerSec())} km/s
+                        {HelperConst.showNum(this.props.probe.getDistPerSec())} km/s
                     </div>
 
                 </div>

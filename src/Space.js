@@ -55,12 +55,12 @@ export default class Space extends React.Component {
     static getRangeValues(n) {
         if (n === 2) {
             return ({
-                probeSpendPct: 1,
+                probeSpendPct: 100,
                 rangeCt: 2,
                 distribRange: [0, 50, 100],
                 handleStyle: [
                     { backgroundColor: 'gold', border: '0', },
-                    { backgroundColor: 'black', border: '1px solid #ddd', },
+                    { backgroundColor: 'gold', border: '0', },
                     { backgroundColor: 'cyan', border: '0', },
                 ],
                 trackStyle: [
@@ -72,13 +72,13 @@ export default class Space extends React.Component {
             })
         } else if (n === 3) {
             return ({
-                probeSpendPct: 1,
+                probeSpendPct: 100,
                 rangeCt: 3,
                 distribRange: [0, 33, 66, 100],
                 handleStyle: [
                     { backgroundColor: 'gold', border: '0', },
-                    { backgroundColor: 'black', border: '1px solid #ddd', },
-                    { backgroundColor: 'black', border: '1px solid #ddd', },
+                    { backgroundColor: 'gold', border: '0', },
+                    { backgroundColor: 'cyan', border: '0', },
                     { backgroundColor: 'red', border: '0', },
                 ],
                 trackStyle: [
