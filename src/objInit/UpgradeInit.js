@@ -14,8 +14,6 @@ export default function UpgradeInit() {
             rewardType: "upgradeMult",
             rewardTarget: 0,
             rewardValue: 10,
-            revealed: false,
-            purchased: false,
         }, {
             id: 1,
             name: "Demographics",
@@ -26,8 +24,6 @@ export default function UpgradeInit() {
             rewardType: "upgradeMult",
             rewardTarget: 1,
             rewardValue: 10,
-            revealed: false,
-            purchased: false,
         }
 
     ]);

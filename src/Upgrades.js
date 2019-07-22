@@ -17,14 +17,18 @@ export default class Upgrades extends React.Component {
 
     render() {
         const sources = this.props.upgrades.reduce((result, item) => {
-            if (!item.purchased && item.revealed) {
+            const u = this.props.userSettings.upgStats[item.id];
+            // mylog("u:",u);
+            if (!u.purchased && u.revealed) {
                 result.push(item);
             }
             return result;
         }, []);
+        // mylog("sources:",sources);
 
         const rows = sources.map(item => {
-            if (item.purchased || !item.revealed) { return ""; };
+            const u = this.props.userSettings.upgStats[item.id];
+            if (u.purchased || !u.revealed) { return ""; };
 
             let n = item.name;
             let buyClass = "";
@@ -35,9 +39,9 @@ export default class Upgrades extends React.Component {
 
             if (item.costType === "money") {
                 bgClass = "money ";
-                buyPct = ComputeFunc.buyPct(item.costValue, this.props.money);
+                buyPct = ComputeFunc.buyPct(item.costValue, this.props.userSettings.money);
 
-                if (this.props.money.gte(item.costValue)) {
+                if (this.props.userSettings.money.gte(item.costValue)) {
                     buyClass += "canAfford ";
                     buttonDisabled = false;
                 } else {
@@ -46,9 +50,9 @@ export default class Upgrades extends React.Component {
             }
             if (item.costType === "knowledge") {
                 bgClass = "knowledge ";
-                buyPct = ComputeFunc.buyPct(item.costValue, this.props.knowledge);
+                buyPct = ComputeFunc.buyPct(item.costValue, this.props.userSettings.knowledge);
 
-                if (this.props.knowledge.gte(item.costValue)) {
+                if (this.props.userSettings.knowledge.gte(item.costValue)) {
                     buyClass += "canAfford ";
                     buttonDisabled = false;
                 } else {

@@ -184,7 +184,7 @@ export default function BusinessInit() {
             incomeBase: new Decimal(10000000000),
             costType: "money",
             costBase: new Decimal(17000000000),
-            costCoef: 1.05,
+            costCoef: 1.10,
             timeBase: 90,
             timeAdjusted: 90,
             timeCounter: 0,

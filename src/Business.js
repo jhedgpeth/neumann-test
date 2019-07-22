@@ -20,7 +20,7 @@ export default class Business extends React.Component {
     }
 
     static getAdjustedTimeBase(bus, milestone) {
-        const mults = ComputeFunc.timeMilestoneIdx(milestone);
+        const mults = ComputeFunc.getBuyMilestoneIdx(milestone);
         // mylog("mults:",mults);
         if (mults >= 0) {
             return bus.timeBase / Math.pow(2, mults);

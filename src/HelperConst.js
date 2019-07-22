@@ -32,7 +32,7 @@ export default class HelperConst {
     static purchaseOptsSpecial = this.purchaseOpts.filter(item => !item.match(/\d/));
 
     // set all-business milestones for time boost, including all 100's
-    static timeMilestones = [10, 25, 50];
+    static busBuyMilestones = [10, 25, 50];
 
     // in kilometers
     static spaceZoomLevels = [

@@ -31,29 +31,28 @@ export default class ComputeFunc {
         }
     }
 
-    static timeMilestoneIdx(num) {
+    static getBuyMilestoneIdx(num) {
         // mylog("testing new milestone:", num);
         let retIdx = -1;
-        HelperConst.timeMilestones.forEach((milestone, idx) => {
+        HelperConst.busBuyMilestones.forEach((milestone, idx) => {
             // mylog("num:",num," milestone:",milestone);
             if (num >= milestone) { retIdx = idx; }
         });
-        // const milestoneMax = HelperConst.timeMilestones.length();
         const num100s = Math.floor(num / 100);
         return (retIdx + num100s);
     }
 
-    static getTimeMilestone(idx) {
-        const hardcodeMax = HelperConst.timeMilestones.length - 1;
-        if (idx <= hardcodeMax) { return HelperConst.timeMilestones[idx] };
+    static getBuyMilestone(idx) {
+        const hardcodeMax = HelperConst.busBuyMilestones.length - 1;
+        if (idx <= hardcodeMax) { return HelperConst.busBuyMilestones[idx] };
         const diff = (idx - hardcodeMax);
         return (100 * diff);
     }
 
-    static getTimeMilestonesAttained(fromIdx, toIdx) {
+    static getBuyMilestonesAttained(fromIdx, toIdx) {
         let milestones = [];
         for (let c = fromIdx + 1; c <= toIdx; c++) {
-            milestones.push([this.getTimeMilestone(c)]);
+            milestones.push([this.getBuyMilestone(c)]);
         }
         return milestones;
     }

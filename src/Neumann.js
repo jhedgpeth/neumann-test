@@ -38,7 +38,7 @@ export default class Neumann extends React.Component {
         super(props);
 
         this.state = { ...NeumannInit.freshState() };
-        this.userSettings = {...NeumannInit.userSettings() };
+        this.userSettings = { ...NeumannInit.userSettings() };
 
         this.timeInterval = 100;
         this.timeMultiplier = this.timeInterval / 1000;
@@ -54,7 +54,7 @@ export default class Neumann extends React.Component {
         this.purchaseAmt = "1";
         this.tabIndex = 0;
 
-        this.probe = new Probe(new Decimal(0), 0, 0, 0);
+        // this.probe = new Probe(new Decimal(0), 0, 0, 0);
         this.zoomLevel = 0;
         this.zoomName = HelperConst.spaceZoomLevelNames[0];
         this.mapDistance = HelperConst.spaceZoomLevels[0];
@@ -101,7 +101,7 @@ export default class Neumann extends React.Component {
 
     setTitle() {
         document.title = "NEUMANN $"
-            + HelperConst.showNum(this.state.money)
+            + HelperConst.showNum(this.userSettings.money)
             + " " + this.state.version;
     }
 
@@ -143,11 +143,11 @@ export default class Neumann extends React.Component {
         this.setState((state, props) => ({
             ...NeumannInit.freshState()
         }));
+        this.userSettings = { ...NeumannInit.userSettings() };
         this.announceCt = 0;
         this.populateDomRefs();
         this.outerEllipseMoving = false;
         this.pulseMoving = false;
-        this.probe = new Probe(new Decimal(0), 0, 0, 0);
         this.zoomLevel = 0;
         this.zoomName = HelperConst.spaceZoomLevelNames[0];
         this.mapDistance = HelperConst.spaceZoomLevels[0];
@@ -156,11 +156,11 @@ export default class Neumann extends React.Component {
 
     restart() {
         this.pause();
-        this.setState((state) => ({
-            ...NeumannInit.coreObjOnly()
+        this.setState((state, props) => ({
+            ...NeumannInit.freshState()
         }));
+        this.userSettings = { ...NeumannInit.userSettings() };
         this.populateDomRefs();
-        this.probe = new Probe(new Decimal(0), 0, 0, 0);
         this.zoomLevel = 0;
         this.zoomName = HelperConst.spaceZoomLevelNames[0];
         this.mapDistance = HelperConst.spaceZoomLevels[0];
@@ -213,23 +213,23 @@ export default class Neumann extends React.Component {
     }
 
     updatePrestigeEarned() {
-        // const newPrestigeNext = ComputeFunc.calcPrestigeEarned(this.state.lifetimeEarnings);
-        const newPrestigeNext = ComputeFunc.calcPrestigeEarnedFromMax(this.state.curMaxMoney).minus(this.state.prestige.num);
-        if (newPrestigeNext.gt(0) && !newPrestigeNext.eq(this.state.prestigeNext)) {
-            // mylog("newPrestigeNext:",newPrestigeNext.toFixed(9),"prestigeNext:",this.state.prestigeNext.toFixed(9));
+        // const newPrestigeNext = ComputeFunc.calcPrestigeEarned(this.userSettings.lifetimeEarnings);
+        const newPrestigeNext = ComputeFunc.calcPrestigeEarnedFromMax(this.userSettings.curMaxMoney).minus(this.userSettings.prestige.num);
+        if (newPrestigeNext.gt(0) && !newPrestigeNext.eq(this.userSettings.prestigeNext)) {
+            // mylog("newPrestigeNext:",newPrestigeNext.toFixed(9),"prestigeNext:",this.userSettings.prestigeNext.toFixed(9));
             this.setState({
                 prestigeNext: newPrestigeNext,
             })
         }
-        // mylog("maxMoney:",this.state.curMaxMoney.toFixed());
-        // mylog("lifetime:",this.state.lifetimeEarnings.toFixed(),"  newprestige:",newPrestigeNext.toFixed());
-        // mylog(Decimal.sqrt(this.state.lifetimeEarnings.div(Math.pow(10, 6))).times(150));
+        // mylog("maxMoney:",this.userSettings.curMaxMoney.toFixed());
+        // mylog("lifetime:",this.userSettings.lifetimeEarnings.toFixed(),"  newprestige:",newPrestigeNext.toFixed());
+        // mylog(Decimal.sqrt(this.userSettings.lifetimeEarnings.div(Math.pow(10, 6))).times(150));
     }
 
     prestige() {
-        if (this.state.prestigeNext.gt(0)) {
+        if (this.userSettings.prestigeNext.gt(0)) {
             this.updatePrestigeEarned();
-            const newPrestige = this.state.prestige.num.plus(this.state.prestigeNext);
+            const newPrestige = this.userSettings.prestige.num.plus(this.userSettings.prestigeNext);
             this.restart();
             this.setState((state) => ({
                 prestige: { num: newPrestige, val: state.prestige.val },
@@ -249,14 +249,12 @@ export default class Neumann extends React.Component {
         }
         // mylog(this.state.businesses);
         // mylog(this.state.businesses[0]);
-        // mylog(ComputeFunc.maxBuy(this.state.businesses[0], this.state.money).max25);
+        // mylog(ComputeFunc.maxBuy(this.state.businesses[0], this.userSettings.money).max25);
     }
 
     prestigeCheat() {
         mylog("CHEAT: adding", this.cheatPrestigeVal, "prestige");
-        this.setState((state) => ({
-            prestige: { num: state.prestige.num.plus(this.cheatPrestigeVal), val: state.prestige.val },
-        }));
+        this.userSettings.prestige.num = this.userSettings.prestige.num.plus(this.cheatPrestigeVal);
     }
 
 
@@ -301,14 +299,14 @@ export default class Neumann extends React.Component {
     }
 
     incrementProbeDistance() {
-        this.probe.update(this.timeMultiplier);
+        this.userSettings.probe.update(this.timeMultiplier);
         // this.setState((state, props) => ({
         //     probeDistance: state.probeDistance.plus(this.mapDistance.times(.001))
         // }));
         // const conv = ComputeFunc.convertDistanceToSpace(this.state.probeDistance);
         // mylog("convertDistanceToSpace:",conv.idx,conv.dist.toNumber());
 
-        const conv = ComputeFunc.convertDistanceToSpace(this.probe.distance);
+        const conv = ComputeFunc.convertDistanceToSpace(this.userSettings.probe.distance);
         this.mapDistance = conv.dist;
         this.zoomLevel = conv.idx;
         this.zoomName = conv.name;
@@ -340,7 +338,8 @@ export default class Neumann extends React.Component {
 
     clickBusiness(bus) {
         mylog("business click ", bus.name);
-        const busCost = ComputeFunc.getCost(bus, this.purchaseAmt, this.state.money);
+        const busCost = ComputeFunc.getCost(bus, this.purchaseAmt, this.userSettings.money);
+        this.userSettings.money = this.userSettings.money.minus(busCost.cost);
 
         let newBusinesses = this.state.businesses.map(item => {
             let newItem = { ...item };
@@ -361,59 +360,46 @@ export default class Neumann extends React.Component {
         });
         mylog(bus.name, "owned set to", bus.owned + busCost.num);
 
-        let newMilestone = this.state.timeMilestone;
-        const curIdx = ComputeFunc.timeMilestoneIdx(this.state.timeMilestone);
+        const curIdx = ComputeFunc.getBuyMilestoneIdx(this.userSettings.buyMilestone);
         const newLowest = newBusinesses.reduce((min, bus) =>
             bus.owned < min ? bus.owned : min,
             Number.MAX_SAFE_INTEGER);
-        const newIdx = ComputeFunc.timeMilestoneIdx(newLowest);
+        const newIdx = ComputeFunc.getBuyMilestoneIdx(newLowest);
         // mylog("newIdx:",newIdx," curIdx:",curIdx);
 
         /* apply time modifiers if new time milestone reached */
         if (newIdx > curIdx) {
-            newMilestone = ComputeFunc.getTimeMilestone(newIdx);
-            mylog("new owned milestone:", newMilestone);
+            this.userSettings.buyMilestone = ComputeFunc.getBuyMilestone(newIdx);
+            mylog("new owned milestone:", this.userSettings.buyMilestone);
+            // update adjusted cycle time
             newBusinesses = newBusinesses.map(item => {
                 let newItem = { ...item };
-                newItem.timeAdjusted = Business.getAdjustedTimeBase(item, newMilestone);
+                newItem.timeAdjusted = Business.getAdjustedTimeBase(item, this.userSettings.buyMilestone);
                 mylog(newItem.name, "timeAdjusted now", newItem.timeAdjusted);
                 return newItem;
             });
-            ComputeFunc.getTimeMilestonesAttained(curIdx, newIdx).forEach((num) => {
-                this.announce(num + " all businesses! Speed Doubled!");
+            ComputeFunc.getBuyMilestonesAttained(curIdx, newIdx).forEach((num) => {
+                this.announce("All businesses at "+num+"! Speed Doubled!");
             })
 
         }
 
+        /* for overlays */
         this.setState((state, props) => ({
             businesses: newBusinesses,
-            money: state.money.minus(busCost.cost),
-            timeMilestone: newMilestone,
         }))
     }
 
     clickUpgrade(upg) {
         mylog("upgrade click ", upg.name);
-
-        const idx = this.state.upgrades.findIndex(utest => utest.name === upg.name);
-        this.setState({
-            upgrades: update(this.state.upgrades, {
-                [idx]: {
-                    purchased: { $set: true },
-                }
-            }),
-        });
+        this.userSettings.upgStats[upg.id].purchased = true;
 
         switch (upg.costType) {
             case "money":
-                this.setState({
-                    money: this.state.money.minus(upg.costValue),
-                });
+                this.userSettings.money = this.userSettings.money.minus(upg.costValue);
                 break;
             case "knowledge":
-                this.setState({
-                    knowledge: this.state.knowledge.minus(upg.costValue),
-                });
+                    this.userSettings.knowledge = this.userSettings.knowledge.minus(upg.costValue);
                 break;
             default:
                 break;
@@ -512,7 +498,7 @@ export default class Neumann extends React.Component {
     }
 
     probeTestNextZoom() {
-        mylog("clicked probeTestNextZoom:", ComputeFunc.getSpaceZoomLevelIdx(this.probe.distance) + 1);
+        mylog("clicked probeTestNextZoom:", ComputeFunc.getSpaceZoomLevelIdx(this.userSettings.probe.distance) + 1);
         // this.setState((state, props) => ({
         //     probeDistance: ComputeFunc.getSpaceZoomLevel(this.zoomLevel)
         // }));
@@ -547,11 +533,11 @@ export default class Neumann extends React.Component {
     }
 
     purchaseProbe() {
-        const pCost = ComputeFunc.getPct(this.state.money, this.probeSpendPct);
+        const pCost = ComputeFunc.getPct(this.userSettings.money, this.probeSpendPct);
         const pcts = this.reportRangePcts();
         mylog("probe cost:", pCost.toNumber());
         mylog("probe attrs - pSpeed:", pcts[0], "pQuality:", pcts[1], "pCombat:", pcts[2]);
-        this.probe = new Probe(pCost, pcts[0], pcts[1], pcts[2])
+        this.userSettings.probe = new Probe(pCost, pcts[0], pcts[1], pcts[2])
 
         // test change to 3 settings
         this.rangeSettings = Space.getRangeValues(3);
@@ -564,22 +550,22 @@ export default class Neumann extends React.Component {
         this.incrementProbeDistance();
         this.incrementAnnouncementCounters();
 
-        const payoutMoneyThisTick = ComputeFunc.totalPayout(this.state.businesses, this.state.prestige);
-        const newLifetimeEarnings = this.state.lifetimeEarnings.plus(payoutMoneyThisTick);
+        const payoutMoneyThisTick = ComputeFunc.totalPayout(this.state.businesses, this.userSettings.prestige);
+        this.userSettings.lifetimeEarnings = this.userSettings.lifetimeEarnings.plus(payoutMoneyThisTick);
         // mylog("payoutMoneyThisTick:",payoutMoneyThisTick.toFixed());
 
-        // const payoutKnowledgeThisTick = ComputeFunc.totalPayout(this.state.probes, this.state.prestige);
+        // const payoutKnowledgeThisTick = ComputeFunc.totalPayout(this.state.probes, this.userSettings.prestige);
         const payoutKnowledgeThisTick = new Decimal(0);
 
         /* reveal businesses if money reached */
         const newBusinesses = this.state.businesses.map(item => {
             let newItem = { ...item };
             if (!item.revealed) {
-                if (item.costType === "money" && item.initialVisible.lte(this.state.money)) {
+                if (item.costType === "money" && item.initialVisible.lte(this.userSettings.money)) {
                     newItem.revealed = true;
                     mylog("revealed business", item.name);
                 };
-                if (item.costType === "knowledge" && item.initialVisible.lte(this.state.knowledge)) {
+                if (item.costType === "knowledge" && item.initialVisible.lte(this.userSettings.knowledge)) {
                     newItem.revealed = true;
                     mylog("revealed business", item.name);
                 };
@@ -587,35 +573,28 @@ export default class Neumann extends React.Component {
             return newItem;
         })
         /* reveal upgrades if resource reached */
-        const newUpgrades = this.state.upgrades.map(item => {
-            let newItem = { ...item };
-            if (!item.revealed) {
-                if (item.watchType === "money" && item.watchValue.lte(this.state.money)) {
-                    newItem.revealed = true;
+        this.state.upgrades.forEach(item => {
+            let u = this.userSettings.upgStats[item.id];
+            if (!u.revealed) {
+                if (item.watchType === "money" && item.watchValue.lte(this.userSettings.money)) {
+                    u.revealed = true;
                     mylog("revealed upgrade", item.name);
                 };
-                if (item.watchType === "knowledge" && item.watchValue.lte(this.state.knowledge)) {
-                    newItem.revealed = true;
+                if (item.watchType === "knowledge" && item.watchValue.lte(this.userSettings.knowledge)) {
+                    u.revealed = true;
                     mylog("revealed upgrade", item.name);
                 };
             }
-            return newItem;
-        })
+        });
 
-        const newMoney = this.state.money.plus(payoutMoneyThisTick);
-        let newMax = this.state.curMaxMoney;
-        if (newMoney.gt(newMax)) {
-            newMax = newMoney;
-            // mylog("newMax:",newMax.toFixed());
+        this.userSettings.money = this.userSettings.money.plus(payoutMoneyThisTick);
+        if (this.userSettings.money.gt(this.userSettings.curMaxMoney)) {
+            this.userSettings.curMaxMoney = this.userSettings.money;
         }
+        this.userSettings.knowledge=this.userSettings.knowledge.plus(payoutKnowledgeThisTick);
 
         this.setState((state) => ({
-            money: newMoney,
-            knowledge: state.knowledge.plus(payoutKnowledgeThisTick),
             businesses: newBusinesses,
-            upgrades: newUpgrades,
-            lifetimeEarnings: newLifetimeEarnings,
-            curMaxMoney: newMax,
         }));
 
         this.setTitle();
@@ -625,24 +604,24 @@ export default class Neumann extends React.Component {
         let probeattribs;
         if (this.rangeSettings.rangeCt === 2) {
             probeattribs =
-            <div className="probe-attribs">
-                <div className="probe-attrib speed-header">Speed</div>
-                <div className="probe-attrib quality-header">Quality</div>
-                <div></div>
-                <div className="probe-attrib probe-speed">{this.probePcts[0]}%</div>
-                <div className="probe-attrib probe-quality">{this.probePcts[1]}%</div>
-                <div></div>
-            </div>
+                <div className="probe-attribs">
+                    <div className="probe-attrib speed-header">Speed</div>
+                    <div className="probe-attrib quality-header">Quality</div>
+                    <div></div>
+                    <div className="probe-attrib probe-speed">{this.probePcts[0]}%</div>
+                    <div className="probe-attrib probe-quality">{this.probePcts[1]}%</div>
+                    <div></div>
+                </div>
         } else {
             probeattribs =
-            <div className="probe-attribs">
-                <div className="probe-attrib speed-header">Speed</div>
-                <div className="probe-attrib quality-header">Quality</div>
-                <div className="probe-attrib combat-header">Combat</div>
-                <div className="probe-attrib probe-speed">{this.probePcts[0]}%</div>
-                <div className="probe-attrib probe-quality">{this.probePcts[1]}%</div>
-                <div className="probe-attrib probe-combat">{this.probePcts[2]}%</div>
-            </div>
+                <div className="probe-attribs">
+                    <div className="probe-attrib speed-header">Speed</div>
+                    <div className="probe-attrib quality-header">Quality</div>
+                    <div className="probe-attrib combat-header">Combat</div>
+                    <div className="probe-attrib probe-speed">{this.probePcts[0]}%</div>
+                    <div className="probe-attrib probe-quality">{this.probePcts[1]}%</div>
+                    <div className="probe-attrib probe-combat">{this.probePcts[2]}%</div>
+                </div>
         }
 
 
@@ -651,12 +630,9 @@ export default class Neumann extends React.Component {
                 <div id="header">
 
                     <Income
-                        money={this.state.money}
-                        knowledge={this.state.knowledge}
+                        knowledge={this.userSettings.knowledge}
                         businesses={this.state.businesses}
-                        probe={this.probe}
-                        prestige={this.state.prestige}
-                        prestigeNext={this.state.prestigeNext}
+                        userSettings={this.userSettings}
                     />
 
                 </div>
@@ -680,8 +656,7 @@ export default class Neumann extends React.Component {
                             <Upgrades
                                 upgrades={this.state.upgrades}
                                 businesses={this.state.businesses}
-                                money={this.state.money}
-                                knowledge={this.state.knowledge}
+                                userSettings={this.userSettings}
                                 onClick={this.clickUpgrade}
                             />
 
@@ -703,7 +678,7 @@ export default class Neumann extends React.Component {
                             <button className="testbutton reset-button" onClick={this.resetAll}>RESET</button>
                             <button
                                 className="testbutton prestige-button"
-                                disabled={this.state.prestigeNext.gt(0) ? false : true}
+                                disabled={this.userSettings.prestigeNext.gt(0) ? false : true}
                                 onClick={this.prestige}>Prestige</button>
                             <button className="testbutton test-give-prestige"
                                 onClick={this.prestigeCheat}>+{this.cheatPrestigeVal} prestige</button>
@@ -724,9 +699,10 @@ export default class Neumann extends React.Component {
 
                                 <Business
                                     businesses={this.state.businesses}
+                                    userSettings={this.userSettings}
                                     purchaseAmt={this.purchaseAmt}
-                                    money={this.state.money}
-                                    prestige={this.state.prestige}
+                                    money={this.userSettings.money}
+                                    prestige={this.userSettings.prestige}
                                     onClick={this.clickBusiness}
                                     domRefs={this.domRefs}
                                 />
@@ -741,7 +717,7 @@ export default class Neumann extends React.Component {
                     <TabPanel className="react-tabs__tab-panel probe-tab-panel">
 
                         <div id="right-sidebar">
-                            
+
                             Zoom Index: {this.zoomLevel}<br />
                             <button className="testbutton pause-button" onClick={this.pause}>Pause</button>
                             <button className="testbutton pause-button" onClick={this.resume}>Resume</button>
@@ -752,7 +728,7 @@ export default class Neumann extends React.Component {
                                 Space Zoom
                             </button>
                             <button className="testbutton announce-button" onClick={() => this.announce("great job winning!  oh boy this is just super.")}>Announce</button>
-                            <div className="sliderHeader">Fund: ${HelperConst.showNum(ComputeFunc.getPct(this.state.money, this.probeSpendPct))}</div>
+                            <div className="sliderHeader">Fund: ${HelperConst.showNum(ComputeFunc.getPct(this.userSettings.money, this.probeSpendPct))}</div>
                             <div className="sliderContainer">
                                 <MySlider
                                     // count={1}
@@ -814,14 +790,6 @@ export default class Neumann extends React.Component {
                                 />
                             </div>
                             {probeattribs}
-                            {/* <div className="probe-attribs">
-                                <div className="probe-attrib speed-header">Speed</div>
-                                <div className="probe-attrib quality-header">Quality</div>
-                                <div className="probe-attrib combat-header">Combat</div>
-                                <div className="probe-attrib probe-speed">{this.probePcts[0]}%</div>
-                                <div className="probe-attrib probe-quality">{this.probePcts[1]}%</div>
-                                <div className="probe-attrib probe-combat">{this.probePcts[2]}%</div>
-                            </div> */}
                             <button className="testbutton purchase-button" onClick={this.purchaseProbe}>Purchase Probe</button>
                         </div>
 

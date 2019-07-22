@@ -10,7 +10,7 @@ export default class Income extends React.Component {
 
 
     render() {
-        const revenue = ComputeFunc.computeTotalEarningPerSec(this.props.businesses, this.props.prestige);
+        const revenue = ComputeFunc.computeTotalEarningPerSec(this.props.businesses, this.props.userSettings.prestige);
         // const learning = ComputeFunc.computeTotalEarningPerSec(this.props.probes, this.props.prestige);
         const learning = new Decimal(0);
 
@@ -23,7 +23,7 @@ export default class Income extends React.Component {
                         Money:
                     </div>
                     <div className="income-money">
-                        {HelperConst.moneySymbolSpan()}{HelperConst.showNum(this.props.money)}
+                        {HelperConst.moneySymbolSpan()}{HelperConst.showNum(this.props.userSettings.money)}
                     </div>
                     <div className="income-earning">
                         (+ {HelperConst.moneySymbolSpan()}{HelperConst.showNum(revenue)}/s)
@@ -34,7 +34,7 @@ export default class Income extends React.Component {
                         Knowledge:
                     </div>
                     <div className="income-knowledge">
-                        {HelperConst.knowledgeSymbolSpan()}{HelperConst.showNum(this.props.knowledge)}
+                        {HelperConst.knowledgeSymbolSpan()}{HelperConst.showNum(this.props.userSettings.knowledge)}
                     </div>
                     <div className="income-learning">
                         (+ {HelperConst.knowledgeSymbolSpan()}{HelperConst.showNum(learning)}/s)
@@ -56,20 +56,20 @@ export default class Income extends React.Component {
                         Prestige:
                     </div>
                     <div className="prestige-units">
-                        {HelperConst.prestigeSymbolSpan()}{HelperConst.showInt(this.props.prestige.num)}
+                        {HelperConst.prestigeSymbolSpan()}{HelperConst.showInt(this.props.userSettings.prestige.num)}
                     </div>
                     <div className="prestige-earning">
-                        (+ {HelperConst.prestigeSymbolSpan()}{HelperConst.showInt(this.props.prestigeNext)})
+                        (+ {HelperConst.prestigeSymbolSpan()}{HelperConst.showInt(this.props.userSettings.prestigeNext)})
                     </div>
 
                     <div className="probe-header">
                         Distance:
                     </div>
                     <div className="probe-distance">
-                        {HelperConst.showNum(this.props.probe.distance)} km
+                        {HelperConst.showNum(this.props.userSettings.probe.distance)} km
                     </div>
                     <div className="probe-rate">
-                        {HelperConst.showNum(this.props.probe.getDistPerSec())} km/s
+                        {HelperConst.showNum(this.props.userSettings.probe.getDistPerSec())} km/s
                     </div>
 
                 </div>

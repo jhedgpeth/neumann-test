@@ -2,35 +2,29 @@ import React from 'react';
 import BusinessInit from './BusinessInit';
 // import ProbeInit from './ProbeInit';
 import UpgradeInit from './UpgradeInit';
-// import Probe from '../Probe';
+import Probe from '../Probe';
 const Decimal = require('decimal.js');
 
 export default class NeumannInit extends React.Component {
 
     static freshState = () => ({
-        ...this.coreObjOnly(),
-        prestige: { num: new Decimal(0), val: 5 },
-        prestigeNext: new Decimal(0),
-        lifetimeEarnings: new Decimal(0),
-        lifetimeLearning: new Decimal(0),
-        curMaxMoney: new Decimal(0),
-        curTotalClicks: 0,
-    });
-
-    static coreObjOnly = () => ({
-        money: new Decimal("1e9"),
-        knowledge: new Decimal(0),
         businesses: BusinessInit(),
-        // probes: new Probe(new Decimal(0), 0,0,0),
         upgrades: UpgradeInit(),
         timeMilestone: 0,
-        // probeDistance: new Decimal(0),
         announcements: [],
         version: "0.0.1",
     })
 
     static userSettings = () => ({
         money: new Decimal(0),
+        knowledge: new Decimal(0),
+        probe: new Probe(new Decimal(0), 0, 0, 0),
+        prestige: { num: new Decimal(0), val: 5 },
+        prestigeNext: new Decimal(0),
+        lifetimeEarnings: new Decimal(0),
+        lifetimeLearning: new Decimal(0),
+        curMaxMoney: new Decimal(0),
+        curTotalClicks: 0,
         buyMilestone: 0,
         busStats: [
             { id: 0, owned: 0, revealed: false, timeAdj: 0, payoutAdj: 0, },
@@ -44,10 +38,11 @@ export default class NeumannInit extends React.Component {
             { id: 8, owned: 0, revealed: false, timeAdj: 0, payoutAdj: 0, },
             { id: 9, owned: 0, revealed: false, timeAdj: 0, payoutAdj: 0, },
         ],
-        upgStats: [
-            { id: 0, owned: 0, revealed: false, },
-            { id: 1, owned: 0, revealed: false, },
-        ]
+        upgStats: {
+            0: {purchased: false, revealed: false },
+            1: {purchased: false, revealed: false },
+        }
+ 
 
     })
 
