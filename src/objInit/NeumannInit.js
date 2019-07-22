@@ -29,4 +29,26 @@ export default class NeumannInit extends React.Component {
         version: "0.0.1",
     })
 
+    static userSettings = () => ({
+        money: new Decimal(0),
+        buyMilestone: 0,
+        busStats: [
+            { id: 0, owned: 0, revealed: false, timeAdj: 0, payoutAdj: 0, },
+            { id: 1, owned: 0, revealed: false, timeAdj: 0, payoutAdj: 0, },
+            { id: 2, owned: 0, revealed: false, timeAdj: 0, payoutAdj: 0, },
+            { id: 3, owned: 0, revealed: false, timeAdj: 0, payoutAdj: 0, },
+            { id: 4, owned: 0, revealed: false, timeAdj: 0, payoutAdj: 0, },
+            { id: 5, owned: 0, revealed: false, timeAdj: 0, payoutAdj: 0, },
+            { id: 6, owned: 0, revealed: false, timeAdj: 0, payoutAdj: 0, },
+            { id: 7, owned: 0, revealed: false, timeAdj: 0, payoutAdj: 0, },
+            { id: 8, owned: 0, revealed: false, timeAdj: 0, payoutAdj: 0, },
+            { id: 9, owned: 0, revealed: false, timeAdj: 0, payoutAdj: 0, },
+        ],
+        upgStats: [
+            { id: 0, owned: 0, revealed: false, },
+            { id: 1, owned: 0, revealed: false, },
+        ]
+
+    })
+
 }

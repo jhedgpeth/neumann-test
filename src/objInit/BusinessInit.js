@@ -158,7 +158,7 @@ export default function BusinessInit() {
             overlays: [],
         }, {
             id: 8,
-            name: "Government Advisory",
+            name: "Research Laboratory",
             desc: "desc2",
             owned: 0,
             incomeType: "money",
@@ -177,7 +177,7 @@ export default function BusinessInit() {
             overlays: [],
         }, {
             id: 9,
-            name: "Research Laboratory",
+            name: "Government Advisory",
             desc: "desc2",
             owned: 0,
             incomeType: "money",

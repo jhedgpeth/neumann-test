@@ -38,6 +38,7 @@ export default class Neumann extends React.Component {
         super(props);
 
         this.state = { ...NeumannInit.freshState() };
+        this.userSettings = {...NeumannInit.userSettings() };
 
         this.timeInterval = 100;
         this.timeMultiplier = this.timeInterval / 1000;
@@ -740,8 +741,7 @@ export default class Neumann extends React.Component {
                     <TabPanel className="react-tabs__tab-panel probe-tab-panel">
 
                         <div id="right-sidebar">
-                            Probe Distance: {HelperConst.showNum(this.probe.distance)}<br />
-                            Map Distance: {HelperConst.showNum(this.mapDistance)}<br />
+                            
                             Zoom Index: {this.zoomLevel}<br />
                             <button className="testbutton pause-button" onClick={this.pause}>Pause</button>
                             <button className="testbutton pause-button" onClick={this.resume}>Resume</button>
