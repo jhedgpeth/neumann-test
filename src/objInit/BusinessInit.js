@@ -12,7 +12,7 @@ export default function BusinessInit() {
             incomeType: "money",
             incomeBase: new Decimal(1),
             costType: "money",
-            costBase: new Decimal(4.67289719626),
+            costBase: new Decimal(4.8076),
             costCoef: 1.04,
             timeBase: 1,
             timeAdjusted: 1,

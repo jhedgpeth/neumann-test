@@ -19,11 +19,9 @@ export default class Business extends React.Component {
         })
     }
 
-    static getAdjustedTimeBase(bus, milestone) {
-        const mults = ComputeFunc.getBuyMilestoneIdx(milestone);
-        // mylog("mults:",mults);
-        if (mults >= 0) {
-            return bus.timeBase / Math.pow(2, mults);
+    static getAdjustedTimeBase(bus, milestoneIdx) {
+        if (milestoneIdx >= 0) {
+            return bus.timeBase / Math.pow(2, milestoneIdx);
         }
         return bus.timeBase;
     }
@@ -102,31 +100,32 @@ export default class Business extends React.Component {
 
     render() {
         const sources = this.props.businesses.reduce((result, item) => {
-            if (item.revealed) {
+            if (this.props.userSettings.busStats[item.id].revealed) {
                 result.push(item);
             }
             return result;
         }, []);
 
-        const totalEarningPerSec = ComputeFunc.computeTotalEarningPerSec(this.props.businesses, this.props.prestige);
+        const totalEarningPerSec = ComputeFunc.computeTotalEarningPerSec(this.props.businesses, this.props.userSettings);
 
 
         const rows = sources.map((item) => {
+            const b = this.props.userSettings.busStats[item.id];
             const n = item.name;
-            const myCost = ComputeFunc.getCost(item, this.props.purchaseAmt, this.props.money);
+            const myCost = ComputeFunc.getCost(item, this.props.userSettings.busStats[item.id], this.props.purchaseAmt, this.props.userSettings.money);
             // mylog(myCost);
-            const nextPayout = ComputeFunc.computeNextPayoutValueMoney(item, this.props.prestige, myCost.num);
+            const nextPayout = ComputeFunc.computeNextPayoutValueMoney(item, this.props.userSettings.busStats[item.id], this.props.userSettings.prestige, myCost.num);
 
-            const buyPct = ComputeFunc.buyPct(myCost.cost, this.props.money);
+            const buyPct = ComputeFunc.buyPct(myCost.cost, this.props.userSettings.money);
             const buyPctStyle = { width: buyPct + '%' };
-            const earnPct = ComputeFunc.earnPct(item);
+            const earnPct = ComputeFunc.earnPct(item, b.timeAdj);
             const earnPctStyle = { width: earnPct + '%' };
 
             let bgClass = "money ";
             let buttonClass = "";
             let costClass = "";
             let buttonDisabled = false;
-            if (this.props.money.gte(myCost.cost)) {
+            if (this.props.userSettings.money.gte(myCost.cost)) {
                 buttonClass = "business-buy canAfford ";
                 costClass = "cost-wrapper canAfford ";
             } else {
@@ -135,8 +134,8 @@ export default class Business extends React.Component {
                 costClass = "cost-wrapper cannotAfford ";
             }
 
-            const myEarningPerSec = ComputeFunc.computeEarningPerSec(item, this.props.prestige);
-            let curPayout = ComputeFunc.computePayoutValueMoney(item, this.props.prestige);
+            const myEarningPerSec = ComputeFunc.computeEarningPerSec(item, this.props.userSettings.busStats[item.id],this.props.userSettings.prestige);
+            let curPayout = ComputeFunc.computePayoutValueMoney(item, this.props.userSettings.busStats[item.id], this.props.userSettings.prestige);
             const myPayout = curPayout.gt(0) ? curPayout : nextPayout;
             const myEarningPct = ComputeFunc.getEarningPct(myEarningPerSec, totalEarningPerSec);
 
@@ -169,7 +168,7 @@ export default class Business extends React.Component {
                             className="buyMultiple">{myCost.num}{HelperConst.multiplySymbolSpan()}
                         </span> {n}
                     </button>
-                    <div key={n + "owned"} className="business-owned">{HelperConst.showInt(item.owned)}</div>
+                    <div key={n + "owned"} className="business-owned">{HelperConst.showInt(b.owned)}</div>
 
                     <div key={n + "cost-wrapper"} className={costClass}>
                         <div key={n + "cost-money"} className="business-cost-money">{HelperConst.moneySymbolSpan()}{HelperConst.showNum(myCost.cost)}</div>

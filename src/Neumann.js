@@ -261,9 +261,10 @@ export default class Neumann extends React.Component {
     incrementBusinessCounters() {
         let changed = false;
         const newBusinesses = this.state.businesses.map(item => {
+            let b = this.userSettings.busStats[item.id];
             let newItem = { ...item };
-            if (item.owned === 0) {
-                if (item.revealed && item.timeCounter !== 0) {
+            if (b.owned === 0) {
+                if (b.revealed && item.timeCounter !== 0) {
                     newItem.timeCounter = 0;
                     changed = true;
                     mylog("resetting ", item.name, " to timeCounter ", newItem.timeCounter);
@@ -271,7 +272,7 @@ export default class Neumann extends React.Component {
             } else {
                 newItem.payout = false;
                 newItem.timeCounter = newItem.timeCounter + this.timeMultiplier;
-                if (newItem.timeCounter >= newItem.timeAdjusted) {
+                if (newItem.timeCounter >= b.timeAdj) {
                     newItem.payout = true;
                     newItem.timeCounter = 0;
                 }
@@ -338,56 +339,59 @@ export default class Neumann extends React.Component {
 
     clickBusiness(bus) {
         mylog("business click ", bus.name);
-        const busCost = ComputeFunc.getCost(bus, this.purchaseAmt, this.userSettings.money);
+        const busCost = ComputeFunc.getCost(bus, this.userSettings.busStats[bus.id], this.purchaseAmt, this.userSettings.money);
         this.userSettings.money = this.userSettings.money.minus(busCost.cost);
+        let b = this.userSettings.busStats[bus.id];
+        b.owned += busCost.num;
+        mylog(bus.name, "owned set to", b.owned);
 
+        // add overlays
         let newBusinesses = this.state.businesses.map(item => {
+            b = this.userSettings.busStats[item.id];
             let newItem = { ...item };
             if (newItem.id === bus.id) {
                 let bonusArr = [];
-                const ownedMilestones = ComputeFunc.getOwnedMilestonesAttained(item.owned, item.owned + busCost.num);
+                const ownedMilestones = ComputeFunc.getOwnedMilestonesAttained(b.owned, b.owned + busCost.num);
                 let busMult = 1;
                 ownedMilestones.forEach((milestone) => {
                     busMult *= 2;
                 });
                 (busMult > 1) && bonusArr.push(this.genOverlayObj("X" + busMult + "!", "ownedBonus"));
-                newItem.owned += busCost.num;
                 newItem.overlays = this.genOverlayArr(item.overlays, "+" + busCost.num).concat(bonusArr);
                 mylog("adding", busCost.num, "to", newItem.name);
 
             }
             return newItem;
         });
-        mylog(bus.name, "owned set to", bus.owned + busCost.num);
+        /* for overlays */
+        this.setState((state, props) => ({
+            businesses: newBusinesses,
+        }))
 
-        const curIdx = ComputeFunc.getBuyMilestoneIdx(this.userSettings.buyMilestone);
-        const newLowest = newBusinesses.reduce((min, bus) =>
-            bus.owned < min ? bus.owned : min,
+        /* total buy milestones */
+        const curIdx = ComputeFunc.getTotalMilestoneIdx(this.userSettings.buyMilestone);
+        const newLowest = Object.keys(this.userSettings.busStats).reduce((min, bus) =>
+        this.userSettings.busStats[bus].owned < min ? this.userSettings.busStats[bus].owned : min,
             Number.MAX_SAFE_INTEGER);
-        const newIdx = ComputeFunc.getBuyMilestoneIdx(newLowest);
+        const newIdx = ComputeFunc.getTotalMilestoneIdx(newLowest);
         // mylog("newIdx:",newIdx," curIdx:",curIdx);
 
-        /* apply time modifiers if new time milestone reached */
+        /* apply time modifiers if new total milestone reached */
         if (newIdx > curIdx) {
-            this.userSettings.buyMilestone = ComputeFunc.getBuyMilestone(newIdx);
+            this.userSettings.buyMilestone = ComputeFunc.getTotalMilestone(newIdx);
             mylog("new owned milestone:", this.userSettings.buyMilestone);
             // update adjusted cycle time
-            newBusinesses = newBusinesses.map(item => {
-                let newItem = { ...item };
-                newItem.timeAdjusted = Business.getAdjustedTimeBase(item, this.userSettings.buyMilestone);
-                mylog(newItem.name, "timeAdjusted now", newItem.timeAdjusted);
-                return newItem;
+            this.state.businesses.forEach((item,idx) => {
+                this.userSettings.busStats[item.id].timeAdj = Business.getAdjustedTimeBase(item, newIdx);
+                mylog(this.state.businesses[idx].name,"timeAdjusted now", this.userSettings.busStats[item.id].timeAdj);
             });
-            ComputeFunc.getBuyMilestonesAttained(curIdx, newIdx).forEach((num) => {
+            ComputeFunc.getTotalMilestonesAttained(curIdx, newIdx).forEach((num) => {
                 this.announce("All businesses at "+num+"! Speed Doubled!");
             })
 
         }
 
-        /* for overlays */
-        this.setState((state, props) => ({
-            businesses: newBusinesses,
-        }))
+        
     }
 
     clickUpgrade(upg) {
@@ -407,18 +411,9 @@ export default class Neumann extends React.Component {
 
         switch (upg.rewardType) {
             case "upgradeMult":
-                const busIdx = this.state.businesses.findIndex(utest => utest.id === upg.rewardTarget);
-                this.setState({
-                    businesses: update(this.state.businesses, {
-                        [busIdx]: {
-                            $set: Business.applyMultiplier(
-                                this.state.businesses[busIdx],
-                                upg.rewardValue)
-                        },
-                    }),
-                });
-                this.addOverlay(this.state.businesses[busIdx].id, "x" + upg.rewardValue)
-                mylog(this.state.businesses[busIdx].name, "received multiplier", upg.rewardValue);
+                this.userSettings.busStats[upg.rewardTarget].payoutAdj *= upg.rewardValue;
+                this.addOverlay(upg.rewardTarget, "x" + upg.rewardValue)
+                mylog(this.state.businesses[upg.rewardTarget].name, "received multiplier", upg.rewardValue);
                 break;
             default:
                 mylog("unknown rewardType");
@@ -478,15 +473,14 @@ export default class Neumann extends React.Component {
         return [...origOverlay, this.genOverlayObj(text, ovType)].slice(-4);
     }
 
-    addOverlay(busId, text) {
-        const idx = this.state.businesses.findIndex(test => test.id === busId);
-        mylog("addOverlay click ", text, this.state.businesses[idx].name);
-        mylog("idx:", idx);
+    addOverlay(busIdx, text) {
+        const bus = this.state.businesses[busIdx];
+        mylog("addOverlay click ", text, bus.name);
         this.setState((state, props) => ({
             businesses: update(state.businesses, {
-                [idx]: {
+                [busIdx]: {
                     overlays: {
-                        $set: this.genOverlayArr(state.businesses[idx].overlays, text),
+                        $set: this.genOverlayArr(bus.overlays, text),
                     }
                 },
             }),
@@ -550,7 +544,7 @@ export default class Neumann extends React.Component {
         this.incrementProbeDistance();
         this.incrementAnnouncementCounters();
 
-        const payoutMoneyThisTick = ComputeFunc.totalPayout(this.state.businesses, this.userSettings.prestige);
+        const payoutMoneyThisTick = ComputeFunc.totalPayout(this.state.businesses, this.userSettings.busStats, this.userSettings.prestige);
         this.userSettings.lifetimeEarnings = this.userSettings.lifetimeEarnings.plus(payoutMoneyThisTick);
         // mylog("payoutMoneyThisTick:",payoutMoneyThisTick.toFixed());
 
@@ -558,19 +552,18 @@ export default class Neumann extends React.Component {
         const payoutKnowledgeThisTick = new Decimal(0);
 
         /* reveal businesses if money reached */
-        const newBusinesses = this.state.businesses.map(item => {
-            let newItem = { ...item };
-            if (!item.revealed) {
+        this.state.businesses.forEach(item => {
+            let b = this.userSettings.busStats[item.id];
+            if (!b.revealed) {
                 if (item.costType === "money" && item.initialVisible.lte(this.userSettings.money)) {
-                    newItem.revealed = true;
+                    b.revealed = true;
                     mylog("revealed business", item.name);
                 };
                 if (item.costType === "knowledge" && item.initialVisible.lte(this.userSettings.knowledge)) {
-                    newItem.revealed = true;
+                    b.revealed = true;
                     mylog("revealed business", item.name);
                 };
             }
-            return newItem;
         })
         /* reveal upgrades if resource reached */
         this.state.upgrades.forEach(item => {
@@ -592,10 +585,6 @@ export default class Neumann extends React.Component {
             this.userSettings.curMaxMoney = this.userSettings.money;
         }
         this.userSettings.knowledge=this.userSettings.knowledge.plus(payoutKnowledgeThisTick);
-
-        this.setState((state) => ({
-            businesses: newBusinesses,
-        }));
 
         this.setTitle();
     }
@@ -683,8 +672,8 @@ export default class Neumann extends React.Component {
                             <button className="testbutton test-give-prestige"
                                 onClick={this.prestigeCheat}>+{this.cheatPrestigeVal} prestige</button>
                             <button className="testbutton announce-button" onClick={() => this.announce("great job winning!  oh boy this is just super.")}>Announce</button>
-                            <button className="testbutton overlay-button" onClick={() => this.addOverlay({ id: 0 }, "X2")}>Odd Jobs Overlay</button>
-                            <button className="testbutton overlay-button" onClick={() => this.addOverlay({ id: 1 }, "X2")}>Newspaper Overlay</button>
+                            <button className="testbutton overlay-button" onClick={() => this.addOverlay(0, "X2")}>Odd Jobs Overlay</button>
+                            <button className="testbutton overlay-button" onClick={() => this.addOverlay(1, "X2")}>Newspaper Overlay</button>
                             <button className="testbutton ref-button" onClick={() => mylog("domRef:", this.state.businesses[0].domRef)}>Odd Job domRef</button>
                             <button className="testbutton ref-button" onClick={() => mylog("domRef2:", this.state.businesses[1].domRef)}>Newspaper domRef</button>
 
@@ -701,8 +690,6 @@ export default class Neumann extends React.Component {
                                     businesses={this.state.businesses}
                                     userSettings={this.userSettings}
                                     purchaseAmt={this.purchaseAmt}
-                                    money={this.userSettings.money}
-                                    prestige={this.userSettings.prestige}
                                     onClick={this.clickBusiness}
                                     domRefs={this.domRefs}
                                 />
