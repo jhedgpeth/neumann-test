@@ -1,15 +1,17 @@
 {
   "files": {
-    "main.css": "/neumann-test/static/css/main.aa130027.chunk.css",
-    "main.js": "/neumann-test/static/js/main.17a99149.chunk.js",
-    "main.js.map": "/neumann-test/static/js/main.17a99149.chunk.js.map",
+    "main.css": "/neumann-test/static/css/main.3f15898a.chunk.css",
+    "main.js": "/neumann-test/static/js/main.d117b65a.chunk.js",
+    "main.js.map": "/neumann-test/static/js/main.d117b65a.chunk.js.map",
     "runtime~main.js": "/neumann-test/static/js/runtime~main.869e5942.js",
     "runtime~main.js.map": "/neumann-test/static/js/runtime~main.869e5942.js.map",
-    "static/js/2.391886c4.chunk.js": "/neumann-test/static/js/2.391886c4.chunk.js",
-    "static/js/2.391886c4.chunk.js.map": "/neumann-test/static/js/2.391886c4.chunk.js.map",
+    "static/css/2.509658c0.chunk.css": "/neumann-test/static/css/2.509658c0.chunk.css",
+    "static/js/2.7cbe00d9.chunk.js": "/neumann-test/static/js/2.7cbe00d9.chunk.js",
+    "static/js/2.7cbe00d9.chunk.js.map": "/neumann-test/static/js/2.7cbe00d9.chunk.js.map",
     "index.html": "/neumann-test/index.html",
-    "precache-manifest.1736d6ebded57fe2237a1e3c3cc8845b.js": "/neumann-test/precache-manifest.1736d6ebded57fe2237a1e3c3cc8845b.js",
+    "precache-manifest.161cc1504f0edcc57137497f1c1c2a70.js": "/neumann-test/precache-manifest.161cc1504f0edcc57137497f1c1c2a70.js",
     "service-worker.js": "/neumann-test/service-worker.js",
-    "static/css/main.aa130027.chunk.css.map": "/neumann-test/static/css/main.aa130027.chunk.css.map"
+    "static/css/2.509658c0.chunk.css.map": "/neumann-test/static/css/2.509658c0.chunk.css.map",
+    "static/css/main.3f15898a.chunk.css.map": "/neumann-test/static/css/main.3f15898a.chunk.css.map"
   }
 }
