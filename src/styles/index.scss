@@ -108,7 +108,7 @@ body {
 .header-wrapper {
   height: 60px;
   display: grid;
-  grid-template-columns: 40% 20% 40%;
+  grid-template-columns: 39% 22% 39%;
 }
 
 .income {
@@ -441,39 +441,6 @@ body {
   color: $c_maindimfg;
 }
 
-@-webkit-keyframes ProgressAnim {
-  from {
-    background-position: left;
-  }
-  to {
-    background-position: right;
-  }
-}
-@-moz-keyframes ProgressAnim {
-  from {
-    background-position: left;
-  }
-  to {
-    background-position: right;
-  }
-}
-@-o-keyframes ProgressAnim {
-  from {
-    background-position: left;
-  }
-  to {
-    background-position: right;
-  }
-}
-@keyframes ProgressAnim {
-  from {
-    background-position: left;
-  }
-  to {
-    background-position: right;
-  }
-}
-
 /* right sidebar
 -----------------------------------------------------------------------------*/
 
@@ -507,6 +474,15 @@ body {
   color: $c_selected;
   width: 30%;
   text-align: right;
+}
+.probe-prod-span {
+  font-size: 1rem;
+  font-weight: bold;
+  margin: auto;
+  padding: 0 10px 0 0;
+  color: $c_selected;
+  width: 100%;
+  text-align: left;
 }
 
 .testbutton {
@@ -587,8 +563,9 @@ body {
   grid-row: 1;
   z-index: 2;
   // height: 42px;
-  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
-    1px 1px 0 #000;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+  // text-shadow: 0px 0px 5px rgba(0, 0, 0, 1);
+    
 }
 .business-buy-progress.money {
   background: $c_moneybg;

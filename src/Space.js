@@ -52,45 +52,6 @@ export default class Space extends React.Component {
 
     }
 
-    static getRangeValues(n) {
-        if (n === 2) {
-            return ({
-                probeSpendPct: 100,
-                rangeCt: 2,
-                distribRange: [0, 50, 100],
-                handleStyle: [
-                    { backgroundColor: 'gold', border: '0', },
-                    { backgroundColor: 'gold', border: '0', },
-                    { backgroundColor: 'cyan', border: '0', },
-                ],
-                trackStyle: [
-                    { backgroundColor: 'gold' },
-                    { backgroundColor: 'cyan' },
-                ],
-                railStyle: { backgroundColor: 'blue' },
-
-            })
-        } else if (n === 3) {
-            return ({
-                probeSpendPct: 100,
-                rangeCt: 3,
-                distribRange: [0, 33, 66, 100],
-                handleStyle: [
-                    { backgroundColor: 'gold', border: '0', },
-                    { backgroundColor: 'gold', border: '0', },
-                    { backgroundColor: 'cyan', border: '0', },
-                    { backgroundColor: 'red', border: '0', },
-                ],
-                trackStyle: [
-                    { backgroundColor: 'gold' },
-                    { backgroundColor: 'cyan' },
-                    { backgroundColor: 'red' },
-                ],
-                railStyle: { backgroundColor: 'red' },
-            })
-        }
-    }
-
     resetProbeZoom() {
         this.outerEllipseRef.setAttrs({
             'radiusX': this.outerRadius.x,
@@ -391,6 +352,7 @@ export default class Space extends React.Component {
                             width={160}
                             text={"#" + this.props.zoomLevel + ": " + HelperConst.showInt(this.props.mapDistance) + " km"}
                             fontSize={16}
+                            fontFamily={'Kodchasan'}
                             align="center"
                             fill="#1A8A09"
                         />
@@ -400,6 +362,7 @@ export default class Space extends React.Component {
                             width={160}
                             text={this.props.zoomName}
                             fontSize={16}
+                            fontFamily={'Kodchasan'}
                             align="center"
                             fill="#1A8A09"
                         />

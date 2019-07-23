@@ -1,22 +1,32 @@
 @import "./colors.scss";
 
 .rainbow_text_animated {
-    // background: linear-gradient(to bottom, #6666ff, #0099ff , #00ff00, #ff3399, #6666ff);
-    // background: linear-gradient(to bottom, violet, indigo, blue, green, yellow, orange, red, violet) repeat-x;
-   background: repeating-linear-gradient(to bottom, $c_selected, yellow, $c_neonblue, $c_neongreen) repeat-x;
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    animation: rainbow_animation 0.3s linear infinite;
-    background-size: 100% 400%;
+  // background: linear-gradient(to bottom, #6666ff, #0099ff , #00ff00, #ff3399, #6666ff);
+  // background: linear-gradient(to bottom, violet, indigo, blue, green, yellow, orange, red, violet) repeat-x;
+  background: repeating-linear-gradient(
+      to bottom,
+      $c_selected,
+      yellow,
+      $c_neonblue,
+      $c_neongreen
+    )
+    repeat-x;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-animation: rainbow_animation 0.3s linear infinite;
+  -moz-animation: rainbow_animation 0.3s linear infinite;
+  -o-animation: rainbow_animation 0.3s linear infinite;
+  animation: rainbow_animation 0.3s linear infinite;
+  background-size: 100% 400%;
 }
 
 @keyframes rainbow_animation {
-    0% {
-        background-position: 0 0;
-    }
+  0% {
+    background-position: 0 0;
+  }
 
-    100% {
-        background-position: 0 100%;
-    }
+  100% {
+    background-position: 0 100%;
+  }
 }

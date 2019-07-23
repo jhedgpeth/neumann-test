@@ -4,11 +4,12 @@ import './styles/fonts.css';
 const Decimal = require('decimal.js');
 const numberformat = require('swarm-numberformat');
 
-const DEBUG = true;
+// const DEBUG = true;
 
 
 export default class HelperConst {
-    
+    static DEBUG = true;
+
     static moneySymbol = "$";
     // static knowledgeSymbol = "𓂀";
     static knowledgeSymbol = '\u29a8';
@@ -52,7 +53,7 @@ export default class HelperConst {
     ];
 
     static DebugLog() {
-        if (DEBUG) {
+        if (HelperConst.DEBUG) {
             console.log.apply(console, arguments);
         }
     }

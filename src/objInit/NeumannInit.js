@@ -10,7 +10,6 @@ export default class NeumannInit extends React.Component {
     static freshState = () => ({
         businesses: BusinessInit(),
         upgrades: UpgradeInit(),
-        timeMilestone: 0,
         announcements: [],
         version: "0.0.1",
     })

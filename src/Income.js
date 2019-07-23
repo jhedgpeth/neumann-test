@@ -47,7 +47,7 @@ export default class Income extends React.Component {
                     <div className="text-effect">
                         <h1 className="neon" data-text="NEUMANN">NEUMANN</h1>
                         <div className="gradient"></div>
-                        {/* <div className="spotlight"></div> */}
+                        <div className="spotlight"></div>
                     </div>
                 </div>
 
