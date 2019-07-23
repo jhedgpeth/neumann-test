@@ -78,7 +78,6 @@ export default class Neumann extends React.Component {
         this.clickAnnouncement = this.clickAnnouncement.bind(this);
         this.purchaseAmtDropDownHandler = this.purchaseAmtDropDownHandler.bind(this);
         this.announce = this.announce.bind(this);
-        this.probeTestNextZoom = this.probeTestNextZoom.bind(this);
         this.sliderChange = this.sliderChange.bind(this);
         this.rangeChange = this.rangeChange.bind(this);
         this.purchaseProbe = this.purchaseProbe.bind(this);
@@ -302,6 +301,7 @@ export default class Neumann extends React.Component {
         this.mapDistance = conv.dist;
         this.zoomLevel = conv.idx;
         this.zoomName = conv.name;
+        // mylog("conv:",conv);
     }
 
     incrementAnnouncementCounters() {
@@ -481,14 +481,7 @@ export default class Neumann extends React.Component {
     changeTabs(idx) {
         this.tabIndex = idx;
     }
-
-    probeTestNextZoom() {
-        mylog("clicked probeTestNextZoom:", ComputeFunc.getSpaceZoomLevelIdx(this.userSettings.probe.distance) + 1);
-        // this.setState((state, props) => ({
-        //     probeDistance: ComputeFunc.getSpaceZoomLevel(this.zoomLevel)
-        // }));
-    }
-
+    
     sliderChange(value) {
         mylog("slider change:", value);
         this.sliderInfo.probeSpendPct = value;
@@ -624,11 +617,6 @@ export default class Neumann extends React.Component {
 
                     <button className="testbutton save-button" onClick={this.saveGame}>SAVE</button>
                     <h3>Zoom Index: {this.zoomLevel}</h3><br />
-                    <button
-                        className="testbutton space-button"
-                        onClick={this.probeTestNextZoom}>
-                        Space Zoom
-                    </button>
 
                 </div>
         }
