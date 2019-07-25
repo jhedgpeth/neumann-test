@@ -2,7 +2,7 @@ import React from 'react';
 import HelperConst from './HelperConst';
 import ComputeFunc from './ComputeFunc';
 import './styles/fonts.css';
-import ScrollBar  from 'react-scrollbars-custom';
+import ScrollBar from 'react-scrollbars-custom';
 const mylog = HelperConst.DebugLog;
 
 export default class Upgrades extends React.Component {
@@ -36,44 +36,53 @@ export default class Upgrades extends React.Component {
 
             let buyPct = 0;
             let bgClass = "";
+            let costSymbol = "";
 
-            if (item.costType === "money") {
-                bgClass = "money ";
-                buyPct = ComputeFunc.buyPct(item.costValue, this.props.userSettings.money);
+            let rewardInfo;
+            let clickAction = this.props.onClick;
 
-                if (this.props.userSettings.money.gte(item.costValue)) {
-                    buyClass += "canAfford ";
-                    buttonDisabled = false;
-                } else {
-                    buyClass += "cannotAfford ";
-                }
-            }
-            if (item.costType === "knowledge") {
-                bgClass = "knowledge ";
-                buyPct = ComputeFunc.buyPct(item.costValue, this.props.userSettings.knowledge);
-
-                if (this.props.userSettings.knowledge.gte(item.costValue)) {
-                    buyClass += "canAfford ";
-                    buttonDisabled = false;
-                } else {
-                    buyClass += "cannotAfford ";
-                }
-            }
-            let costSymbol = ""
             switch (item.costType) {
                 case "knowledge":
                     costSymbol = HelperConst.knowledgeSymbolSpan();
+                    bgClass = "knowledge ";
+                    buyPct = ComputeFunc.buyPct(item.costValue, this.props.userSettings.knowledge);
+
+                    if (this.props.userSettings.knowledge.gte(item.costValue)) {
+                        buyClass += "canAfford ";
+                        buttonDisabled = false;
+                    } else {
+                        buyClass += "cannotAfford ";
+                    }
                     break;
                 default:
                     costSymbol = HelperConst.moneySymbolSpan();
+                    bgClass = "money ";
+                    buyPct = ComputeFunc.buyPct(item.costValue, this.props.userSettings.money);
+
+                    if (this.props.userSettings.money.gte(item.costValue)) {
+                        buyClass += "canAfford ";
+                        buttonDisabled = false;
+                    } else {
+                        buyClass += "cannotAfford ";
+                    }
                     break;
             }
 
-            let bgAnim = buyPct<100 ? "upgAnim " : "";
+            switch (item.rewardType) {
+                case "enableFeature":
+                    rewardInfo = "Enable: "+item.rewardTarget;
+                    clickAction = this.props.enableFeature;
+                    break;
+                default:
+                        rewardInfo = this.props.businesses[item.rewardTarget].name+" x"+item.rewardValue;
+                    break;
+            }
+
+            let bgAnim = buyPct < 100 ? "upgAnim " : "";
             const buyPctStyle = { width: buyPct + '%' }
 
             return (
-                <div key={n + "upgrade"} className={"upgrade "+bgClass} >
+                <div key={n + "upgrade"} className={"upgrade " + bgClass} >
                     <div className={"upgrade-buy-progress " + bgClass}>
                         <div className={"upgrade-buy-progress-pct " + bgClass + bgAnim} style={buyPctStyle}>
                             <span ></span>
@@ -82,14 +91,14 @@ export default class Upgrades extends React.Component {
                     <button
                         key={n + "button"}
                         className={"upgrade-buy " + buyClass + bgClass}
-                        onClick={() => this.props.onClick(item)}
+                        onClick={() => clickAction(item)}
                         disabled={buttonDisabled}>
                         {n}
                     </button>
                     <div key={n + "upgrade-reward"} className="upgrade-reward">
-                        {this.props.businesses[item.rewardTarget].name} x{item.rewardValue}
+                        {rewardInfo}
                     </div>
-                    <div key={n + "upgrade-cost-wrapper"} className={"upgrade-cost-wrapper " + buyClass +bgClass} >
+                    <div key={n + "upgrade-cost-wrapper"} className={"upgrade-cost-wrapper " + buyClass + bgClass} >
                         {costSymbol}{HelperConst.showNum(item.costValue)}
                     </div>
                 </div >
@@ -98,9 +107,9 @@ export default class Upgrades extends React.Component {
         });
 
         return (
-                <ScrollBar permanentTrackY={true} className="upgrade-container">
-                    {rows}
-                </ScrollBar>
+            <ScrollBar permanentTrackY={true} className="upgrade-container">
+                {rows}
+            </ScrollBar>
         )
 
     }

@@ -15,7 +15,13 @@ export default class Sliders {
     };
 
     static getRangeValues(n) {
-        if (n === 2) {
+        if (n === 1) {
+            return ({
+                probeSpendPct: 100,
+                rangeCt: 1,
+                distribRange: [0, 100],
+            })
+        } else if (n === 2) {
             return ({
                 probeSpendPct: 100,
                 rangeCt: 2,
@@ -30,7 +36,6 @@ export default class Sliders {
                     { backgroundColor: 'cyan' },
                 ],
                 railStyle: { backgroundColor: 'blue' },
-
             })
         } else if (n === 3) {
             return ({

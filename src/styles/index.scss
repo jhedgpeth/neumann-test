@@ -693,7 +693,7 @@ body {
 }
 
 .cost-wrapper {
-  padding: 0 5px 0 5px;
+  // padding: 0 5px 0 5px;
   border-radius: 0 0 0 5px;
   grid-column: 1;
   grid-row: 2;
@@ -701,6 +701,7 @@ body {
   align-items: center;
   justify-content: left;
   // background: #020;
+  overflow: hidden;
 }
 .cost-wrapper.canAfford {
   color: $c_mainfg;
@@ -711,13 +712,14 @@ body {
 
 .earning-wrapper {
   // background: #444;
-  padding: 0 5px 0 5px;
+  // padding: 0 5px 0 5px;
   border-right: 1px solid $c_moneydivider;
   grid-column: 2;
   grid-row: 2;
   display: flex;
   align-items: center;
   justify-content: left;
+  overflow: hidden;
 }
 
 .earning-pct-wrapper {

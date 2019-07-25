@@ -16,14 +16,14 @@ export default function UpgradeInit() {
             rewardValue: 10,
         }, {
             id: 1,
-            name: "Demographics",
-            watchType: "knowledge",
-            watchValue: new Decimal(1),
-            costType: "knowledge",
-            costValue: new Decimal(30),
-            rewardType: "upgradeMult",
-            rewardTarget: 1,
-            rewardValue: 10,
+            name: "Technology Discovered",
+            watchType: "businessOwned",
+            watchTarget: 0,
+            watchValue: 1,
+            costType: "money",
+            costValue: new Decimal(100),
+            rewardType: "enableFeature",
+            rewardTarget: "Probes",
         }
 
     ]);

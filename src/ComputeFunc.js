@@ -58,8 +58,8 @@ export default class ComputeFunc {
     }
 
     static getOwnedMilestonesAttained(fromCt, toCt) {
-        const from25s = Math.floor(fromCt / 25) > 2 ? 2 : Math.floor(fromCt / 25);
-        const to25s = Math.floor(toCt / 25) > 2 ? 2 : Math.floor(toCt / 25);
+        const from25s = Math.floor(fromCt / 25) > 3 ? 3 : Math.floor(fromCt / 25);
+        const to25s = Math.floor(toCt / 25) > 3 ? 3 : Math.floor(toCt / 25);
         const from100s = Math.floor(fromCt / 100);
         const to100s = Math.floor(toCt / 100);
         let retArr = [];
@@ -73,6 +73,7 @@ export default class ComputeFunc {
                 retArr.push(n * 100);
             }
         }
+        mylog("owned milestones:",retArr);
         return retArr;
     }
 

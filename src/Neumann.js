@@ -58,7 +58,7 @@ export default class Neumann extends React.Component {
         this.mapDistance = HelperConst.spaceZoomLevels[0];
 
         this.sliderInfo = {
-            rangeSettings: Sliders.getRangeValues(2),
+            rangeSettings: Sliders.getRangeValues(1),
             probePcts: [50, 50, 0],
             probeSpendPct: 100,
         }
@@ -80,6 +80,7 @@ export default class Neumann extends React.Component {
         this.announce = this.announce.bind(this);
         this.sliderChange = this.sliderChange.bind(this);
         this.rangeChange = this.rangeChange.bind(this);
+        this.enableFeature = this.enableFeature.bind(this);
         this.purchaseProbe = this.purchaseProbe.bind(this);
 
 
@@ -333,21 +334,20 @@ export default class Neumann extends React.Component {
         const busCost = ComputeFunc.getCost(bus, this.userSettings.busStats[bus.id], this.purchaseAmt, this.userSettings.money);
         this.userSettings.money = this.userSettings.money.minus(busCost.cost);
         let b = this.userSettings.busStats[bus.id];
-        b.owned += busCost.num;
-        mylog(bus.name, "owned set to", b.owned);
+
 
         // add overlays
         let newBusinesses = this.state.businesses.map(item => {
-            b = this.userSettings.busStats[item.id];
+            const newB = this.userSettings.busStats[item.id];
             let newItem = { ...item };
             if (newItem.id === bus.id) {
                 let bonusArr = [];
-                const ownedMilestones = ComputeFunc.getOwnedMilestonesAttained(b.owned, b.owned + busCost.num);
+                const ownedMilestones = ComputeFunc.getOwnedMilestonesAttained(newB.owned, newB.owned + busCost.num);
                 let busMult = 1;
                 ownedMilestones.forEach((milestone) => {
                     busMult *= 2;
                 });
-                (busMult > 1) && bonusArr.push(this.genOverlayObj("X" + busMult + "!", "ownedBonus"));
+                (busMult > 1) && bonusArr.push(this.genOverlayObj("X" + busMult, "ownedBonus"));
                 newItem.overlays = this.genOverlayArr(item.overlays, "+" + busCost.num).concat(bonusArr);
                 mylog("adding", busCost.num, "to", newItem.name);
 
@@ -357,7 +357,10 @@ export default class Neumann extends React.Component {
         /* for overlays */
         this.setState((state, props) => ({
             businesses: newBusinesses,
-        }))
+        }));
+        b.owned += busCost.num;
+        mylog(bus.name, "owned set to", b.owned);
+
 
         /* total buy milestones */
         const curIdx = ComputeFunc.getTotalMilestoneIdx(this.userSettings.buyMilestone);
@@ -383,6 +386,12 @@ export default class Neumann extends React.Component {
         }
 
 
+    }
+
+    enableFeature(feature) {
+        mylog("feature click ", feature.name);
+        this.userSettings.upgStats[feature.id].purchased = true;
+        mylog("feature enabled:", feature.rewardTarget);
     }
 
     clickUpgrade(upg) {
@@ -481,7 +490,7 @@ export default class Neumann extends React.Component {
     changeTabs(idx) {
         this.tabIndex = idx;
     }
-    
+
     sliderChange(value) {
         mylog("slider change:", value);
         this.sliderInfo.probeSpendPct = value;
@@ -498,7 +507,9 @@ export default class Neumann extends React.Component {
     }
     reportRangePcts() {
         let pSpeedPct, pQualityPct, pCombatPct = 0;
-        if (this.sliderInfo.rangeSettings.rangeCt === 2) {
+        if (this.sliderInfo.rangeSettings.rangeCt === 1) {
+            pSpeedPct = 100;
+        } else if (this.sliderInfo.rangeSettings.rangeCt === 2) {
             pSpeedPct = Math.floor(this.sliderInfo.rangeSettings.distribRange[1]);
             pQualityPct = 100 - pSpeedPct;
 
@@ -560,6 +571,10 @@ export default class Neumann extends React.Component {
                     u.revealed = true;
                     mylog("revealed upgrade", item.name);
                 };
+                if (item.watchType === "businessOwned" && this.userSettings.busStats[item.watchTarget].owned >= item.watchValue) {
+                    u.revealed = true;
+                    mylog("revealed upgrade", item.name);
+                }
             }
         });
 
@@ -572,9 +587,19 @@ export default class Neumann extends React.Component {
         this.setTitle();
     }
 
-    render() {
-        let probeattribs;
-        if (this.sliderInfo.rangeSettings.rangeCt === 2) {
+    getProbeTab() {
+        let probeattribs, sliderattribs;
+        if (this.sliderInfo.rangeSettings.rangeCt === 1) {
+            probeattribs = <div className="probe-attribs"></div>
+            sliderattribs =
+                <div className="sliderattribs">
+                    <span className="probe-prod-span">Probe Production</span>
+                    <div className="sliderHeader">Fund: ${HelperConst.showNum(ComputeFunc.getPct(this.userSettings.money, this.sliderInfo.probeSpendPct))}</div>
+                    <div className="sliderContainer">
+                        {Sliders.getSlider(this.sliderInfo, this.sliderChange)}
+                    </div>
+                </div>
+        } else if (this.sliderInfo.rangeSettings.rangeCt === 2) {
             probeattribs =
                 <div className="probe-attribs">
                     <div className="probe-attrib speed-header">Speed</div>
@@ -583,6 +608,18 @@ export default class Neumann extends React.Component {
                     <div className="probe-attrib probe-speed">{this.sliderInfo.probePcts[0]}%</div>
                     <div className="probe-attrib probe-quality">{this.sliderInfo.probePcts[1]}%</div>
                     <div></div>
+                </div>
+            sliderattribs =
+                <div className="sliderattribs">
+                    <span className="probe-prod-span">Probe Production</span>
+                    <div className="sliderHeader">Fund: ${HelperConst.showNum(ComputeFunc.getPct(this.userSettings.money, this.sliderInfo.probeSpendPct))}</div>
+                    <div className="sliderContainer">
+                        {Sliders.getSlider(this.sliderInfo, this.sliderChange)}
+                    </div>
+                    <div className="sliderHeader">Distribute Funds</div>
+                    <div className="sliderContainer">
+                        {Sliders.getRange(this.sliderInfo, this.rangeChange)}
+                    </div>
                 </div>
         } else {
             probeattribs =
@@ -594,7 +631,42 @@ export default class Neumann extends React.Component {
                     <div className="probe-attrib probe-quality">{this.sliderInfo.probePcts[1]}%</div>
                     <div className="probe-attrib probe-combat">{this.sliderInfo.probePcts[2]}%</div>
                 </div>
+            sliderattribs =
+                <div className="sliderattribs">
+                    <span className="probe-prod-span">Probe Production</span>
+                    <div className="sliderHeader">Fund: ${HelperConst.showNum(ComputeFunc.getPct(this.userSettings.money, this.sliderInfo.probeSpendPct))}</div>
+                    <div className="sliderContainer">
+                        {Sliders.getSlider(this.sliderInfo, this.sliderChange)}
+                    </div>
+                    <div className="sliderHeader">Distribute Funds</div>
+                    <div className="sliderContainer">
+                        {Sliders.getRange(this.sliderInfo, this.rangeChange)}
+                    </div>
+                </div>
         }
+        return (
+            <TabPanel className="react-tabs__tab-panel probe-tab-panel">
+
+                <div id="right-sidebar">
+                    {sliderattribs}
+                    {probeattribs}
+                    <button className="testbutton purchase-button" onClick={this.purchaseProbe}>Purchase Probe</button>
+                </div>
+
+                <Space
+                    probe={this.userSettings.probe}
+                    mapDistance={this.mapDistance}
+                    timeMultiplier={this.timeMultiplier}
+                    zoomLevel={this.zoomLevel}
+                    zoomName={this.zoomName}
+                />
+
+            </TabPanel>
+        )
+    }
+
+    render() {
+
         let debugButtons;
         if (HelperConst.DEBUG) {
             debugButtons =
@@ -617,7 +689,7 @@ export default class Neumann extends React.Component {
 
                     <button className="testbutton save-button" onClick={this.saveGame}>SAVE</button>
                     <h3>Zoom Index: {this.zoomLevel}</h3><br />
-
+                    <h3>RangeCt: {this.sliderInfo.rangeSettings.rangeCt}</h3>
                 </div>
         }
 
@@ -655,6 +727,7 @@ export default class Neumann extends React.Component {
                                 businesses={this.state.businesses}
                                 userSettings={this.userSettings}
                                 onClick={this.clickUpgrade}
+                                enableFeature={this.enableFeature}
                             />
 
                         </div>
@@ -692,36 +765,7 @@ export default class Neumann extends React.Component {
 
                     </TabPanel>
 
-                    <TabPanel className="react-tabs__tab-panel probe-tab-panel">
-
-                        <div id="right-sidebar">
-
-                            {debugButtons}
-
-                            <span className="probe-prod-span">Probe Production</span>
-                            <div className="sliderHeader">Fund: ${HelperConst.showNum(ComputeFunc.getPct(this.userSettings.money, this.sliderInfo.probeSpendPct))}</div>
-                            <div className="sliderContainer">
-                                {Sliders.getSlider(this.sliderInfo, this.sliderChange)}
-
-                            </div>
-                            <div className="sliderHeader">Distribute Funds</div>
-                            <div className="sliderContainer">
-                                {Sliders.getRange(this.sliderInfo, this.rangeChange)}
-
-                            </div>
-                            {probeattribs}
-                            <button className="testbutton purchase-button" onClick={this.purchaseProbe}>Purchase Probe</button>
-                        </div>
-
-                        <Space
-                            probe={this.userSettings.probe}
-                            mapDistance={this.mapDistance}
-                            timeMultiplier={this.timeMultiplier}
-                            zoomLevel={this.zoomLevel}
-                            zoomName={this.zoomName}
-                        />
-
-                    </TabPanel>
+                    {this.getProbeTab()}
 
                 </Tabs>
 

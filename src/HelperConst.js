@@ -45,7 +45,7 @@ export default class HelperConst {
         // new Decimal("Infinity"),
     ];
     static spaceZoomLevelNames = [
-        "Sol - Earth - Moon",
+        "Moon",
         "Solar System",
         "Milky Way",
         "Galaxy NGC 4945",
