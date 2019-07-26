@@ -16,7 +16,7 @@ export default function BusinessInit() {
             costCoef: 1.10,
             timeBase: 1,
             timeCounter: 0,
-            payout: false,
+            payout: 0,
             initialVisible: new Decimal(0),
             overlays: [],
         }, {
@@ -31,7 +31,7 @@ export default function BusinessInit() {
             costCoef: 1.10,
             timeBase: 2,
             timeCounter: 0,
-            payout: false,
+            payout: 0,
             initialVisible: new Decimal(84),
             overlays: [],
         }, {
@@ -46,7 +46,7 @@ export default function BusinessInit() {
             costCoef: 1.10,
             timeBase: 4,
             timeCounter: 0,
-            payout: false,
+            payout: 0,
             initialVisible: new Decimal(98015),
             overlays: [],
         }, {
@@ -61,7 +61,7 @@ export default function BusinessInit() {
             costCoef: 1.10,
             timeBase: 8,
             timeCounter: 0,
-            payout: false,
+            payout: 0,
             initialVisible: new Decimal(10500),
             overlays: [],
         }, {
@@ -76,7 +76,7 @@ export default function BusinessInit() {
             costCoef: 1.10,
             timeBase: 12,
             timeCounter: 0,
-            payout: false,
+            payout: 0,
             initialVisible: new Decimal(122500),
             overlays: [],
         }, {
@@ -91,7 +91,7 @@ export default function BusinessInit() {
             costCoef: 1.10,
             timeBase: 20,
             timeCounter: 0,
-            payout: false,
+            payout: 0,
             initialVisible: new Decimal(1190000),
             overlays: [],
         }, {
@@ -106,7 +106,7 @@ export default function BusinessInit() {
             costCoef: 1.10,
             timeBase: 30,
             timeCounter: 0,
-            payout: false,
+            payout: 0,
             initialVisible: new Decimal(11900000),
             overlays: [],
         }, {
@@ -121,7 +121,7 @@ export default function BusinessInit() {
             costCoef: 1.10,
             timeBase: 40,
             timeCounter: 0,
-            payout: false,
+            payout: 0,
             initialVisible: new Decimal(119000000),
             overlays: [],
         }, {
@@ -136,7 +136,7 @@ export default function BusinessInit() {
             costCoef: 1.10,
             timeBase: 60,
             timeCounter: 0,
-            payout: false,
+            payout: 0,
             initialVisible: new Decimal(1000000000),
             overlays: [],
         }, {
@@ -151,7 +151,7 @@ export default function BusinessInit() {
             costCoef: 1.14,
             timeBase: 90,
             timeCounter: 0,
-            payout: false,
+            payout: 0,
             initialVisible: new Decimal(9000000000),
             overlays: [],
         }

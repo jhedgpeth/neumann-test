@@ -40,6 +40,7 @@ export default class Neumann extends React.Component {
 
         this.timeInterval = 100;
         this.timeMultiplier = this.timeInterval / 1000;
+        this.lastLoop = Date.now();
 
         this.announceCt = 0;
         this.overlayCt = 0;
@@ -183,7 +184,7 @@ export default class Neumann extends React.Component {
         if (!this.gameSaveIntervalId) {
             // this.gameSaveIntervalId = setInterval(this.saveGame, 10000);
         }
-
+        this.lastLoop = Date.now();
     }
 
     loadGame() {
@@ -261,11 +262,12 @@ export default class Neumann extends React.Component {
                     mylog("resetting ", item.name, " to timeCounter ", newItem.timeCounter);
                 }
             } else {
-                newItem.payout = false;
+                newItem.payout = 0;
                 newItem.timeCounter = newItem.timeCounter + this.timeMultiplier;
                 if (newItem.timeCounter >= b.timeAdj) {
-                    newItem.payout = true;
-                    newItem.timeCounter = 0;
+                    const numPayouts = Math.floor(newItem.timeCounter/b.timeAdj);
+                    newItem.payout = numPayouts;
+                    newItem.timeCounter = newItem.timeCounter % b.timeAdj;
                 }
                 changed = true;
                 // mylog(newItem.name, " timeCounter:", newItem.timeCounter, " payout:",newItem.payout);
@@ -534,6 +536,14 @@ export default class Neumann extends React.Component {
     }
 
     updateGame() {
+        
+        const now = Date.now();
+        const dt = now - this.lastLoop;
+        this.lastLoop = now;
+        this.timeMultiplier = dt / 1000;
+        this.fpsPct = Math.floor((100/dt)*100);
+        mylog("dt:",dt,"this.fpsPct:",this.fpsPct);
+
         this.incrementBusinessCounters();
         this.incrementProbeDistance();
         this.incrementAnnouncementCounters();
@@ -771,7 +781,9 @@ export default class Neumann extends React.Component {
 
                 <div id="footer">
 
-                    v. 0.0.1
+                    <div id="version">v. 0.0.1</div>
+                    <div id="fps">fps:{this.fpsPct}%</div>
+                    {/* <div id="testinfo">mult:{this.timeMultiplier}</div> */}
 
                 </div>
 

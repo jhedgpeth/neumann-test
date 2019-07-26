@@ -153,7 +153,7 @@ export default class ComputeFunc {
         let revenue = new Decimal(0);
 
         items.forEach((item) => {
-            revenue = revenue.plus(ComputeFunc.getPayout(item, busStats[item.id], prestige));
+            revenue = revenue.plus(ComputeFunc.getPayout(item, busStats[item.id], prestige).times(item.payout));
         });
         return revenue;
     }
