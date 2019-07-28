@@ -2,6 +2,7 @@ import React from 'react';
 // import Konva from 'konva';
 import { Stage, Layer, Circle, Ellipse, Line, Text } from 'react-konva';
 // import MyPortal from './MyPortal';
+import ComputeFunc from './ComputeFunc';
 import HelperConst from './HelperConst';
 // import ComputeFunc from './ComputeFunc';
 // import Decimal from 'decimal.js';
@@ -19,6 +20,10 @@ export default class Space extends React.Component {
             x: 0,
             y: 0,
         };
+        this.centerRadius = {
+            x: 0,
+            y: 0,
+        }
         this.innerRadius = {
             x: 300,
             y: 150,
@@ -32,36 +37,56 @@ export default class Space extends React.Component {
             y: this.centerCanvas.y - 135,
         }
 
-        if (this.props.zoomLevel === 0) {
+        const conv = ComputeFunc.convertDistanceToSpace(this.props.probe.distance);
+        this.mapDistance = conv.dist;
+        this.zoomLevel = conv.idx;
+        this.zoomName = conv.name;
+        if (this.zoomLevel === 0) {
             this.planetRadius = 10;
-        } else if (this.props.zoomLevel === 1) {
+        } else if (this.zoomLevel === 1) {
             this.planetRadius = 3;
         } else {
             this.planetRadius = 0;
         }
 
         this.zoomDuration = 0.25;
-        this.zoomShown = this.props.zoomLevel;
+        this.zoomShown = this.zoomLevel;
 
         this.pulseColor = "#222";
         this.pulseColorCt = 0;
 
         this.starClass = "stars starpause";
 
-        // this.buildNewZoomText = this.buildNewZoomText.bind(this);
-
+        mylog("init mapDistance:", this.mapDistance, "zoomLevel:", this.zoomLevel, "zoomShown:", this.zoomShown, "zoomName:", this.zoomName);
     }
 
     resetProbeZoom() {
-        this.outerEllipseRef.setAttrs({
+        // const conv = ComputeFunc.getSpaceInfoForIndex(this.zoomShown);
+        // this.mapDistance = conv.dist;
+        // this.zoomLevel = conv.idx;
+        // this.zoomName = conv.name;
+        // mylog("reset mapDistance:", this.mapDistance, "zoomLevel:", this.zoomLevel, "zoomShown:", this.zoomShown, "zoomName:", this.zoomName);
+
+        if (this.outerEllipseRef) this.outerEllipseRef.setAttrs({
             'radiusX': this.outerRadius.x,
             'radiusY': this.outerRadius.y,
         })
-        this.innerEllipseRef.setAttrs({
+        if (this.innerEllipseRef) this.innerEllipseRef.setAttrs({
             'radiusX': this.innerRadius.x,
             'radiusY': this.innerRadius.y,
         })
-        this.planetRadius = 3;
+        if (this.centerEllipseRef) this.centerEllipseRef.setAttrs({
+            'radiusX': this.centerRadius.x,
+            'radiusY': this.centerRadius.y,
+        })
+        // set planet size
+        if (this.zoomShown === 0) {
+            this.planetRadius = 10;
+        } else if (this.zoomShown === 1) {
+            this.planetRadius = 3;
+        } else {
+            this.planetRadius = 0;
+        }
         this.pulsePause = false;
         this.starClass = "stars starpause";
     }
@@ -77,7 +102,7 @@ export default class Space extends React.Component {
 
     calcProbePulseRadius() {
         const pulseFactor = this.props.probe.distance
-            .div(this.props.mapDistance);
+            .div(this.mapDistance);
 
         let xRadius = pulseFactor
             .times(this.innerRadius.x)
@@ -99,11 +124,14 @@ export default class Space extends React.Component {
 
     processSpaceMap() {
 
+        this.zoomLevel = ComputeFunc.convertDistanceToSpace(this.props.probe.distance).idx;
+        // mylog("zoomLevel:",this.zoomLevel, "zoomShown:",this.zoomShown);
+
         /* set probe distance pulse */
         if (this.pulseRef) {
             const probeRadius = (
                 this.props.probe.distance.eq(0)
-                || (this.props.zoomLevel !== this.zoomShown)
+                || (this.zoomLevel !== this.zoomShown)
                 || this.outerEllipseMoving
                 || this.innerEllipseMoving)
                 ? { x: 0, y: 0 }
@@ -119,33 +147,60 @@ export default class Space extends React.Component {
         this.pulseColor = "rgba(85,85,0," + (((Math.sin(this.pulseColorCt) + 1) / 4) + 0.5).toFixed(1) + ")"
         // mylog("pulseColor:",this.pulseColor);
 
-        if ((this.props.zoomLevel < this.zoomShown)) {
-            this.resetProbeZoom();
-        }
+        // if ((this.zoomLevel === this.zoomShown)) {
+        //     this.resetProbeZoom();
+        // }
 
         /* "zoom" space map if zoom level changes */
-        if ((this.props.zoomLevel > this.zoomShown)
+        if ((this.zoomLevel !== this.zoomShown)
             && this.outerEllipseRef
             && this.innerEllipseRef
+            && this.centerEllipseRef
             && !this.outerEllipseMoving
             && !this.innerEllipseMoving) {
-            mylog("zoomShown:", this.zoomShown);
-            this.starClass = "stars starzoom";
-            this.zoomShown += 1;
-            if (this.props.zoomLevel < 2) {
-                mylog("shrinking planet");
-                this.centerPlanetRef.to({
-                    duration: this.zoomDuration,
-                    radius: 3
-                })
+
+            mylog("before reset.  zoomShown:", this.zoomShown, "zoomLevel:", this.zoomLevel);
+            this.resetProbeZoom();
+
+            let toOuterRadX, toOuterRadY, toInnerRadX, toInnerRadY, toCenterRadX, toCenterRadY;
+            if (this.zoomLevel > this.zoomShown) {
+                // shrink ellipse
+                toOuterRadX = this.innerRadius.x;  // shrink
+                toOuterRadY = this.innerRadius.y;
+                toInnerRadX = 0;  // shrink
+                toInnerRadY = 0;
+                toCenterRadX = 0;  // stay
+                toCenterRadY = 0;
+                this.starClass = "stars starzoom";
+                this.zoomShown += 1;
+            } else {
+                // grow ellipse
+                toOuterRadX = this.outerRadius.x;  // stay
+                toOuterRadY = this.outerRadius.y;
+                toInnerRadX = this.outerRadius.x;  // grow
+                toInnerRadY = this.outerRadius.y;
+                toCenterRadX = this.innerRadius.x;  // grow
+                toCenterRadY = this.innerRadius.y;
+                this.starClass = "stars starshrink";
+                this.zoomShown -= 1;
             }
+
+            // set planet size
+            if (this.zoomShown === 0) {
+                this.planetRadius = 10;
+            } else if (this.zoomShown === 1) {
+                this.planetRadius = 3;
+            } else {
+                this.planetRadius = 0;
+            }
+
             if (!this.outerEllipseMoving) {
                 mylog("ring anim starting");
                 this.outerEllipseMoving = true;
                 this.outerEllipseRef.to({
                     duration: this.zoomDuration,
-                    radiusX: this.innerRadius.x,
-                    radiusY: this.innerRadius.y,
+                    radiusX: toOuterRadX,
+                    radiusY: toOuterRadY,
                     onFinish: () => {
                         this.probeOuterZoomFinished();
                     },
@@ -153,13 +208,28 @@ export default class Space extends React.Component {
                 this.innerEllipseMoving = true;
                 this.innerEllipseRef.to({
                     duration: this.zoomDuration,
-                    radiusX: 0,
-                    radiusY: 0,
+                    radiusX: toInnerRadX,
+                    radiusY: toInnerRadY,
                     onFinish: () => {
                         this.probeInnerZoomFinished();
                     },
-                })
+                });
+                this.centerPlanetRef.to({
+                    duration: this.zoomDuration,
+                    radius: this.planetRadius
+                });
+                this.centerEllipseRef.to({
+                    duration: this.zoomDuration,
+                    radiusX: toCenterRadX,
+                    radiusY: toCenterRadY,
+                });
             }
+
+            const conv = ComputeFunc.getSpaceInfoForIndex(this.zoomShown);
+            this.mapDistance = conv.dist;
+            this.zoomName = conv.name;
+            // mylog("process mapDistance:", this.mapDistance, "zoomLevel:", this.zoomLevel, "zoomShown:", this.zoomShown, "zoomName:", this.zoomName);
+            // mylog("starclass:",this.starClass);
         }
     }
 
@@ -177,6 +247,45 @@ export default class Space extends React.Component {
                 fill="rgba(85,85,85,0.2)"
                 ref={node => {
                     this.pulseRef = node;
+                }}
+            />
+        );
+        rows.push(
+            <Circle
+                key="centerPlanet"
+                id='centerPlanet'
+                x={this.centerCanvas.x}
+                y={this.centerCanvas.y}
+                radius={this.planetRadius}
+                // fill="green"
+                fillRadialGradientStartPoint={{
+                    x: -10,
+                    y: -10,
+                }}
+                fillRadialGradientStartRadius={1}
+                fillRadialGradientEndPoint={{
+                    x: -10,
+                    y: -10,
+                }}
+                fillRadialGradientEndRadius={30}
+                fillRadialGradientColorStops={[0.4, '#1A8A09', 0.8, '#163bb5', 1, '#333']}
+                ref={node => {
+                    this.centerPlanetRef = node;
+                }}
+            />
+        );
+        rows.push(
+            <Ellipse
+                key="centerEllipse"
+                id='centerEllipse'
+                x={this.centerCanvas.x}
+                y={this.centerCanvas.y}
+                radiusX={this.centerRadius.x}
+                radiusY={this.centerRadius.y}
+                stroke="#d55"
+                dash={[5, 5]}
+                ref={node => {
+                    this.centerEllipseRef = node;
                 }}
             />
         );
@@ -211,8 +320,8 @@ export default class Space extends React.Component {
             />
         );
 
-        /* moon only for closest zoom */
-        if (this.props.zoomLevel === 0) {
+        if (this.zoomShown === 0) {
+            /* moon only for closest zoom */
             rows.push(
                 <Circle
                     key="moon"
@@ -234,83 +343,24 @@ export default class Space extends React.Component {
                 />
             );
         }
-
-        /* compute for center planet representation */
-        switch (this.props.zoomLevel) {
-            case 0:
-                /* the big planet */
-                rows.push(
-                    <Circle
-                        key="centerPlanet"
-                        id='centerPlanet'
-                        x={this.centerCanvas.x}
-                        y={this.centerCanvas.y}
-                        radius={10}
-                        // fill="green"
-                        fillRadialGradientStartPoint={{
-                            x: -10,
-                            y: -10,
-                        }}
-                        fillRadialGradientStartRadius={1}
-                        fillRadialGradientEndPoint={{
-                            x: -10,
-                            y: -10,
-                        }}
-                        fillRadialGradientEndRadius={30}
-                        fillRadialGradientColorStops={[0.4, '#1A8A09', 0.8, '#163bb5', 1, '#333']}
-                        ref={node => {
-                            this.centerPlanetRef = node;
-                        }}
+        if (this.zoomShown > 1) {
+            /* reticle */
+            rows.push(
+                <React.Fragment key="crossHairFragment">
+                    <Line
+                        key="crossHair1"
+                        points={[this.centerCanvas.x - 5, this.centerCanvas.y, this.centerCanvas.x + 5, this.centerCanvas.y]}
+                        stroke="#d55"
+                        strokeWidth={1}
                     />
-                );
-                break;
-            case "none":
-                /* just a dot... */
-                rows.push(
-                    <Circle
-                        key="centerPlanet"
-                        id='centerPlanet'
-                        x={this.centerCanvas.x}
-                        y={this.centerCanvas.y}
-                        radius={3}
-                        fill="#1A8A09"
-                        ref={node => {
-                            this.centerPlanetRef = node;
-                        }}
+                    <Line
+                        key="crossHair2"
+                        points={[this.centerCanvas.x, this.centerCanvas.y - 5, this.centerCanvas.x, this.centerCanvas.y + 5]}
+                        stroke="#d55"
+                        strokeWidth={1}
                     />
-                );
-                break;
-            default:
-                /*  reticle only */
-                rows.push(
-                    <React.Fragment key="crossHairFragment">
-                        {/* <Ellipse
-                            id='centerPlanet'
-                            x={this.centerCanvas.x}
-                            y={this.centerCanvas.y}
-                            radiusX={20 * this.ellipseMetrics.x}
-                            radiusY={20 * this.ellipseMetrics.y}
-                            stroke="#d55"
-                            dash={[4, 4]}
-                            ref={node => {
-                                this.centerPlanetRef = node;
-                            }}
-                        /> */}
-                        <Line
-                            key="crossHair1"
-                            points={[this.centerCanvas.x - 5, this.centerCanvas.y, this.centerCanvas.x + 5, this.centerCanvas.y]}
-                            stroke="#d55"
-                            strokeWidth={1}
-                        />
-                        <Line
-                            key="crossHair2"
-                            points={[this.centerCanvas.x, this.centerCanvas.y - 5, this.centerCanvas.x, this.centerCanvas.y + 5]}
-                            stroke="#d55"
-                            strokeWidth={1}
-                        />
-                    </React.Fragment>
-                );
-                break;
+                </React.Fragment>
+            );
         }
 
         return rows;
@@ -350,7 +400,7 @@ export default class Space extends React.Component {
                             x={this.centerCanvas.x - 80}
                             y={this.centerCanvas.y + this.innerRadius.y + 24}
                             width={160}
-                            text={"#" + this.props.zoomLevel + ": " + HelperConst.showInt(this.props.mapDistance) + " km"}
+                            text={"#" + this.zoomShown + ": " + HelperConst.showInt(this.mapDistance) + " km"}
                             fontSize={16}
                             fontFamily={'Kodchasan'}
                             align="center"
@@ -360,7 +410,7 @@ export default class Space extends React.Component {
                             x={this.centerCanvas.x - 80}
                             y={this.centerCanvas.y + this.innerRadius.y + 45}
                             width={160}
-                            text={this.props.zoomName}
+                            text={this.zoomName}
                             fontSize={16}
                             fontFamily={'Kodchasan'}
                             align="center"

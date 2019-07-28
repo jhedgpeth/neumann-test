@@ -128,6 +128,7 @@ export default class Neumann extends React.Component {
         });
         this.probeDivRef = React.createRef();
         this.pulseRef = null;
+        this.centerEllipseRef = null;
         this.innerEllipseRef = null;
         this.outerEllipseRef = null;
         this.centerPlanetRef = null;
@@ -607,8 +608,8 @@ export default class Neumann extends React.Component {
 
     getTabList() {
         let rows = [];
-        rows.push(<Tab className="tab-list-item">Businesses</Tab>);
-        this.featureEnabled['Probes'] && rows.push(<Tab className="tab-list-item">Probes</Tab>);
+        rows.push(<Tab className="tab-list-item" key="business-tab">Businesses</Tab>);
+        this.featureEnabled['Probes'] && rows.push(<Tab className="tab-list-item" key="probe-tab">Probes</Tab>);
 
         return (
             <div id="tabs">
@@ -689,10 +690,10 @@ export default class Neumann extends React.Component {
 
                     <Space
                         probe={this.userSettings.probe}
-                        mapDistance={this.mapDistance}
                         timeMultiplier={this.timeMultiplier}
-                        zoomLevel={this.zoomLevel}
-                        zoomName={this.zoomName}
+                        // mapDistance={this.mapDistance}
+                        // zoomLevel={this.zoomLevel}
+                        // zoomName={this.zoomName}
                     />
 
                 </TabPanel>
