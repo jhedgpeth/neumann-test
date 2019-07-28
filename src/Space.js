@@ -41,10 +41,18 @@ export default class Space extends React.Component {
         this.mapDistance = conv.dist;
         this.zoomLevel = conv.idx;
         this.zoomName = conv.name;
+
+        this.planetColors = {
+            'earth': [0.4, '#1A8A09', 0.8, '#163bb5', 1, '#333'],
+            'sun': [0.4, '#fadf98', 0.8, '#B1954D', 1, '#333'],
+        }
+        this.planetColorStops = this.planetColors.earth;
         if (this.zoomLevel === 0) {
             this.planetRadius = 10;
+            this.planetColorStops = this.planetColors.earth;
         } else if (this.zoomLevel === 1) {
             this.planetRadius = 3;
+            this.planetColorStops = this.planetColors.sun;
         } else {
             this.planetRadius = 0;
         }
@@ -80,10 +88,12 @@ export default class Space extends React.Component {
             'radiusY': this.centerRadius.y,
         })
         // set planet size
-        if (this.zoomShown === 0) {
+        if (this.zoomLevel === 0) {
             this.planetRadius = 10;
-        } else if (this.zoomShown === 1) {
+            this.planetColorStops = this.planetColors.earth;
+        } else if (this.zoomLevel === 1) {
             this.planetRadius = 3;
+            this.planetColorStops = this.planetColors.sun;
         } else {
             this.planetRadius = 0;
         }
@@ -186,10 +196,12 @@ export default class Space extends React.Component {
             }
 
             // set planet size
-            if (this.zoomShown === 0) {
+            if (this.zoomLevel === 0) {
                 this.planetRadius = 10;
-            } else if (this.zoomShown === 1) {
+                this.planetColorStops = this.planetColors.earth;
+            } else if (this.zoomLevel === 1) {
                 this.planetRadius = 3;
+                this.planetColorStops = this.planetColors.sun;
             } else {
                 this.planetRadius = 0;
             }
@@ -268,7 +280,7 @@ export default class Space extends React.Component {
                     y: -10,
                 }}
                 fillRadialGradientEndRadius={30}
-                fillRadialGradientColorStops={[0.4, '#1A8A09', 0.8, '#163bb5', 1, '#333']}
+                fillRadialGradientColorStops={this.planetColorStops}
                 ref={node => {
                     this.centerPlanetRef = node;
                 }}

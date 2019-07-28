@@ -187,7 +187,7 @@ export default class Business extends React.Component {
             // mylog("overlayItems:",overlayItems);
 
             return (
-                <div key={n + "business"} className={"business " + bgClass} ref={this.getDomRef(n)} >
+                <div key={item.id + "business"} className={"business " + bgClass} ref={this.getDomRef(n)} >
                     <div className="overlays-wrapper">
                         {overlayItems}
                     </div>
@@ -202,7 +202,7 @@ export default class Business extends React.Component {
                         </div>
                     </div>
                     <button
-                        key={n + "button"}
+                        key={item.id + "button"}
                         className={buttonClass + bgClass}
                         onClick={() => this.props.onClick(item)}
                         disabled={buttonDisabled}>
@@ -210,18 +210,18 @@ export default class Business extends React.Component {
                             className="buyMultiple">{myCost.num}{HelperConst.multiplySymbolSpan()}
                         </span> {n}
                     </button>
-                    <div key={n + "owned"} className="business-owned">{HelperConst.showInt(b.owned)}</div>
+                    <div key={item.id + "owned"} className="business-owned">{HelperConst.showInt(b.owned)}</div>
 
-                    <div key={n + "cost-wrapper"} className={costClass}>
-                        <div key={n + "cost-money"} className="business-cost-money">{HelperConst.moneySymbolSpan()}{HelperConst.showNum(myCost.cost)}</div>
+                    <div key={item.id + "cost-wrapper"} className={costClass}>
+                        <div key={item.id + "cost-money"} className="business-cost-money">{HelperConst.moneySymbolSpan()}{HelperConst.showNum(myCost.cost)}</div>
                     </div>
 
-                    <div key={n + "earning-wrapper"} className="earning-wrapper">
-                        <div key={n + "revenue-total"} className="business-revenue-total">+{HelperConst.moneySymbolSpan()}{HelperConst.showNum(myPayout)}</div>
+                    <div key={item.id + "earning-wrapper"} className="earning-wrapper">
+                        <div key={item.id + "revenue-total"} className="business-revenue-total">+{HelperConst.moneySymbolSpan()}{HelperConst.showNum(myPayout)}</div>
                     </div>
 
-                    <div key={n + "earning-pct-wrapper"} className="earning-pct-wrapper">
-                        <div key={n + "earning-pct"} className="earning-pct">{myEarningPct}%</div>
+                    <div key={item.id + "earning-pct-wrapper"} className="earning-pct-wrapper">
+                        <div key={item.id + "earning-pct"} className="earning-pct">{myEarningPct}%</div>
                     </div>
                 </div>
             );

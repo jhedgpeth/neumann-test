@@ -38,15 +38,14 @@ export default class Neumann extends React.Component {
         this.state = { ...NeumannInit.freshState() };
         this.userSettings = { ...NeumannInit.userSettings() };
 
+        this.timerRunning = false;
+        this.state.pauseClass = "testbutton pause-button ";
         this.timeInterval = 100;
         this.timeMultiplier = this.timeInterval / 1000;
         this.lastLoop = Date.now();
 
         this.announceCt = 0;
         this.overlayCt = 0;
-        this.featureEnabled = {
-            'Probes': false,
-        }
 
         this.gameIntervalId = null;
         this.prestigeIntervalId = null;
@@ -165,6 +164,10 @@ export default class Neumann extends React.Component {
     }
 
     pause() {
+        this.timerRunning = false;
+        this.setState((state) => ({
+            pauseClass: "testbutton pause-button lit",
+        }));
         if (this.gameIntervalId) {
             clearInterval(this.gameIntervalId);
             delete (this.gameIntervalId);
@@ -177,9 +180,14 @@ export default class Neumann extends React.Component {
             clearInterval(this.gameSaveIntervalId);
             delete (this.gameSaveIntervalId)
         }
+        mylog("set timeRunning to", this.timerRunning);
     }
 
     resume() {
+        this.timerRunning = true;
+        this.setState((state) => ({
+            pauseClass: "testbutton pause-button ",
+        }));
         if (!this.gameIntervalId) {
             this.gameIntervalId = setInterval(this.updateGame, this.timeInterval);
         }
@@ -401,7 +409,7 @@ export default class Neumann extends React.Component {
     enableFeature(feature) {
         mylog("feature click ", feature.name);
         this.userSettings.upgStats[feature.id].purchased = true;
-        this.featureEnabled[feature.rewardTarget] = true;
+        this.userSettings.featureEnabled[feature.rewardTarget] = true;
         mylog("feature enabled:", feature.rewardTarget);
     }
 
@@ -608,8 +616,8 @@ export default class Neumann extends React.Component {
 
     getTabList() {
         let rows = [];
-        rows.push(<Tab className="tab-list-item" key="business-tab">Businesses</Tab>);
-        this.featureEnabled['Probes'] && rows.push(<Tab className="tab-list-item" key="probe-tab">Probes</Tab>);
+        rows.push(<Tab className="tab-list-item" key="business-tab">Business</Tab>);
+        this.userSettings.featureEnabled['Satellite'] && rows.push(<Tab className="tab-list-item" key="probe-tab">Space</Tab>);
 
         return (
             <div id="tabs">
@@ -622,12 +630,14 @@ export default class Neumann extends React.Component {
 
     getProbeTab() {
         let probeattribs, sliderattribs;
+        let sliderText = "Spend %";
+
         if (this.sliderInfo.rangeSettings.rangeCt === 1) {
             probeattribs = <div className="probe-attribs"></div>
             sliderattribs =
                 <div className="sliderattribs">
                     <span className="probe-prod-span">Probe Production</span>
-                    <div className="sliderHeader">Fund: ${HelperConst.showNum(ComputeFunc.getPct(this.userSettings.money, this.sliderInfo.probeSpendPct))}</div>
+                    <div className="sliderHeader">{sliderText}</div>
                     <div className="sliderContainer">
                         {Sliders.getSlider(this.sliderInfo, this.sliderChange)}
                     </div>
@@ -645,7 +655,7 @@ export default class Neumann extends React.Component {
             sliderattribs =
                 <div className="sliderattribs">
                     <span className="probe-prod-span">Probe Production</span>
-                    <div className="sliderHeader">Fund: ${HelperConst.showNum(ComputeFunc.getPct(this.userSettings.money, this.sliderInfo.probeSpendPct))}</div>
+                    <div className="sliderHeader">{sliderText}</div>
                     <div className="sliderContainer">
                         {Sliders.getSlider(this.sliderInfo, this.sliderChange)}
                     </div>
@@ -667,7 +677,7 @@ export default class Neumann extends React.Component {
             sliderattribs =
                 <div className="sliderattribs">
                     <span className="probe-prod-span">Probe Production</span>
-                    <div className="sliderHeader">Fund: ${HelperConst.showNum(ComputeFunc.getPct(this.userSettings.money, this.sliderInfo.probeSpendPct))}</div>
+                    <div className="sliderHeader">{sliderText}</div>
                     <div className="sliderContainer">
                         {Sliders.getSlider(this.sliderInfo, this.sliderChange)}
                     </div>
@@ -678,22 +688,22 @@ export default class Neumann extends React.Component {
                 </div>
         }
 
-        if (this.featureEnabled['Probes']) {
+        if (this.userSettings.featureEnabled['Satellite']) {
             return (
                 <TabPanel className="react-tabs__tab-panel probe-tab-panel">
 
                     <div id="right-sidebar">
                         {sliderattribs}
                         {probeattribs}
-                        <button className="testbutton purchase-button" onClick={this.purchaseProbe}>Purchase Probe</button>
+                        <button className="probe-purchase"
+                            onClick={this.purchaseProbe}>
+                            Purchase Probe: ${HelperConst.showNum(ComputeFunc.getPct(this.userSettings.money, this.sliderInfo.probeSpendPct))}
+                        </button>
                     </div>
 
                     <Space
                         probe={this.userSettings.probe}
                         timeMultiplier={this.timeMultiplier}
-                        // mapDistance={this.mapDistance}
-                        // zoomLevel={this.zoomLevel}
-                        // zoomName={this.zoomName}
                     />
 
                 </TabPanel>
@@ -709,8 +719,8 @@ export default class Neumann extends React.Component {
         if (HelperConst.DEBUG) {
             debugButtons =
                 <div className="debugButtons">
-                    <button className="testbutton pause-button" onClick={this.pause}>Pause</button>
-                    <button className="testbutton pause-button" onClick={this.resume}>Resume</button>
+                    <button className={this.state.pauseClass} onClick={this.pause}>Pause</button>
+                    <button className={"testbutton pause-button "} onClick={this.resume}>Resume</button>
                     <button className="testbutton reset-button" onClick={this.resetAll}>RESET</button>
                     <button
                         className="testbutton prestige-button"

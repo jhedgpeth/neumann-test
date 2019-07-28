@@ -11,9 +11,48 @@ export default class Income extends React.Component {
 
 
     render() {
+
         const revenue = Business.computeTotalEarningPerSec(this.props.businesses, this.props.userSettings);
         // const learning = ComputeFunc.computeTotalEarningPerSec(this.props.probes, this.props.prestige);
         const learning = new Decimal(0);
+
+        let rowsLeft = [];
+        let rowsRight = [];
+        if (this.props.userSettings.featureEnabled['Satellite']) {
+            rowsLeft.push(
+                <div className="income-header">
+                    Knowledge:
+                </div>
+            );
+            rowsLeft.push(
+                <div className="income-knowledge">
+                    {HelperConst.knowledgeSymbolSpan()}{HelperConst.showNum(this.props.userSettings.knowledge)}
+                </div>
+
+            );
+            rowsLeft.push(
+                <div className="income-learning">
+                    (+ {HelperConst.knowledgeSymbolSpan()}{HelperConst.showNum(learning)}/s)
+                </div>
+            )
+            rowsRight.push(
+                <div className="probe-header">
+                    Distance:
+                </div>
+
+            )
+            rowsRight.push(
+                <div className="probe-distance">
+                    {HelperConst.showNum(this.props.userSettings.probe.distance)} km
+                </div>
+            )
+            rowsRight.push(
+                <div className="probe-rate">
+                    {HelperConst.showNum(this.props.userSettings.probe.getDistPerSec())} km/s
+                </div>
+            )
+        }
+
 
         return (
             <div className="header-wrapper">
@@ -31,15 +70,7 @@ export default class Income extends React.Component {
                     </div>
 
 
-                    <div className="income-header">
-                        Knowledge:
-                    </div>
-                    <div className="income-knowledge">
-                        {HelperConst.knowledgeSymbolSpan()}{HelperConst.showNum(this.props.userSettings.knowledge)}
-                    </div>
-                    <div className="income-learning">
-                        (+ {HelperConst.knowledgeSymbolSpan()}{HelperConst.showNum(learning)}/s)
-                    </div>
+                    {rowsLeft}
 
                 </div>
 
@@ -63,15 +94,7 @@ export default class Income extends React.Component {
                         (+ {HelperConst.prestigeSymbolSpan()}{HelperConst.showInt(this.props.userSettings.prestigeNext)})
                     </div>
 
-                    <div className="probe-header">
-                        Distance:
-                    </div>
-                    <div className="probe-distance">
-                        {HelperConst.showNum(this.props.userSettings.probe.distance)} km
-                    </div>
-                    <div className="probe-rate">
-                        {HelperConst.showNum(this.props.userSettings.probe.getDistPerSec())} km/s
-                    </div>
+                    {rowsRight}
 
                 </div>
 

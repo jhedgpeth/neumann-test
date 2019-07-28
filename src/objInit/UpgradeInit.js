@@ -16,14 +16,34 @@ export default function UpgradeInit() {
             rewardValue: 10,
         }, {
             id: 1,
-            name: "Technology Discovered",
+            name: "New Technology",
             watchType: "businessOwned",
             watchTarget: 0,
             watchValue: 1,
             costType: "money",
             costValue: new Decimal(100),
             rewardType: "enableFeature",
-            rewardTarget: "Probes",
+            rewardTarget: "Satellite",
+        }, {
+            id: 2,
+            name: "New Technology",
+            watchType: "businessOwned",
+            watchTarget: 0,
+            watchValue: 1,
+            costType: "money",
+            costValue: new Decimal(100),
+            rewardType: "enableFeature",
+            rewardTarget: "Self-Replication Machinery",
+        }, {
+            id: 3,
+            name: "New Technology",
+            watchType: "businessOwned",
+            watchTarget: 0,
+            watchValue: 1,
+            costType: "money",
+            costValue: new Decimal(100),
+            rewardType: "enableFeature",
+            rewardTarget: "Nano Technology",
         }
 
     ]);
