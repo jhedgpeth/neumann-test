@@ -44,6 +44,9 @@ export default class Neumann extends React.Component {
 
         this.announceCt = 0;
         this.overlayCt = 0;
+        this.featureEnabled = {
+            'Probes': false,
+        }
 
         this.gameIntervalId = null;
         this.prestigeIntervalId = null;
@@ -52,6 +55,7 @@ export default class Neumann extends React.Component {
         this.domRefs = [];
         this.purchaseAmt = "1";
         this.tabIndex = 0;
+
 
         // this.probe = new Probe(new Decimal(0), 0, 0, 0);
         this.zoomLevel = 0;
@@ -254,6 +258,9 @@ export default class Neumann extends React.Component {
         let changed = false;
         const newBusinesses = this.state.businesses.map(item => {
             let b = this.userSettings.busStats[item.id];
+            // reset if new
+            if (b.timeAdj === 1) b.timeAdj = item.timeBase;
+
             let newItem = { ...item };
             if (b.owned === 0) {
                 if (b.revealed && item.timeCounter !== 0) {
@@ -265,7 +272,7 @@ export default class Neumann extends React.Component {
                 newItem.payout = 0;
                 newItem.timeCounter = newItem.timeCounter + this.timeMultiplier;
                 if (newItem.timeCounter >= b.timeAdj) {
-                    const numPayouts = Math.floor(newItem.timeCounter/b.timeAdj);
+                    const numPayouts = Math.floor(newItem.timeCounter / b.timeAdj);
                     newItem.payout = numPayouts;
                     newItem.timeCounter = newItem.timeCounter % b.timeAdj;
                 }
@@ -393,6 +400,7 @@ export default class Neumann extends React.Component {
     enableFeature(feature) {
         mylog("feature click ", feature.name);
         this.userSettings.upgStats[feature.id].purchased = true;
+        this.featureEnabled[feature.rewardTarget] = true;
         mylog("feature enabled:", feature.rewardTarget);
     }
 
@@ -536,19 +544,19 @@ export default class Neumann extends React.Component {
     }
 
     updateGame() {
-        
+
         const now = Date.now();
         const dt = now - this.lastLoop;
         this.lastLoop = now;
         this.timeMultiplier = dt / 1000;
-        this.fpsPct = Math.floor((100/dt)*100);
-        mylog("dt:",dt,"this.fpsPct:",this.fpsPct);
+        this.fpsPct = Math.floor((100 / dt) * 100);
+        // mylog("dt:",dt,"this.fpsPct:",this.fpsPct);
 
         this.incrementBusinessCounters();
         this.incrementProbeDistance();
         this.incrementAnnouncementCounters();
 
-        const payoutMoneyThisTick = ComputeFunc.totalPayout(this.state.businesses, this.userSettings.busStats, this.userSettings.prestige);
+        const payoutMoneyThisTick = Business.getAllPayouts(this.state.businesses, this.userSettings);
         this.userSettings.lifetimeEarnings = this.userSettings.lifetimeEarnings.plus(payoutMoneyThisTick);
         // mylog("payoutMoneyThisTick:",payoutMoneyThisTick.toFixed());
 
@@ -595,6 +603,20 @@ export default class Neumann extends React.Component {
         this.userSettings.knowledge = this.userSettings.knowledge.plus(payoutKnowledgeThisTick);
 
         this.setTitle();
+    }
+
+    getTabList() {
+        let rows = [];
+        rows.push(<Tab className="tab-list-item">Businesses</Tab>);
+        this.featureEnabled['Probes'] && rows.push(<Tab className="tab-list-item">Probes</Tab>);
+
+        return (
+            <div id="tabs">
+                <TabList className="tab-list">
+                    {rows}
+                </TabList>
+            </div>
+        )
     }
 
     getProbeTab() {
@@ -654,25 +676,30 @@ export default class Neumann extends React.Component {
                     </div>
                 </div>
         }
-        return (
-            <TabPanel className="react-tabs__tab-panel probe-tab-panel">
 
-                <div id="right-sidebar">
-                    {sliderattribs}
-                    {probeattribs}
-                    <button className="testbutton purchase-button" onClick={this.purchaseProbe}>Purchase Probe</button>
-                </div>
+        if (this.featureEnabled['Probes']) {
+            return (
+                <TabPanel className="react-tabs__tab-panel probe-tab-panel">
 
-                <Space
-                    probe={this.userSettings.probe}
-                    mapDistance={this.mapDistance}
-                    timeMultiplier={this.timeMultiplier}
-                    zoomLevel={this.zoomLevel}
-                    zoomName={this.zoomName}
-                />
+                    <div id="right-sidebar">
+                        {sliderattribs}
+                        {probeattribs}
+                        <button className="testbutton purchase-button" onClick={this.purchaseProbe}>Purchase Probe</button>
+                    </div>
 
-            </TabPanel>
-        )
+                    <Space
+                        probe={this.userSettings.probe}
+                        mapDistance={this.mapDistance}
+                        timeMultiplier={this.timeMultiplier}
+                        zoomLevel={this.zoomLevel}
+                        zoomName={this.zoomName}
+                    />
+
+                </TabPanel>
+            )
+        } else {
+            return (<div></div>);
+        }
     }
 
     render() {
@@ -721,12 +748,7 @@ export default class Neumann extends React.Component {
                     selectedIndex={this.tabIndex}
                     onSelect={idx => this.changeTabs(idx)}>
 
-                    <div id="tabs">
-                        <TabList className="tab-list">
-                            <Tab className="tab-list-item">Businesses</Tab>
-                            <Tab className="tab-list-item">Probes</Tab>
-                        </TabList>
-                    </div>
+                    {this.getTabList()}
 
                     <TabPanel className="react-tabs__tab-panel main-tab-panel">
 
@@ -783,7 +805,6 @@ export default class Neumann extends React.Component {
 
                     <div id="version">v. 0.0.1</div>
                     <div id="fps">fps:{this.fpsPct}%</div>
-                    {/* <div id="testinfo">mult:{this.timeMultiplier}</div> */}
 
                 </div>
 

@@ -6,12 +6,54 @@ import { Motion, spring } from 'react-motion';
 import ComputeFunc from './ComputeFunc';
 import HelperConst from './HelperConst';
 import './styles/fonts.css';
+const Decimal = require('decimal.js');
 // const mylog = HelperConst.DebugLog;
 
 
 export default class Business extends React.Component {
 
     static overlayCt = 0;
+
+    static computeNextPayoutValue(bus, userSettings, buyNum) {
+        const nextOwned = userSettings.busStats[bus.id].owned + buyNum;
+        const num25s = Math.floor(nextOwned / 25);
+        // 25, 50, 75, 100, 200, ...
+        const mult25 = num25s > 3 ? 3 : num25s;
+        const mult100 = Math.floor(nextOwned / 100);
+        const prestigeMultiplier = userSettings.prestige.num.times(userSettings.prestige.val).div(100).plus(1);
+        let revenue = new Decimal(
+            bus.incomeBase
+                .times(nextOwned)
+                .times(Math.pow(2, mult25))
+                .times(Math.pow(4, mult100))
+                .times(userSettings.busStats[bus.id].payoutAdj)
+                .times(prestigeMultiplier)
+        );
+        return revenue;
+    }
+    static computeEarningPerSec(item, userSettings) {
+        return this.computeNextPayoutValue(item, userSettings, 0).div(userSettings.busStats[item.id].timeAdj);
+    }
+    static computeTotalEarningPerSec(items, userSettings) {
+        let revenue = new Decimal(0);
+        items.forEach((item) => {
+            revenue = revenue.plus(this.computeEarningPerSec(item, userSettings));
+        });
+        return revenue;
+    }
+
+    static getPayout(bus, userSettings) {
+        return this.computeNextPayoutValue(bus, userSettings, 0).times(bus.payout);
+    }
+
+    static getAllPayouts(items, userSettings) {
+        let revenue = new Decimal(0);
+        items.forEach((item) => {
+            revenue = revenue.plus(this.getPayout(item, userSettings));
+        });
+        return revenue;
+    }
+
 
     static applyMultiplier(bus, mult) {
         return update(bus, {
@@ -106,7 +148,7 @@ export default class Business extends React.Component {
             return result;
         }, []);
 
-        const totalEarningPerSec = ComputeFunc.computeTotalEarningPerSec(this.props.businesses, this.props.userSettings);
+        const totalEarningPerSec = Business.computeTotalEarningPerSec(this.props.businesses, this.props.userSettings);
 
 
         const rows = sources.map((item) => {
@@ -114,7 +156,7 @@ export default class Business extends React.Component {
             const n = item.name;
             const myCost = ComputeFunc.getCost(item, this.props.userSettings.busStats[item.id], this.props.purchaseAmt, this.props.userSettings.money);
             // mylog(myCost);
-            const nextPayout = ComputeFunc.computeNextPayoutValueMoney(item, this.props.userSettings.busStats[item.id], this.props.userSettings.prestige, myCost.num);
+            const nextPayout = Business.computeNextPayoutValue(item, this.props.userSettings, myCost.num);
 
             const buyPct = ComputeFunc.buyPct(myCost.cost, this.props.userSettings.money);
             const buyPctStyle = { width: buyPct + '%' };
@@ -134,8 +176,8 @@ export default class Business extends React.Component {
                 costClass = "cost-wrapper cannotAfford ";
             }
 
-            const myEarningPerSec = ComputeFunc.computeEarningPerSec(item, this.props.userSettings.busStats[item.id],this.props.userSettings.prestige);
-            let curPayout = ComputeFunc.computePayoutValueMoney(item, this.props.userSettings.busStats[item.id], this.props.userSettings.prestige);
+            const myEarningPerSec = Business.computeEarningPerSec(item, this.props.userSettings);
+            let curPayout = Business.computeNextPayoutValue(item, this.props.userSettings, 0);
             const myPayout = curPayout.gt(0) ? curPayout : nextPayout;
             const myEarningPct = ComputeFunc.getEarningPct(myEarningPerSec, totalEarningPerSec);
 

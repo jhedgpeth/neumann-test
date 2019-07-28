@@ -1,8 +1,9 @@
 import React from 'react';
-import ComputeFunc from './ComputeFunc';
+// import ComputeFunc from './ComputeFunc';
 import HelperConst from './HelperConst';
 import './styles/fonts.css';
 import './styles/neon.scss';
+import Business from './Business';
 // const mylog = HelperConst.DebugLog;
 const Decimal = require('decimal.js');
 
@@ -10,7 +11,7 @@ export default class Income extends React.Component {
 
 
     render() {
-        const revenue = ComputeFunc.computeTotalEarningPerSec(this.props.businesses, this.props.userSettings);
+        const revenue = Business.computeTotalEarningPerSec(this.props.businesses, this.props.userSettings);
         // const learning = ComputeFunc.computeTotalEarningPerSec(this.props.probes, this.props.prestige);
         const learning = new Decimal(0);
 
