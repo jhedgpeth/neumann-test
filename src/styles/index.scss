@@ -121,6 +121,7 @@ body {
 }
 .income-header {
   grid-column: 1;
+  grid-row: 1;
   padding: 0 10px;
   margin: auto 0 auto auto;
 }
@@ -138,14 +139,20 @@ body {
   align-items: center;
   justify-content: left;
 }
-.income-knowledge {
+.learning-header {
+  grid-column: 1;
+  grid-row: 2;
+  padding: 0 10px;
+  margin: auto 0 auto auto;
+}
+.learning-knowledge {
   grid-column: 2;
   grid-row: 2;
   display: flex;
   align-items: center;
   justify-content: left;
 }
-.income-learning {
+.learning-learning {
   grid-column: 3;
   grid-row: 2;
   display: flex;
@@ -167,6 +174,7 @@ body {
 }
 .probe-header {
   grid-column: 1;
+  grid-row: 2;
   padding: 0 10px;
   margin: auto 0 auto auto;
 }
@@ -309,12 +317,15 @@ body {
 }
 .upgrade.money {
   border: 1px solid $c_moneyhover;
+  // box-shadow: 0 0 25px 1px $c_moneyhover;
 }
 .upgrade.knowledge {
   border: 1px solid $c_knowledgehover;
+  // box-shadow: 0 0 25px 1px $c_knowledgehover;
 }
 .upgrade.feature {
   border: 1px solid $c_featurehover;
+  box-shadow: 0 0 25px 1px $c_featurehover;
 }
 .upgrade-buy {
   font-weight: bold;
@@ -532,13 +543,14 @@ body {
   background: $c_mainbg;
   color: $c_mainfg;
   text-decoration: none;
-  border-radius: 10%;
+  border-radius: 5px;
   border: 1px solid $c_countdownbg;
   position: relative;
   margin: 4px;
 }
 .testbutton:hover {
-  border: 1px solid $c_selected;
+  // border: 1px solid $c_selected;
+  box-shadow: inset 0 0 0 3px $c_selected;
 }
 .testbutton.lit,
 .testbutton:active {
@@ -813,6 +825,18 @@ body {
   left: 300px;
 }
 
+#probe-offline {
+  width: 180px;
+  height: 50px;
+  background: #111;
+  text-align: center;
+  vertical-align: middle;
+  line-height: 50px;
+  margin: 0 auto;
+  border-right: 5px solid $c_selected;
+  border-left: 5px solid $c_selected;
+}
+
 .sliderHeader {
   margin: 5px;
   font-size: 14px;
@@ -859,6 +883,30 @@ body {
 }
 .probe-purchase:hover {
   box-shadow: inset 0 0 0 3px $c_selected;
+}
+.probe-purchase {
+  font-weight: bold;
+  width: 190px;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  vertical-align: middle;
+  margin: 0 auto;
+  background: $c_mainbg;
+  color: $c_mainfg;
+  text-decoration: none;
+  border-radius: 5px;
+  border: 1px solid $c_countdownbg;
+  // position: relative;
+  // padding: 5px;
+  // margin: 4px;
+}
+// .probe-purchase:hover {
+//   border: 1px solid $c_selected;
+// }
+.probe-purchase:active {
+  background: $c_selected;
+  box-shadow: 0 0 25px 1px $c_selected;
 }
 
 /* bonuses 

@@ -629,63 +629,74 @@ export default class Neumann extends React.Component {
     }
 
     getProbeTab() {
-        let probeattribs, sliderattribs;
+        let probebutton, probeattribs, sliderattribs, offlinetext;
         let sliderText = "Spend %";
 
-        if (this.sliderInfo.rangeSettings.rangeCt === 1) {
-            probeattribs = <div className="probe-attribs"></div>
-            sliderattribs =
-                <div className="sliderattribs">
-                    <span className="probe-prod-span">Probe Production</span>
-                    <div className="sliderHeader">{sliderText}</div>
-                    <div className="sliderContainer">
-                        {Sliders.getSlider(this.sliderInfo, this.sliderChange)}
+        if (this.userSettings.featureEnabled["Self-Replication Machinery"]) {
+            offlinetext = "";
+            probebutton = (
+                <button className="probe-purchase"
+                    onClick={this.purchaseProbe}>
+                    Purchase Probe: ${HelperConst.showNum(ComputeFunc.getPct(this.userSettings.money, this.sliderInfo.probeSpendPct))}
+                </button>
+            );
+            if (this.sliderInfo.rangeSettings.rangeCt === 1) {
+                probeattribs = <div className="probe-attribs"></div>
+                sliderattribs =
+                    <div className="sliderattribs">
+                        <span className="probe-prod-span">Probe Production</span>
+                        <div className="sliderHeader">{sliderText}</div>
+                        <div className="sliderContainer">
+                            {Sliders.getSlider(this.sliderInfo, this.sliderChange)}
+                        </div>
                     </div>
-                </div>
-        } else if (this.sliderInfo.rangeSettings.rangeCt === 2) {
-            probeattribs =
-                <div className="probe-attribs">
-                    <div className="probe-attrib speed-header">Speed</div>
-                    <div className="probe-attrib quality-header">Quality</div>
-                    <div></div>
-                    <div className="probe-attrib probe-speed">{this.sliderInfo.probePcts[0]}%</div>
-                    <div className="probe-attrib probe-quality">{this.sliderInfo.probePcts[1]}%</div>
-                    <div></div>
-                </div>
-            sliderattribs =
-                <div className="sliderattribs">
-                    <span className="probe-prod-span">Probe Production</span>
-                    <div className="sliderHeader">{sliderText}</div>
-                    <div className="sliderContainer">
-                        {Sliders.getSlider(this.sliderInfo, this.sliderChange)}
+            } else if (this.sliderInfo.rangeSettings.rangeCt === 2) {
+                probeattribs =
+                    <div className="probe-attribs">
+                        <div className="probe-attrib speed-header">Speed</div>
+                        <div className="probe-attrib quality-header">Quality</div>
+                        <div></div>
+                        <div className="probe-attrib probe-speed">{this.sliderInfo.probePcts[0]}%</div>
+                        <div className="probe-attrib probe-quality">{this.sliderInfo.probePcts[1]}%</div>
+                        <div></div>
                     </div>
-                    <div className="sliderHeader">Distribute Funds</div>
-                    <div className="sliderContainer">
-                        {Sliders.getRange(this.sliderInfo, this.rangeChange)}
+                sliderattribs =
+                    <div className="sliderattribs">
+                        <span className="probe-prod-span">Probe Production</span>
+                        <div className="sliderHeader">{sliderText}</div>
+                        <div className="sliderContainer">
+                            {Sliders.getSlider(this.sliderInfo, this.sliderChange)}
+                        </div>
+                        <div className="sliderHeader">Distribute Funds</div>
+                        <div className="sliderContainer">
+                            {Sliders.getRange(this.sliderInfo, this.rangeChange)}
+                        </div>
                     </div>
-                </div>
+            } else {
+                probeattribs =
+                    <div className="probe-attribs">
+                        <div className="probe-attrib speed-header">Speed</div>
+                        <div className="probe-attrib quality-header">Quality</div>
+                        <div className="probe-attrib combat-header">Combat</div>
+                        <div className="probe-attrib probe-speed">{this.sliderInfo.probePcts[0]}%</div>
+                        <div className="probe-attrib probe-quality">{this.sliderInfo.probePcts[1]}%</div>
+                        <div className="probe-attrib probe-combat">{this.sliderInfo.probePcts[2]}%</div>
+                    </div>
+                sliderattribs =
+                    <div className="sliderattribs">
+                        <span className="probe-prod-span">Probe Production</span>
+                        <div className="sliderHeader">{sliderText}</div>
+                        <div className="sliderContainer">
+                            {Sliders.getSlider(this.sliderInfo, this.sliderChange)}
+                        </div>
+                        <div className="sliderHeader">Distribute Funds</div>
+                        <div className="sliderContainer">
+                            {Sliders.getRange(this.sliderInfo, this.rangeChange)}
+                        </div>
+                    </div>
+            }
         } else {
-            probeattribs =
-                <div className="probe-attribs">
-                    <div className="probe-attrib speed-header">Speed</div>
-                    <div className="probe-attrib quality-header">Quality</div>
-                    <div className="probe-attrib combat-header">Combat</div>
-                    <div className="probe-attrib probe-speed">{this.sliderInfo.probePcts[0]}%</div>
-                    <div className="probe-attrib probe-quality">{this.sliderInfo.probePcts[1]}%</div>
-                    <div className="probe-attrib probe-combat">{this.sliderInfo.probePcts[2]}%</div>
-                </div>
-            sliderattribs =
-                <div className="sliderattribs">
-                    <span className="probe-prod-span">Probe Production</span>
-                    <div className="sliderHeader">{sliderText}</div>
-                    <div className="sliderContainer">
-                        {Sliders.getSlider(this.sliderInfo, this.sliderChange)}
-                    </div>
-                    <div className="sliderHeader">Distribute Funds</div>
-                    <div className="sliderContainer">
-                        {Sliders.getRange(this.sliderInfo, this.rangeChange)}
-                    </div>
-                </div>
+            offlinetext = <div id="probe-offline">[ OFFLINE ]</div>;
         }
 
         if (this.userSettings.featureEnabled['Satellite']) {
@@ -693,12 +704,10 @@ export default class Neumann extends React.Component {
                 <TabPanel className="react-tabs__tab-panel probe-tab-panel">
 
                     <div id="right-sidebar">
+                        {offlinetext}
                         {sliderattribs}
                         {probeattribs}
-                        <button className="probe-purchase"
-                            onClick={this.purchaseProbe}>
-                            Purchase Probe: ${HelperConst.showNum(ComputeFunc.getPct(this.userSettings.money, this.sliderInfo.probeSpendPct))}
-                        </button>
+                        {probebutton}
                     </div>
 
                     <Space

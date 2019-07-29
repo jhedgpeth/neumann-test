@@ -18,38 +18,50 @@ export default class Income extends React.Component {
 
         let rowsLeft = [];
         let rowsRight = [];
-        if (this.props.userSettings.featureEnabled['Satellite']) {
-            rowsLeft.push(
-                <div className="income-header">
-                    Knowledge:
-                </div>
-            );
-            rowsLeft.push(
-                <div className="income-knowledge">
-                    {HelperConst.knowledgeSymbolSpan()}{HelperConst.showNum(this.props.userSettings.knowledge)}
-                </div>
 
-            );
-            rowsLeft.push(
-                <div className="income-learning">
-                    (+ {HelperConst.knowledgeSymbolSpan()}{HelperConst.showNum(learning)}/s)
-                </div>
-            )
-            rowsRight.push(
-                <div className="probe-header">
-                    Distance:
-                </div>
+        if (this.props.userSettings.prestige.num.gt(0) || this.props.userSettings.prestigeNext.gt(0)) {
 
+            rowsRight.push(
+                <React.Fragment>
+                    <div className="prestige-header">
+                        Prestige:
+                    </div>
+                    <div className="prestige-units">
+                        {HelperConst.prestigeSymbolSpan()}{HelperConst.showInt(this.props.userSettings.prestige.num)}
+                    </div>
+                    <div className="prestige-earning">
+                        (+ {HelperConst.prestigeSymbolSpan()}{HelperConst.showInt(this.props.userSettings.prestigeNext)})
+                    </div>
+                </React.Fragment>
+            )
+        }
+
+        if (this.props.userSettings.featureEnabled['Satellite'] && this.props.userSettings.probe.value.gt(0)) {
+            rowsLeft.push(
+                <React.Fragment>
+                    <div className="learning-header">
+                        Knowledge:
+                    </div>
+                    <div className="learning-knowledge">
+                        {HelperConst.knowledgeSymbolSpan()}{HelperConst.showNum(this.props.userSettings.knowledge)}
+                    </div>
+                    <div className="learning-learning">
+                        (+ {HelperConst.knowledgeSymbolSpan()}{HelperConst.showNum(learning)}/s)
+                    </div>
+                </React.Fragment>
             )
             rowsRight.push(
-                <div className="probe-distance">
-                    {HelperConst.showNum(this.props.userSettings.probe.distance)} km
-                </div>
-            )
-            rowsRight.push(
-                <div className="probe-rate">
-                    {HelperConst.showNum(this.props.userSettings.probe.getDistPerSec())} km/s
-                </div>
+                <React.Fragment>
+                    <div className="probe-header">
+                        Distance:
+                    </div>
+                    <div className="probe-distance">
+                        {HelperConst.showNum(this.props.userSettings.probe.distance)} km
+                    </div>
+                    <div className="probe-rate">
+                        {HelperConst.showNum(this.props.userSettings.probe.getDistPerSec())} km/s
+                    </div>
+                </React.Fragment>
             )
         }
 
@@ -84,15 +96,6 @@ export default class Income extends React.Component {
                 </div>
 
                 <div className="prestige">
-                    <div className="prestige-header">
-                        Prestige:
-                    </div>
-                    <div className="prestige-units">
-                        {HelperConst.prestigeSymbolSpan()}{HelperConst.showInt(this.props.userSettings.prestige.num)}
-                    </div>
-                    <div className="prestige-earning">
-                        (+ {HelperConst.prestigeSymbolSpan()}{HelperConst.showInt(this.props.userSettings.prestigeNext)})
-                    </div>
 
                     {rowsRight}
 
