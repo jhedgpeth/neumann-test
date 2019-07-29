@@ -1,12 +1,13 @@
 import React from 'react';
 // import ReactDOM from 'react-dom'
+import SecureLS from 'secure-ls';
 import update from 'immutability-helper';
 import Dropdown from 'react-dropdown';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 // import Slider from 'rc-slider';
 
-// import { compress as lzStringCompress, decompress as lzStringDecompresss } from 'lz-string';
-import { compress as lzStringCompress } from 'lz-string';
+// import { compress as lzStringCompress, decompress as lzStringDecompress } from 'lz-string';
+// import { compress as lzStringCompress } from 'lz-string';
 
 import './styles/fonts.css';
 import './styles/index.scss';
@@ -73,6 +74,7 @@ export default class Neumann extends React.Component {
         this.resetAll = this.resetAll.bind(this);
         this.pause = this.pause.bind(this);
         this.resume = this.resume.bind(this);
+        this.loadGame = this.loadGame.bind(this);
         this.saveGame = this.saveGame.bind(this);
         this.prestige = this.prestige.bind(this);
         this.updatePrestigeEarned = this.updatePrestigeEarned.bind(this);
@@ -201,18 +203,35 @@ export default class Neumann extends React.Component {
     }
 
     loadGame() {
+        const ls = new SecureLS({ encodingType: 'aes' });
+        const saveString = ls.get('neumann_game_save');
+        // const saveStringText = lzStringDecompress(saveString);
+        mylog("loaded:", saveString);
+        const rawStr = JSON.parse(saveString);
 
+        // FIXME: make more robust for non-decimal values
+        this.userSettings = JSON.parse(saveString, (key,value) => 
+            typeof value === 'number'
+            ? new Decimal(value)
+            : value
+        );
+        this.userSettings.curTotalClicks = rawStr.curTotalClicks;
+        this.userSettings.buyMilestone = rawStr.buyMilestone;
+        this.userSettings.busStats = rawStr.busStats;
+        this.userSettings.upgStats = rawStr.upgStats;
+        this.userSettings.featureEnabled = rawStr.featureEnabled;
+        
+        mylog("userSettings:",this.userSettings);
     }
 
     saveGame() {
-        const saveString = lzStringCompress(JSON.stringify(this.state));
-        mylog("saveString length:", saveString.length);
-        localStorage.setItem('neumann_game_save_time', Date.now());
-        localStorage.setItem('neumann_game_save', saveString);
-        // mylog("saveString:",saveString);
-        // mylog("retrieve jeff cookie:", cookie.load('jeff'));
-        // // mylog("retrieve money cookie:", cookie.load('money'));
-        // mylog("retrieve businesses cookie:", cookie.load('businesses'));
+        mylog("userSettings:",this.userSettings);
+        const ls = new SecureLS({ encodingType: 'aes' });
+        const saveStringText = JSON.stringify(this.userSettings);
+        mylog("saveStringText:",saveStringText);
+
+        ls.set('neumann_game_save_time', Date.now());
+        ls.set('neumann_game_save', saveStringText);
 
         this.announce("game saved");
     }
@@ -409,7 +428,7 @@ export default class Neumann extends React.Component {
     enableFeature(feature) {
         mylog("feature click ", feature.name);
         this.userSettings.upgStats[feature.id].purchased = true;
-        this.userSettings.featureEnabled[feature.rewardTarget] = true;
+        this.userSettings.featureEnabled[feature.id] = true;
         mylog("feature enabled:", feature.rewardTarget);
     }
 
@@ -617,7 +636,8 @@ export default class Neumann extends React.Component {
     getTabList() {
         let rows = [];
         rows.push(<Tab className="tab-list-item" key="business-tab">Business</Tab>);
-        this.userSettings.featureEnabled['Satellite'] && rows.push(<Tab className="tab-list-item" key="probe-tab">Space</Tab>);
+        // if space view activated
+        this.userSettings.featureEnabled[1] && rows.push(<Tab className="tab-list-item" key="probe-tab">Space</Tab>);
 
         return (
             <div id="tabs">
@@ -632,7 +652,8 @@ export default class Neumann extends React.Component {
         let probebutton, probeattribs, sliderattribs, offlinetext;
         let sliderText = "Spend %";
 
-        if (this.userSettings.featureEnabled["Self-Replication Machinery"]) {
+        // probes enabled
+        if (this.userSettings.featureEnabled[2]) {
             offlinetext = "";
             probebutton = (
                 <button className="probe-purchase"
@@ -699,7 +720,8 @@ export default class Neumann extends React.Component {
             offlinetext = <div id="probe-offline">[ OFFLINE ]</div>;
         }
 
-        if (this.userSettings.featureEnabled['Satellite']) {
+        // space view
+        if (this.userSettings.featureEnabled[1]) {
             return (
                 <TabPanel className="react-tabs__tab-panel probe-tab-panel">
 
@@ -745,6 +767,7 @@ export default class Neumann extends React.Component {
                     <button className="testbutton ref-button" onClick={() => mylog("getRect:", Business.getPosition(this.state.businesses[0].domRef))}>getRect</button> */}
 
                     <button className="testbutton save-button" onClick={this.saveGame}>SAVE</button>
+                    <button className="testbutton save-button" onClick={this.loadGame}>LOAD</button>
                     <h3>Zoom Index: {this.zoomLevel}</h3><br />
                     <h3>RangeCt: {this.sliderInfo.rangeSettings.rangeCt}</h3>
                 </div>

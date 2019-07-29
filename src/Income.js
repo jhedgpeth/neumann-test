@@ -36,7 +36,8 @@ export default class Income extends React.Component {
             )
         }
 
-        if (this.props.userSettings.featureEnabled['Satellite'] && this.props.userSettings.probe.value.gt(0)) {
+        // space view activated
+        if (this.props.userSettings.featureEnabled[1] && this.props.userSettings.probe.value.gt(0)) {
             rowsLeft.push(
                 <React.Fragment>
                     <div className="learning-header">
