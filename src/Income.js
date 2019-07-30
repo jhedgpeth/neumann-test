@@ -37,7 +37,7 @@ export default class Income extends React.Component {
         }
 
         // space view activated
-        if (this.props.userSettings.featureEnabled[1] && this.props.userSettings.probe.value.gt(0)) {
+        if (this.props.userSettings.featureEnabled[1000] && this.props.userSettings.probe.value.gt(0)) {
             rowsLeft.push(
                 <React.Fragment key="learning-header">
                     <div className="learning-header">
@@ -60,7 +60,7 @@ export default class Income extends React.Component {
                         {HelperConst.showNum(this.props.userSettings.probe.distance)} km
                     </div>
                     <div className="probe-rate">
-                        {HelperConst.showNum(this.props.userSettings.probe.getDistPerSec())} km/s
+                        +{HelperConst.showNum(this.props.userSettings.probe.getDistPerSec())} km/s
                     </div>
                 </React.Fragment>
             )

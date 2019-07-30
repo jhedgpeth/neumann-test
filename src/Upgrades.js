@@ -17,8 +17,7 @@ export default class Upgrades extends React.Component {
 
     render() {
         const sources = this.props.upgrades.reduce((result, item) => {
-            const u = this.props.userSettings.upgStats[item.id];
-            // mylog("u:",u);
+            let u = this.props.userSettings.upgStats[item.id];
             if (!u.purchased && u.revealed) {
                 result.push(item);
             }

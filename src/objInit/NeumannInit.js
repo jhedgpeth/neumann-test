@@ -15,7 +15,7 @@ export default class NeumannInit extends React.Component {
     })
 
     static userSettings = () => ({
-        money: new Decimal(1000),
+        money: new Decimal(0),
         knowledge: new Decimal(0),
         probe: new Probe(new Decimal(0), 0, 0, 0),
         prestige: { num: new Decimal(0), val: 5 },
@@ -27,22 +27,8 @@ export default class NeumannInit extends React.Component {
         buyMilestone: 0,
         busStats: {
             0: { owned: 1, revealed: false, timeAdj: -1, payoutAdj: 1, },
-            1: { owned: 0, revealed: false, timeAdj: -1, payoutAdj: 1, },
-            2: { owned: 0, revealed: false, timeAdj: -1, payoutAdj: 1, },
-            3: { owned: 0, revealed: false, timeAdj: -1, payoutAdj: 1, },
-            4: { owned: 0, revealed: false, timeAdj: -1, payoutAdj: 1, },
-            5: { owned: 0, revealed: false, timeAdj: -1, payoutAdj: 1, },
-            6: { owned: 0, revealed: false, timeAdj: -1, payoutAdj: 1, },
-            7: { owned: 0, revealed: false, timeAdj: -1, payoutAdj: 1, },
-            8: { owned: 0, revealed: false, timeAdj: -1, payoutAdj: 1, },
-            9: { owned: 0, revealed: false, timeAdj: -1, payoutAdj: 1, },
         },
-        upgStats: {
-            0: { purchased: false, revealed: false },
-            1: { purchased: false, revealed: false },
-            2: { purchased: false, revealed: false },
-            3: { purchased: false, revealed: false },
-        },
+        upgStats: {},
         featureEnabled: {}
 
 

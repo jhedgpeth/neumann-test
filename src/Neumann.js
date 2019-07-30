@@ -78,7 +78,7 @@ export default class Neumann extends React.Component {
         }
 
         // this._business = React.createRef();
-        this.populateBusDomRefs = this.populateDomRefs.bind(this);
+        this.populateBusDomRefs = this.populateInitVals.bind(this);
         this.restart = this.restart.bind(this);
         this.resetAll = this.resetAll.bind(this);
         this.pause = this.pause.bind(this);
@@ -105,22 +105,23 @@ export default class Neumann extends React.Component {
         this.cheatPrestigeVal = "1e9";
 
 
-        
+
     }
 
-    setTitle() {
-        document.title = "NEUMANN $"
-            + HelperConst.showNum(this.userSettings.money)
-            + " " + this.state.version;
-    }
 
     componentDidMount() {
         mylog("game didmount");
         this.resetAll();
         this.loadGame(); // if exists
 
+
+
         mylog(HelperConst.purchaseOptsSpecial);
         mylog(HelperConst.spaceZoomLevels.map(n => HelperConst.showInt(n)));
+        this.setState((state, props) => ({
+            isLoaded: true,
+        }));
+        mylog("init work done");
     }
 
     componentWillUnmount() {
@@ -135,10 +136,23 @@ export default class Neumann extends React.Component {
 
     }
 
-    populateDomRefs() {
-        this.state.businesses.forEach((bus) => {
-            mylog("creating domRef for", bus.name);
-            this.domRefs.push({ name: bus.name, domRef: React.createRef() });
+    setTitle() {
+        document.title = "NEUMANN $"
+            + HelperConst.showNum(this.userSettings.money)
+            + " " + this.state.version;
+    }
+
+    populateInitVals() {
+        // update our userSettings for all businesses and upgrades
+        mylog("updating userSettings with bus and upg");
+        this.state.businesses.forEach(item => {
+            if (!this.userSettings.busStats[item.id])
+                this.userSettings.busStats[item.id] = { owned: 0, revealed: false, timeAdj: -1, payoutAdj: 1, };
+            this.domRefs.push({ name: item.name, domRef: React.createRef() });
+        });
+        this.state.upgrades.forEach(item => {
+            if (!this.userSettings.upgStats[item.id])
+                this.userSettings.upgStats[item.id] = { purchased: false, revealed: false };
         });
         this.probeDivRef = React.createRef();
         this.pulseRef = null;
@@ -158,7 +172,9 @@ export default class Neumann extends React.Component {
     startSaveGameInterval() {
         if (!this.gameSaveIntervalId) {
             this.gameSaveIntervalId = setInterval(this.saveGame, 30000);
+            mylog("game intervalId set");
         }
+        mylog("save intervalId:", this.gameIntervalId);
     }
 
     resetAll() {
@@ -168,7 +184,7 @@ export default class Neumann extends React.Component {
         }));
         this.userSettings = { ...NeumannInit.userSettings() };
         this.announceCt = 0;
-        this.populateDomRefs();
+        this.populateInitVals();
         this.outerEllipseMoving = false;
         this.pulseMoving = false;
         this.zoomLevel = 0;
@@ -183,7 +199,7 @@ export default class Neumann extends React.Component {
             ...NeumannInit.freshState()
         }));
         this.userSettings = { ...NeumannInit.userSettings() };
-        this.populateDomRefs();
+        this.populateInitVals();
         this.zoomLevel = 0;
         this.zoomName = HelperConst.spaceZoomLevelNames[0];
         this.mapDistance = HelperConst.spaceZoomLevels[0];
@@ -207,7 +223,7 @@ export default class Neumann extends React.Component {
         mylog("set timeRunning to", this.timerRunning);
     }
 
-    
+
     resume() {
         this.timerRunning = true;
         this.setState((state) => ({
@@ -221,6 +237,7 @@ export default class Neumann extends React.Component {
         }
         this.startSaveGameInterval();
         this.lastLoop = Date.now();
+        mylog("set timeRunning to", this.timerRunning);
     }
 
     loadGame() {
@@ -229,6 +246,7 @@ export default class Neumann extends React.Component {
         const saveString = ls.get('neumann_game_save');
         if (!saveString) {
             mylog("no save present");
+            this.startSaveGameInterval();
             return;
         }
         mylog("loaded:", saveString);
@@ -279,13 +297,13 @@ export default class Neumann extends React.Component {
             mylog("probe distance:", HelperConst.showNum(this.userSettings.probe.distance));
         }
 
-        this.lastLoop = Date.now();
+        // this.lastLoop = Date.now();
         this.startSaveGameInterval();
         this.announce("game loaded");
     }
 
     saveGame() {
-        this.stopSaveGameInterval();
+        // this.stopSaveGameInterval();
         // mylog("userSettings:", this.userSettings);
         const ls = new SecureLS({ encodingType: 'aes' });
         const saveStringText = JSON.stringify(this.userSettings);
@@ -299,7 +317,7 @@ export default class Neumann extends React.Component {
             content: this.gameSavedNotify,
             countdown: this.gameSavedCountdown,
         };
-        this.startSaveGameInterval();
+        // this.startSaveGameInterval();
         mylog("game saved");
     }
 
@@ -447,7 +465,6 @@ export default class Neumann extends React.Component {
         const busCost = ComputeFunc.getCost(bus, this.userSettings.busStats[bus.id], this.purchaseAmt, this.userSettings.money);
         this.userSettings.money = this.userSettings.money.minus(busCost.cost);
         let b = this.userSettings.busStats[bus.id];
-
 
         // add overlays
         let newBusinesses = this.state.businesses.map(item => {
@@ -714,7 +731,7 @@ export default class Neumann extends React.Component {
         let rows = [];
         rows.push(<Tab className="tab-list-item" key="business-tab">Business</Tab>);
         // if space view activated
-        this.userSettings.featureEnabled[1] && rows.push(<Tab className="tab-list-item" key="probe-tab">Space</Tab>);
+        this.userSettings.featureEnabled[1000] && rows.push(<Tab className="tab-list-item" key="probe-tab">Space</Tab>);
 
         return (
             <div id="tabs">
@@ -730,7 +747,7 @@ export default class Neumann extends React.Component {
         let sliderText = "Spend %";
 
         // probes enabled
-        if (this.userSettings.featureEnabled[2]) {
+        if (this.userSettings.featureEnabled[1001]) {
             offlinetext = "";
             probebutton = (
                 <button className="probe-purchase"
@@ -798,7 +815,7 @@ export default class Neumann extends React.Component {
         }
 
         // space view
-        if (this.userSettings.featureEnabled[1]) {
+        if (this.userSettings.featureEnabled[1000]) {
             return (
                 <TabPanel className="react-tabs__tab-panel probe-tab-panel">
 
@@ -822,6 +839,8 @@ export default class Neumann extends React.Component {
     }
 
     render() {
+        const { isLoaded } = this.state;
+        if (!isLoaded) return <div id="wrapper"></div>
 
         let debugButtons;
         if (HelperConst.DEBUG) {
