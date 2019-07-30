@@ -268,6 +268,9 @@ body {
   display: grid;
   grid-template-columns: repeat(8, 1fr);
   grid-auto-rows: 50% 50%;
+  // grid-template-areas:
+  //   "line1"
+  //   "line2";
 }
 #footer:hover {
   opacity: 1;
@@ -276,6 +279,22 @@ body {
 #fps {
   grid-column: 1;
   grid-row: 2;
+}
+#savegame {
+  font-weight: bold;
+  opacity: 1;
+}
+#savegame.game-saved {
+  text-align: center;
+  margin: auto;
+  grid-column: 8;
+  grid-row: 1;
+  -webkit-transition: opacity 5s ease-in;
+  -moz-transition: opacity 5s ease-in;
+  -ms-transition: opacity 5s ease-in;
+  -o-transition: opacity 5s ease-in;
+  transition: opacity 5s ease-in;
+  opacity: 0;
 }
 
 /* left sidebar

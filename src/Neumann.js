@@ -45,6 +45,15 @@ export default class Neumann extends React.Component {
         this.timeMultiplier = this.timeInterval / 1000;
         this.lastLoop = Date.now();
 
+
+        this.gameSavedHide = <div id="savegame"></div>;
+        this.gameSavedNotify = <div id="savegame" className="game-saved">Game Saved</div>
+        this.gameSavedCountdown = 5;
+        this.gameSavedObj = {
+            content: this.gameSavedHide,
+            countdown: this.gameSavedCountdown,
+        };
+
         this.announceCt = 0;
         this.overlayCt = 0;
 
@@ -76,6 +85,7 @@ export default class Neumann extends React.Component {
         this.resume = this.resume.bind(this);
         this.loadGame = this.loadGame.bind(this);
         this.saveGame = this.saveGame.bind(this);
+        this.decrementSavedGameObj = this.decrementSavedGameObj.bind(this);
         this.prestige = this.prestige.bind(this);
         this.updatePrestigeEarned = this.updatePrestigeEarned.bind(this);
         this.updateGame = this.updateGame.bind(this);
@@ -94,6 +104,8 @@ export default class Neumann extends React.Component {
         this.prestigeCheat = this.prestigeCheat.bind(this);
         this.cheatPrestigeVal = "1e9";
 
+
+        
     }
 
     setTitle() {
@@ -105,6 +117,7 @@ export default class Neumann extends React.Component {
     componentDidMount() {
         mylog("game didmount");
         this.resetAll();
+        this.loadGame(); // if exists
 
         mylog(HelperConst.purchaseOptsSpecial);
         mylog(HelperConst.spaceZoomLevels.map(n => HelperConst.showInt(n)));
@@ -134,6 +147,18 @@ export default class Neumann extends React.Component {
         this.outerEllipseRef = null;
         this.centerPlanetRef = null;
         mylog("populated domRefs:", this.domRefs);
+    }
+
+    stopSaveGameInterval() {
+        if (this.gameSaveIntervalId) {
+            clearInterval(this.gameSaveIntervalId);
+            delete (this.gameSaveIntervalId)
+        }
+    }
+    startSaveGameInterval() {
+        if (!this.gameSaveIntervalId) {
+            this.gameSaveIntervalId = setInterval(this.saveGame, 30000);
+        }
     }
 
     resetAll() {
@@ -178,13 +203,11 @@ export default class Neumann extends React.Component {
             clearInterval(this.prestigeIntervalId);
             delete (this.prestigeIntervalId)
         }
-        if (this.gameSaveIntervalId) {
-            clearInterval(this.gameSaveIntervalId);
-            delete (this.gameSaveIntervalId)
-        }
+        this.stopSaveGameInterval();
         mylog("set timeRunning to", this.timerRunning);
     }
 
+    
     resume() {
         this.timerRunning = true;
         this.setState((state) => ({
@@ -196,15 +219,18 @@ export default class Neumann extends React.Component {
         if (!this.prestigeIntervalId) {
             this.prestigeIntervalId = setInterval(this.updatePrestigeEarned, 1000);
         }
-        if (!this.gameSaveIntervalId) {
-            // this.gameSaveIntervalId = setInterval(this.saveGame, 10000);
-        }
+        this.startSaveGameInterval();
         this.lastLoop = Date.now();
     }
 
     loadGame() {
+        this.stopSaveGameInterval();
         const ls = new SecureLS({ encodingType: 'aes' });
         const saveString = ls.get('neumann_game_save');
+        if (!saveString) {
+            mylog("no save present");
+            return;
+        }
         mylog("loaded:", saveString);
         const decimalKeys = [
             "money",
@@ -217,7 +243,7 @@ export default class Neumann extends React.Component {
         ];
         this.userSettings = JSON.parse(saveString, (key, value) => {
             if (decimalKeys.includes(key)) {
-                mylog("  new decimal value for", key);
+                // mylog("  new decimal value for", key);
                 return new Decimal(value);
             }
             return value;
@@ -228,37 +254,62 @@ export default class Neumann extends React.Component {
             this.userSettings.probe.quality,
             this.userSettings.probe.combat,
         );
+        // FIXME: missing probe internal vars
+
+
         mylog("userSettings:", this.userSettings);
 
         const saveTime = ls.get('neumann_game_save_time');
-        const deltaMillis = (Date.now() - saveTime);
-        const duration = ComputeFunc.convertMillis(deltaMillis);
-        mylog("you were gone for",
-            duration.days + "d",
-            duration.hours + "h",
-            duration.minutes + "m",
-            duration.seconds + "s",
-        );
-        this.lastLoop = saveTime;
-        const gained = Business.computeTotalEarningPerSec(this.state.businesses, this.userSettings)
-            .times(Math.floor(deltaMillis / 1000));
-        mylog("previous money:", HelperConst.showNum(this.userSettings.money));
-        mylog("you gained $", HelperConst.showNum(gained));
+        if (saveTime) {
+            const deltaMillis = (Date.now() - saveTime);
+            const duration = ComputeFunc.convertMillis(deltaMillis);
+            mylog("you were gone for",
+                duration.days + "d",
+                duration.hours + "h",
+                duration.minutes + "m",
+                duration.seconds + "s",
+            );
 
+            const gained = Business.computeTotalEarningPerSec(this.state.businesses, this.userSettings)
+                .times(Math.floor(deltaMillis / 1000));
+            mylog("previous money:", HelperConst.showNum(this.userSettings.money));
+            mylog("you gained $", HelperConst.showNum(gained));
+            this.userSettings.money = this.userSettings.money.plus(gained);
+            mylog("now should have $", HelperConst.showNum(this.userSettings.money));
+            mylog("probe distance:", HelperConst.showNum(this.userSettings.probe.distance));
+        }
 
+        this.lastLoop = Date.now();
+        this.startSaveGameInterval();
         this.announce("game loaded");
     }
 
     saveGame() {
-        mylog("userSettings:", this.userSettings);
+        this.stopSaveGameInterval();
+        // mylog("userSettings:", this.userSettings);
         const ls = new SecureLS({ encodingType: 'aes' });
         const saveStringText = JSON.stringify(this.userSettings);
-        mylog("saveStringText:", saveStringText);
+        // mylog("saveStringText:", saveStringText);
 
         ls.set('neumann_game_save_time', Date.now());
         ls.set('neumann_game_save', saveStringText);
 
-        this.announce("game saved");
+        // this.announce("game saved");
+        this.gameSavedObj = {
+            content: this.gameSavedNotify,
+            countdown: this.gameSavedCountdown,
+        };
+        this.startSaveGameInterval();
+        mylog("game saved");
+    }
+
+    decrementSavedGameObj() {
+        if (this.gameSavedObj.countdown > 0) {
+            this.gameSavedObj.countdown -= this.timeMultiplier;
+        }
+        if (this.gameSavedObj.countdown < 0) {
+            this.gameSavedObj.content = this.gameSavedHide;
+        }
     }
 
     updatePrestigeEarned() {
@@ -608,6 +659,7 @@ export default class Neumann extends React.Component {
         this.incrementBusinessCounters();
         this.incrementProbeDistance();
         this.incrementAnnouncementCounters();
+        this.decrementSavedGameObj();
 
         const payoutMoneyThisTick = Business.getAllPayouts(this.state.businesses, this.userSettings);
         this.userSettings.lifetimeEarnings = this.userSettings.lifetimeEarnings.plus(payoutMoneyThisTick);
@@ -873,6 +925,7 @@ export default class Neumann extends React.Component {
 
                     <div id="version">v. 0.0.1</div>
                     <div id="fps">fps:{this.fpsPct}%</div>
+                    {this.gameSavedObj.content}
 
                 </div>
 
