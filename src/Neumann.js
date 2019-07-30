@@ -205,30 +205,55 @@ export default class Neumann extends React.Component {
     loadGame() {
         const ls = new SecureLS({ encodingType: 'aes' });
         const saveString = ls.get('neumann_game_save');
-        // const saveStringText = lzStringDecompress(saveString);
         mylog("loaded:", saveString);
-        const rawStr = JSON.parse(saveString);
-
-        // FIXME: make more robust for non-decimal values
-        this.userSettings = JSON.parse(saveString, (key,value) => 
-            typeof value === 'number'
-            ? new Decimal(value)
-            : value
+        const decimalKeys = [
+            "money",
+            "knowledge",
+            "value", "number", "losses", "distance",
+            "num",
+            "prestigeNext",
+            "lifetimeEarnings", "lifetimeLearning",
+            "curMaxMoney"
+        ];
+        this.userSettings = JSON.parse(saveString, (key, value) => {
+            if (decimalKeys.includes(key)) {
+                mylog("  new decimal value for", key);
+                return new Decimal(value);
+            }
+            return value;
+        });
+        this.userSettings.probe = new Probe(
+            this.userSettings.probe.value,
+            this.userSettings.probe.speed,
+            this.userSettings.probe.quality,
+            this.userSettings.probe.combat,
         );
-        this.userSettings.curTotalClicks = rawStr.curTotalClicks;
-        this.userSettings.buyMilestone = rawStr.buyMilestone;
-        this.userSettings.busStats = rawStr.busStats;
-        this.userSettings.upgStats = rawStr.upgStats;
-        this.userSettings.featureEnabled = rawStr.featureEnabled;
-        
-        mylog("userSettings:",this.userSettings);
+        mylog("userSettings:", this.userSettings);
+
+        const saveTime = ls.get('neumann_game_save_time');
+        const deltaMillis = (Date.now() - saveTime);
+        const duration = ComputeFunc.convertMillis(deltaMillis);
+        mylog("you were gone for",
+            duration.days + "d",
+            duration.hours + "h",
+            duration.minutes + "m",
+            duration.seconds + "s",
+        );
+        this.lastLoop = saveTime;
+        const gained = Business.computeTotalEarningPerSec(this.state.businesses, this.userSettings)
+            .times(Math.floor(deltaMillis / 1000));
+        mylog("previous money:", HelperConst.showNum(this.userSettings.money));
+        mylog("you gained $", HelperConst.showNum(gained));
+
+
+        this.announce("game loaded");
     }
 
     saveGame() {
-        mylog("userSettings:",this.userSettings);
+        mylog("userSettings:", this.userSettings);
         const ls = new SecureLS({ encodingType: 'aes' });
         const saveStringText = JSON.stringify(this.userSettings);
-        mylog("saveStringText:",saveStringText);
+        mylog("saveStringText:", saveStringText);
 
         ls.set('neumann_game_save_time', Date.now());
         ls.set('neumann_game_save', saveStringText);
@@ -287,7 +312,7 @@ export default class Neumann extends React.Component {
         const newBusinesses = this.state.businesses.map(item => {
             let b = this.userSettings.busStats[item.id];
             // reset if new
-            if (b.timeAdj === 1) b.timeAdj = item.timeBase;
+            if (b.timeAdj === -1) b.timeAdj = item.timeBase;
 
             let newItem = { ...item };
             if (b.owned === 0) {

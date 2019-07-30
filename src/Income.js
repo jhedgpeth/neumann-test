@@ -22,7 +22,7 @@ export default class Income extends React.Component {
         if (this.props.userSettings.prestige.num.gt(0) || this.props.userSettings.prestigeNext.gt(0)) {
 
             rowsRight.push(
-                <React.Fragment>
+                <React.Fragment key="prestige-header">
                     <div className="prestige-header">
                         Prestige:
                     </div>
@@ -39,7 +39,7 @@ export default class Income extends React.Component {
         // space view activated
         if (this.props.userSettings.featureEnabled[1] && this.props.userSettings.probe.value.gt(0)) {
             rowsLeft.push(
-                <React.Fragment>
+                <React.Fragment key="learning-header">
                     <div className="learning-header">
                         Knowledge:
                     </div>
@@ -52,7 +52,7 @@ export default class Income extends React.Component {
                 </React.Fragment>
             )
             rowsRight.push(
-                <React.Fragment>
+                <React.Fragment key="probe-header">
                     <div className="probe-header">
                         Distance:
                     </div>

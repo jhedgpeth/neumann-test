@@ -234,6 +234,22 @@ export default class ComputeFunc {
         return { idx: definedLevels + diff, dist: new Decimal("1e9").pow(baseE9 + diff + 1), name: "Dark Unknown" };
     }
 
-
+    static convertMillis( milliseconds ) {
+        let day, hour, minute, seconds;
+        const showWith0 = value => (value < 10 ? `0${value}` : value);
+        seconds = Math.floor(milliseconds / 1000);
+        minute = Math.floor(seconds / 60);
+        seconds = seconds % 60;
+        hour = Math.floor(minute / 60);
+        minute = minute % 60;
+        day = Math.floor(hour / 24);
+        hour = hour % 24;
+        return {
+            days: showWith0(day),
+            hours: showWith0(hour),
+            minutes: showWith0(minute),
+            seconds: showWith0(seconds)
+        };
+    }
 
 }
