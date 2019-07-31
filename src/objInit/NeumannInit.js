@@ -11,6 +11,7 @@ export default class NeumannInit extends React.Component {
         businesses: BusinessInit(),
         upgrades: UpgradeInit(),
         announcements: [],
+        modals: [],
         version: "0.0.1",
     })
 

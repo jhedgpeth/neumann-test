@@ -530,21 +530,30 @@ body {
   margin: 0 0 20px 0;
   display: flex;
   align-items: center;
-  justify-content: right;
+  justify-content: center;
 }
 // .purchase-amount.amt-selected {
 //   color: $c_mainfg;
 //   background: #404;
 // }
 
+.buy-wrapper {
+  width: 90%;
+  display: grid;
+  grid-template-columns: 40% 60%;
+  grid-template-rows: 45px ;
+  align-items: center;
+}
+
 .buyx-prefix {
-  font-size: 1rem;
+  font-size: 1.3rem;
   font-weight: bold;
   margin: auto;
-  padding: 0 10px 0 0;
+  // padding: 0 10px 0 0;
   color: $c_selected;
-  width: 30%;
-  text-align: right;
+  width: 100%;
+  text-align: left;
+  justify-self: start;
 }
 .probe-prod-span {
   font-size: 1rem;
@@ -558,8 +567,14 @@ body {
 .debugButtons {
   width: 200px;
   position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
-.testbutton {
+.buttons {
+  display: block;
+  width: 85%;
   background: $c_mainbg;
   color: $c_mainfg;
   text-decoration: none;
@@ -567,13 +582,73 @@ body {
   border: 1px solid $c_countdownbg;
   position: relative;
   margin: 4px;
+
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
+    1px 1px 0 #000;
+
+  /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/$c_selected+15,000000+30,000000+70,b51629+85 */
+  background: $c_selected; /* Old browsers */
+  background: -moz-linear-gradient(
+    left,
+    $c_selected 10%,
+    #000000 30%,
+    #000000 70%,
+    $c_selected 85%
+  ); /* FF3.6-15 */
+  background: -webkit-linear-gradient(
+    left,
+    $c_selected 15%,
+    #000000 30%,
+    #000000 70%,
+    $c_selected 85%
+  ); /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(
+    to right,
+    $c_selected 03%,
+    #000000 30%,
+    #000000 70%,
+    $c_selected 97%
+  ); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( 
+    startColorstr='$c_selected', 
+    endColorstr='$c_selected',
+    GradientType=1 ); /* IE6-9 */
 }
-.testbutton:hover {
+.buttons:hover {
   // border: 1px solid $c_selected;
-  box-shadow: inset 0 0 0 3px $c_selected;
+  // box-shadow: inset 0 0 0 3px $c_selected;
+
+  /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/$c_selected+15,000000+30,000000+70,b51629+85 */
+  background: $c_featurebuy; /* Old browsers */
+  background: -moz-linear-gradient(
+    left,
+    $c_featurebuy 10%,
+    #000000 30%,
+    #000000 70%,
+    $c_featurebuy 85%
+  ); /* FF3.6-15 */
+  background: -webkit-linear-gradient(
+    left,
+    $c_featurebuy 15%,
+    #000000 30%,
+    #000000 70%,
+    $c_featurebuy 85%
+  ); /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(
+    to right,
+    $c_featurebuy 15%,
+    #000000 30%,
+    #000000 70%,
+    $c_featurebuy 85%
+  ); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( 
+    startColorstr='$c_featurebuy', 
+    endColorstr='$c_featurebuy',
+    GradientType=1 ); /* IE6-9 */
+
 }
-.testbutton.lit,
-.testbutton:active {
+.buttons.lit,
+.buttons:active {
   background: $c_selected;
   box-shadow: 0 0 25px 1px $c_selected;
 }

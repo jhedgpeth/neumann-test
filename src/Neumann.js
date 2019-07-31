@@ -39,12 +39,12 @@ export default class Neumann extends React.Component {
         super(props);
 
         this.state = { ...NeumannInit.freshState() };
-        this.state.modalIsOpen = false;
+        this.state.helpModalIsOpen = false;
 
         this.userSettings = { ...NeumannInit.userSettings() };
 
         this.timerRunning = false;
-        this.state.pauseClass = "testbutton pause-button ";
+        this.state.pauseClass = "buttons pause-button ";
         this.timeInterval = 100;
         this.timeMultiplier = this.timeInterval / 1000;
         this.lastLoop = Date.now();
@@ -60,6 +60,7 @@ export default class Neumann extends React.Component {
 
         this.announceCt = 0;
         this.overlayCt = 0;
+        this.modalCt = 0;
 
         this.gameIntervalId = null;
         this.prestigeIntervalId = null;
@@ -103,9 +104,9 @@ export default class Neumann extends React.Component {
         this.enableFeature = this.enableFeature.bind(this);
         this.purchaseProbe = this.purchaseProbe.bind(this);
 
-        this.openModal = this.openModal.bind(this);
-        this.afterOpenModal = this.afterOpenModal.bind(this);
-        this.closeModal = this.closeModal.bind(this);
+        this.openHelpModal = this.openHelpModal.bind(this);
+        this.closeHelpModal = this.closeHelpModal.bind(this);
+        this.afterOpenHelpModal = this.afterOpenHelpModal.bind(this);
 
 
         /* cheats */
@@ -194,6 +195,7 @@ export default class Neumann extends React.Component {
         }));
         this.userSettings = { ...NeumannInit.userSettings() };
         this.announceCt = 0;
+        this.modalCt = 0;
         this.populateInitVals();
         this.outerEllipseMoving = false;
         this.pulseMoving = false;
@@ -219,7 +221,7 @@ export default class Neumann extends React.Component {
     pause() {
         this.timerRunning = false;
         this.setState((state) => ({
-            pauseClass: "testbutton pause-button lit",
+            pauseClass: "buttons pause-button lit",
         }));
         if (this.gameIntervalId) {
             clearInterval(this.gameIntervalId);
@@ -237,7 +239,7 @@ export default class Neumann extends React.Component {
     resume() {
         this.timerRunning = true;
         this.setState((state) => ({
-            pauseClass: "testbutton pause-button ",
+            pauseClass: "buttons pause-button ",
         }));
         if (!this.gameIntervalId) {
             this.gameIntervalId = setInterval(this.updateGame, this.timeInterval);
@@ -386,7 +388,7 @@ export default class Neumann extends React.Component {
     }
     moneyCheat() {
         mylog("CHEAT: adding 10000 money");
-        this.setState((state,props) => ({
+        this.setState((state, props) => ({
             money: state.money.plus(10000),
         }));
     }
@@ -767,7 +769,7 @@ export default class Neumann extends React.Component {
 
     getProbeTab() {
         let probebutton, probeattribs, sliderattribs, offlinetext;
-        let sliderText = "Spend "+this.sliderInfo.probeSpendPct+"%";
+        let sliderText = "Spend " + this.sliderInfo.probeSpendPct + "%";
 
         // probes enabled
         if (this.userSettings.featureEnabled[1001]) {
@@ -861,20 +863,19 @@ export default class Neumann extends React.Component {
         }
     }
 
-    openModal() {
+    openHelpModal() {
         // this.pause();
-        this.setState({ modalIsOpen: true });
+        this.setState({ helpModalIsOpen: true });
     }
-
-    afterOpenModal() {
+    closeHelpModal() {
+        // this.resume();
+        this.setState({ helpModalIsOpen: false });
+    }
+    afterOpenHelpModal() {
         // references are now sync'd and can be accessed.
         this.subtitle.style.color = '#f00';
     }
 
-    closeModal() {
-        // this.resume();
-        this.setState({ modalIsOpen: false });
-    }
 
     render() {
         const { isLoaded } = this.state;
@@ -885,43 +886,31 @@ export default class Neumann extends React.Component {
             debugButtons =
                 <div className="debugButtons">
                     <button className={this.state.pauseClass} onClick={this.pause}>Pause</button>
-                    <button className={"testbutton pause-button "} onClick={this.resume}>Resume</button>
-                    <button className="testbutton reset-button" onClick={this.resetAll}>RESET</button>
+                    <button className={"buttons pause-button "} onClick={this.resume}>Resume</button>
+                    <button className="buttons reset-button" onClick={this.resetAll}>RESET</button>
                     <button
-                        className="testbutton prestige-button"
+                        className="buttons prestige-button"
                         disabled={this.userSettings.prestigeNext.gt(0) ? false : true}
                         onClick={this.prestige}>Prestige</button>
-                    <button className="testbutton test-give-prestige"
+                    <button className="buttons test-give-prestige"
                         onClick={this.prestigeCheat}>+{this.cheatPrestigeVal} prestige</button>
-                    <button className="testbutton test-give-money"
+                    <button className="buttons test-give-money"
                         onClick={this.prestigeCheat}>+10,000 money</button>
-                    {/* <button className="testbutton announce-button" onClick={() => this.announce("great job winning!  oh boy this is just super.")}>Announce</button>
-                    <button className="testbutton overlay-button" onClick={() => this.addOverlay(0, "X2")}>Odd Jobs Overlay</button>
-                    <button className="testbutton overlay-button" onClick={() => this.addOverlay(1, "X2")}>Newspaper Overlay</button>
-                    <button className="testbutton ref-button" onClick={() => mylog("domRef:", this.state.businesses[0].domRef)}>Odd Job domRef</button>
-                    <button className="testbutton ref-button" onClick={() => mylog("domRef2:", this.state.businesses[1].domRef)}>Newspaper domRef</button>
-                    <button className="testbutton ref-button" onClick={() => mylog("getRect:", Business.getPosition(this.state.businesses[0].domRef))}>getRect</button> */}
+                    {/* <button className="buttons announce-button" onClick={() => this.announce("great job winning!  oh boy this is just super.")}>Announce</button>
+                    <button className="buttons overlay-button" onClick={() => this.addOverlay(0, "X2")}>Odd Jobs Overlay</button>
+                    <button className="buttons overlay-button" onClick={() => this.addOverlay(1, "X2")}>Newspaper Overlay</button>
+                    <button className="buttons ref-button" onClick={() => mylog("domRef:", this.state.businesses[0].domRef)}>Odd Job domRef</button>
+                    <button className="buttons ref-button" onClick={() => mylog("domRef2:", this.state.businesses[1].domRef)}>Newspaper domRef</button>
+                    <button className="buttons ref-button" onClick={() => mylog("getRect:", Business.getPosition(this.state.businesses[0].domRef))}>getRect</button> */}
 
-                    <button className="testbutton save-button" onClick={this.saveGame}>SAVE</button>
-                    <button className="testbutton save-button" onClick={this.loadGame}>LOAD</button>
+                    <button className="buttons save-button" onClick={this.saveGame}>SAVE</button>
+                    <button className="buttons save-button" onClick={this.loadGame}>LOAD</button>
                     <h3>Zoom Index: {this.zoomLevel}</h3><br />
                     <h3>RangeCt: {this.sliderInfo.rangeSettings.rangeCt}</h3>
 
-                    <button onClick={this.openModal}>Open Modal</button>
-                    <Modal
-                        isOpen={this.state.modalIsOpen}
-                        onAfterOpen={this.afterOpenModal}
-                        onRequestClose={this.closeModal}
-                        contentLabel="Example Modal"
-                        shouldCloseOnOverlayClick={false}
-                        className="Modal"
-                        overlayClassName="Modal-Overlay"
-                    >
-                        <h2 ref={subtitle => this.subtitle = subtitle}>Hello</h2>
-                        <button onClick={this.closeModal}>close</button>
-                        <div>I am a modal</div>
-                        
-                    </Modal>
+                    <button onClick={this.openHelpModal}>Open Modal</button>
+
+
 
                 </div>
         }
@@ -964,12 +953,15 @@ export default class Neumann extends React.Component {
 
                             <div className="purchaseAmts">
 
-                                <span className="buyx-prefix">Buy {HelperConst.multiplySymbol}</span>
-                                <Dropdown
-                                    options={HelperConst.purchaseOpts}
-                                    onChange={this.purchaseAmtDropDownHandler}
-                                    value={this.purchaseAmt}
-                                    placeholder="Select an option" />
+                                <div className="buy-wrapper">
+                                    <span className="buyx-prefix">Buy {HelperConst.multiplySymbol}</span>
+                                    <Dropdown
+                                        options={HelperConst.purchaseOpts}
+                                        onChange={this.purchaseAmtDropDownHandler}
+                                        value={this.purchaseAmt}
+                                        placeholder="Select an option" />
+                                </div>
+
                             </div>
 
                             {debugButtons}
@@ -1012,6 +1004,22 @@ export default class Neumann extends React.Component {
                         onClick={this.clickAnnouncement}
                     />
                 </div>
+
+                <Modal
+                    isOpen={this.state.helpModalIsOpen}
+                    onAfterOpen={this.afterOpenHelpModal}
+                    onRequestClose={this.closeHelpModal}
+                    contentLabel="Example Modal"
+                    shouldCloseOnOverlayClick={false}
+                    className="Modal"
+                    overlayClassName="Modal-Overlay"
+                >
+                    <h2 ref={subtitle => this.subtitle = subtitle}>Hello</h2>
+                    <button onClick={this.closeModal}>close</button>
+                    <div>I am a modal</div>
+
+                </Modal>
+
             </div>
 
         )
