@@ -2,6 +2,7 @@ import React from 'react';
 // import ReactDOM from 'react-dom'
 import SecureLS from 'secure-ls';
 import update from 'immutability-helper';
+import Modal from 'react-modal';
 import Dropdown from 'react-dropdown';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 // import Slider from 'rc-slider';
@@ -12,6 +13,7 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import './styles/fonts.css';
 import './styles/index.scss';
 import './styles/dropdown.scss';
+import './styles/modal.scss';
 import './styles/effects.scss';
 import './styles/space.scss';
 import 'rc-slider/assets/index.css';
@@ -37,6 +39,8 @@ export default class Neumann extends React.Component {
         super(props);
 
         this.state = { ...NeumannInit.freshState() };
+        this.state.modalIsOpen = false;
+
         this.userSettings = { ...NeumannInit.userSettings() };
 
         this.timerRunning = false;
@@ -99,10 +103,15 @@ export default class Neumann extends React.Component {
         this.enableFeature = this.enableFeature.bind(this);
         this.purchaseProbe = this.purchaseProbe.bind(this);
 
+        this.openModal = this.openModal.bind(this);
+        this.afterOpenModal = this.afterOpenModal.bind(this);
+        this.closeModal = this.closeModal.bind(this);
+
 
         /* cheats */
         this.prestigeCheat = this.prestigeCheat.bind(this);
         this.cheatPrestigeVal = "1e9";
+
 
 
 
@@ -114,13 +123,14 @@ export default class Neumann extends React.Component {
         this.resetAll();
         this.loadGame(); // if exists
 
-
-
         mylog(HelperConst.purchaseOptsSpecial);
         mylog(HelperConst.spaceZoomLevels.map(n => HelperConst.showInt(n)));
         this.setState((state, props) => ({
             isLoaded: true,
         }));
+
+        Modal.setAppElement('#wrapper');
+
         mylog("init work done");
     }
 
@@ -838,6 +848,21 @@ export default class Neumann extends React.Component {
         }
     }
 
+    openModal() {
+        this.pause();
+        this.setState({ modalIsOpen: true });
+    }
+
+    afterOpenModal() {
+        // references are now sync'd and can be accessed.
+        this.subtitle.style.color = '#f00';
+    }
+
+    closeModal() {
+        this.resume();
+        this.setState({ modalIsOpen: false });
+    }
+
     render() {
         const { isLoaded } = this.state;
         if (!isLoaded) return <div id="wrapper"></div>
@@ -866,6 +891,29 @@ export default class Neumann extends React.Component {
                     <button className="testbutton save-button" onClick={this.loadGame}>LOAD</button>
                     <h3>Zoom Index: {this.zoomLevel}</h3><br />
                     <h3>RangeCt: {this.sliderInfo.rangeSettings.rangeCt}</h3>
+
+                    <button onClick={this.openModal}>Open Modal</button>
+                    <Modal
+                        isOpen={this.state.modalIsOpen}
+                        onAfterOpen={this.afterOpenModal}
+                        onRequestClose={this.closeModal}
+                        contentLabel="Example Modal"
+                        shouldCloseOnOverlayClick={false}
+                        className="Modal"
+                        overlayClassName="Modal-Overlay"
+                    >
+                        <h2 ref={subtitle => this.subtitle = subtitle}>Hello</h2>
+                        <button onClick={this.closeModal}>close</button>
+                        <div>I am a modal</div>
+                        <form>
+                            <input />
+                            <button>tab navigation</button>
+                            <button>stays</button>
+                            <button>inside</button>
+                            <button>the modal</button>
+                        </form>
+                    </Modal>
+
                 </div>
         }
 
@@ -916,6 +964,7 @@ export default class Neumann extends React.Component {
                             </div>
 
                             {debugButtons}
+
                         </div>
 
                         <div id="content">
