@@ -11,6 +11,9 @@
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: #000;
+  border: 3px solid $c_selected;
+  border-radius: 5px;
+  padding: 15px;
 }
 
 .Modal-Overlay {

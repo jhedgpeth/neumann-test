@@ -17,13 +17,13 @@ export default class Sliders {
     static getRangeValues(n) {
         if (n === 1) {
             return ({
-                probeSpendPct: 100,
+                probeSpendPct: 25,
                 rangeCt: 1,
                 distribRange: [0, 100],
             })
         } else if (n === 2) {
             return ({
-                probeSpendPct: 100,
+                probeSpendPct: 25,
                 rangeCt: 2,
                 distribRange: [0, 50, 100],
                 handleStyle: [
@@ -39,7 +39,7 @@ export default class Sliders {
             })
         } else if (n === 3) {
             return ({
-                probeSpendPct: 100,
+                probeSpendPct: 25,
                 rangeCt: 3,
                 distribRange: [0, 33, 66, 100],
                 handleStyle: [

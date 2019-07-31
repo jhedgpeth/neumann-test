@@ -78,7 +78,7 @@ export default class Neumann extends React.Component {
         this.sliderInfo = {
             rangeSettings: Sliders.getRangeValues(1),
             probePcts: [50, 50, 0],
-            probeSpendPct: 100,
+            probeSpendPct: 25,
         }
 
         // this._business = React.createRef();
@@ -129,7 +129,7 @@ export default class Neumann extends React.Component {
             isLoaded: true,
         }));
 
-        Modal.setAppElement('#wrapper');
+        Modal.setAppElement('#root');
 
         mylog("init work done");
     }
@@ -384,6 +384,12 @@ export default class Neumann extends React.Component {
         mylog("CHEAT: adding", this.cheatPrestigeVal, "prestige");
         this.userSettings.prestige.num = this.userSettings.prestige.num.plus(this.cheatPrestigeVal);
     }
+    moneyCheat() {
+        mylog("CHEAT: adding 10000 money");
+        this.setState((state,props) => ({
+            money: state.money.plus(10000),
+        }));
+    }
 
 
     incrementBusinessCounters() {
@@ -533,6 +539,15 @@ export default class Neumann extends React.Component {
         this.userSettings.upgStats[feature.id].purchased = true;
         this.userSettings.featureEnabled[feature.id] = true;
         mylog("feature enabled:", feature.rewardTarget);
+
+        if (feature.id === 1003) {
+            this.sliderInfo.rangeSettings = Sliders.getRangeValues(2);
+            this.sliderInfo.probePcts = this.reportRangePcts();
+        }
+        if (feature.id === 1004) {
+            this.sliderInfo.rangeSettings = Sliders.getRangeValues(3);
+            this.sliderInfo.probePcts = this.reportRangePcts();
+        }
     }
 
     clickUpgrade(upg) {
@@ -669,9 +684,7 @@ export default class Neumann extends React.Component {
         mylog("probe attrs - pSpeed:", pcts[0], "pQuality:", pcts[1], "pCombat:", pcts[2]);
         this.userSettings.probe = new Probe(pCost, pcts[0], pcts[1], pcts[2])
 
-        // test change to 3 settings
-        this.sliderInfo.rangeSettings = Sliders.getRangeValues(3);
-        this.sliderInfo.probePcts = this.reportRangePcts();
+
     }
 
     updateGame() {
@@ -754,7 +767,7 @@ export default class Neumann extends React.Component {
 
     getProbeTab() {
         let probebutton, probeattribs, sliderattribs, offlinetext;
-        let sliderText = "Spend %";
+        let sliderText = "Spend "+this.sliderInfo.probeSpendPct+"%";
 
         // probes enabled
         if (this.userSettings.featureEnabled[1001]) {
@@ -797,7 +810,7 @@ export default class Neumann extends React.Component {
                             {Sliders.getRange(this.sliderInfo, this.rangeChange)}
                         </div>
                     </div>
-            } else {
+            } else {  // rangeCt === 3
                 probeattribs =
                     <div className="probe-attribs">
                         <div className="probe-attrib speed-header">Speed</div>
@@ -849,7 +862,7 @@ export default class Neumann extends React.Component {
     }
 
     openModal() {
-        this.pause();
+        // this.pause();
         this.setState({ modalIsOpen: true });
     }
 
@@ -859,7 +872,7 @@ export default class Neumann extends React.Component {
     }
 
     closeModal() {
-        this.resume();
+        // this.resume();
         this.setState({ modalIsOpen: false });
     }
 
@@ -880,6 +893,8 @@ export default class Neumann extends React.Component {
                         onClick={this.prestige}>Prestige</button>
                     <button className="testbutton test-give-prestige"
                         onClick={this.prestigeCheat}>+{this.cheatPrestigeVal} prestige</button>
+                    <button className="testbutton test-give-money"
+                        onClick={this.prestigeCheat}>+10,000 money</button>
                     {/* <button className="testbutton announce-button" onClick={() => this.announce("great job winning!  oh boy this is just super.")}>Announce</button>
                     <button className="testbutton overlay-button" onClick={() => this.addOverlay(0, "X2")}>Odd Jobs Overlay</button>
                     <button className="testbutton overlay-button" onClick={() => this.addOverlay(1, "X2")}>Newspaper Overlay</button>
@@ -905,13 +920,7 @@ export default class Neumann extends React.Component {
                         <h2 ref={subtitle => this.subtitle = subtitle}>Hello</h2>
                         <button onClick={this.closeModal}>close</button>
                         <div>I am a modal</div>
-                        <form>
-                            <input />
-                            <button>tab navigation</button>
-                            <button>stays</button>
-                            <button>inside</button>
-                            <button>the modal</button>
-                        </form>
+                        
                     </Modal>
 
                 </div>
