@@ -92,7 +92,7 @@ body {
 }
 
 .multiplySymbol {
-  // font-size: .5rem;
+  // font-size: .5em;
 }
 
 /* Header
@@ -112,7 +112,7 @@ body {
 }
 
 .income {
-  font-size: 1rem;
+  font-size: 1.2em;
   /* width: 300px; */
   display: grid;
   grid-template-columns: 30% 30% 40%;
@@ -161,11 +161,11 @@ body {
 }
 
 .prestige {
-  font-size: 1rem;
+  font-size: 1.2em;
   display: grid;
   grid-template-columns: 110px 110px 150px;
   grid-template-rows: 30px 30px;
-  float: right;
+  // float: right;
 }
 .prestige-header {
   grid-column: 1;
@@ -385,7 +385,7 @@ body {
 .upgrade-buy-progress.knowledge {
   background: $c_knowledgebg;
 }
-.upgrade-buy-progress.knowledge {
+.upgrade-buy-progress.feature {
   background: $c_featurebg;
 }
 .upgrade-buy.canAfford.money:hover {
@@ -541,12 +541,12 @@ body {
   width: 90%;
   display: grid;
   grid-template-columns: 40% 60%;
-  grid-template-rows: 45px ;
+  grid-template-rows: 45px;
   align-items: center;
 }
 
 .buyx-prefix {
-  font-size: 1.3rem;
+  font-size: 1.3em;
   font-weight: bold;
   margin: auto;
   // padding: 0 10px 0 0;
@@ -556,7 +556,7 @@ body {
   justify-self: start;
 }
 .probe-prod-span {
-  font-size: 1rem;
+  font-size: 1em;
   font-weight: bold;
   margin: auto;
   padding: 0 10px 0 0;
@@ -572,35 +572,37 @@ body {
   align-items: center;
   justify-content: center;
 }
-.buttons {
+.sidebarButtons {
   display: block;
-  width: 85%;
+  width: 65%;
   background: $c_mainbg;
   color: $c_mainfg;
   text-decoration: none;
   border-radius: 5px;
-  border: 1px solid $c_countdownbg;
+  border: 1px solid $c_selected;
   position: relative;
   margin: 4px;
 
   text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
     1px 1px 0 #000;
+}
 
+.fancyButtons {
   /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/$c_selected+15,000000+30,000000+70,b51629+85 */
   background: $c_selected; /* Old browsers */
   background: -moz-linear-gradient(
     left,
-    $c_selected 10%,
+    $c_selected 03%,
     #000000 30%,
     #000000 70%,
-    $c_selected 85%
+    $c_selected 97%
   ); /* FF3.6-15 */
   background: -webkit-linear-gradient(
     left,
-    $c_selected 15%,
+    $c_selected 03%,
     #000000 30%,
     #000000 70%,
-    $c_selected 85%
+    $c_selected 97%
   ); /* Chrome10-25,Safari5.1-6 */
   background: linear-gradient(
     to right,
@@ -614,10 +616,8 @@ body {
     endColorstr='$c_selected',
     GradientType=1 ); /* IE6-9 */
 }
-.buttons:hover {
-  // border: 1px solid $c_selected;
-  // box-shadow: inset 0 0 0 3px $c_selected;
 
+.fancyButtons:hover {
   /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/$c_selected+15,000000+30,000000+70,b51629+85 */
   background: $c_featurebuy; /* Old browsers */
   background: -moz-linear-gradient(
@@ -645,10 +645,10 @@ body {
     startColorstr='$c_featurebuy', 
     endColorstr='$c_featurebuy',
     GradientType=1 ); /* IE6-9 */
-
 }
-.buttons.lit,
-.buttons:active {
+
+.fancyButtons.lit,
+.fancyButtons:active {
   background: $c_selected;
   box-shadow: 0 0 25px 1px $c_selected;
 }
@@ -816,7 +816,7 @@ body {
   // text-align:center;
 }
 .overlay-text {
-  font-size: 2rem;
+  font-size: 2em;
   font-weight: bold;
   // color: red;
   // outline: 1px solid red;
@@ -826,7 +826,7 @@ body {
 }
 
 .business-owned {
-  font-size: 1.1rem;
+  font-size: 1.1em;
   font-weight: bold;
   text-decoration: none;
   height: 100%;
@@ -1054,7 +1054,7 @@ body {
   width: 100%;
   padding: 5px 15px;
   vertical-align: middle;
-  font-size: 1rem;
+  font-size: 1em;
   font-weight: bold;
   text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
     1px 1px 0 #000;

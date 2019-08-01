@@ -44,7 +44,7 @@ export default class Neumann extends React.Component {
         this.userSettings = { ...NeumannInit.userSettings() };
 
         this.timerRunning = false;
-        this.state.pauseClass = "buttons pause-button ";
+        this.state.pauseClass = "sidebarButtons fancyButtons pause-button ";
         this.timeInterval = 100;
         this.timeMultiplier = this.timeInterval / 1000;
         this.lastLoop = Date.now();
@@ -111,6 +111,7 @@ export default class Neumann extends React.Component {
 
         /* cheats */
         this.prestigeCheat = this.prestigeCheat.bind(this);
+        this.moneyCheat = this.moneyCheat.bind(this);
         this.cheatPrestigeVal = "1e9";
 
 
@@ -221,7 +222,7 @@ export default class Neumann extends React.Component {
     pause() {
         this.timerRunning = false;
         this.setState((state) => ({
-            pauseClass: "buttons pause-button lit",
+            pauseClass: "sidebarButtons fancyButtons  pause-button lit",
         }));
         if (this.gameIntervalId) {
             clearInterval(this.gameIntervalId);
@@ -239,7 +240,7 @@ export default class Neumann extends React.Component {
     resume() {
         this.timerRunning = true;
         this.setState((state) => ({
-            pauseClass: "buttons pause-button ",
+            pauseClass: "sidebarButtons fancyButtons  pause-button ",
         }));
         if (!this.gameIntervalId) {
             this.gameIntervalId = setInterval(this.updateGame, this.timeInterval);
@@ -542,14 +543,22 @@ export default class Neumann extends React.Component {
         this.userSettings.featureEnabled[feature.id] = true;
         mylog("feature enabled:", feature.rewardTarget);
 
-        if (feature.id === 1003) {
-            this.sliderInfo.rangeSettings = Sliders.getRangeValues(2);
-            this.sliderInfo.probePcts = this.reportRangePcts();
+        switch (feature.id) {
+            case 1000:
+                this.announce("SPAAAAACE!  The Final* Frontier!");
+                break;
+            case 1003:  // probe quality
+                this.sliderInfo.rangeSettings = Sliders.getRangeValues(2);
+                this.sliderInfo.probePcts = this.reportRangePcts();
+                break;
+            case 1004:  // probe combat
+                this.sliderInfo.rangeSettings = Sliders.getRangeValues(3);
+                this.sliderInfo.probePcts = this.reportRangePcts();
+                break;
+            default:
+                break;
         }
-        if (feature.id === 1004) {
-            this.sliderInfo.rangeSettings = Sliders.getRangeValues(3);
-            this.sliderInfo.probePcts = this.reportRangePcts();
-        }
+
     }
 
     clickUpgrade(upg) {
@@ -570,7 +579,7 @@ export default class Neumann extends React.Component {
         switch (upg.rewardType) {
             case "upgradeMult":
                 this.userSettings.busStats[upg.rewardTarget].payoutAdj *= upg.rewardValue;
-                this.addOverlay(upg.rewardTarget, "x" + upg.rewardValue)
+                this.addOverlay(upg.rewardTarget, "x" + upg.rewardValue, "ownedBonus");
                 mylog(this.state.businesses[upg.rewardTarget].name, "received multiplier", upg.rewardValue);
                 break;
             default:
@@ -631,14 +640,14 @@ export default class Neumann extends React.Component {
         return [...origOverlay, this.genOverlayObj(text, ovType)].slice(-4);
     }
 
-    addOverlay(busIdx, text) {
+    addOverlay(busIdx, text, ovType = "generic") {
         const bus = this.state.businesses[busIdx];
         mylog("addOverlay click ", text, bus.name);
         this.setState((state, props) => ({
             businesses: update(state.businesses, {
                 [busIdx]: {
                     overlays: {
-                        $set: this.genOverlayArr(bus.overlays, text),
+                        $set: this.genOverlayArr(bus.overlays, text, ovType),
                     }
                 },
             }),
@@ -865,11 +874,12 @@ export default class Neumann extends React.Component {
 
     openHelpModal() {
         // this.pause();
-        this.setState({ helpModalIsOpen: true });
+        this.setState((state, props) => ({ helpModalIsOpen: true }));
     }
     closeHelpModal() {
+        mylog("close Help modal");
         // this.resume();
-        this.setState({ helpModalIsOpen: false });
+        this.setState((state, props) => ({ helpModalIsOpen: false }));
     }
     afterOpenHelpModal() {
         // references are now sync'd and can be accessed.
@@ -886,27 +896,27 @@ export default class Neumann extends React.Component {
             debugButtons =
                 <div className="debugButtons">
                     <button className={this.state.pauseClass} onClick={this.pause}>Pause</button>
-                    <button className={"buttons pause-button "} onClick={this.resume}>Resume</button>
-                    <button className="buttons reset-button" onClick={this.resetAll}>RESET</button>
+                    <button className={"sidebarButtons fancyButtons  pause-button "} onClick={this.resume}>Resume</button>
+                    <button className="sidebarButtons fancyButtons  reset-button" onClick={this.resetAll}>RESET</button>
                     <button
-                        className="buttons prestige-button"
+                        className="sidebarButtons fancyButtons  prestige-button"
                         disabled={this.userSettings.prestigeNext.gt(0) ? false : true}
                         onClick={this.prestige}>Prestige</button>
-                    <button className="buttons test-give-prestige"
+                    <button className="sidebarButtons fancyButtons  test-give-prestige"
                         onClick={this.prestigeCheat}>+{this.cheatPrestigeVal} prestige</button>
-                    <button className="buttons test-give-money"
-                        onClick={this.prestigeCheat}>+10,000 money</button>
-                    {/* <button className="buttons announce-button" onClick={() => this.announce("great job winning!  oh boy this is just super.")}>Announce</button>
-                    <button className="buttons overlay-button" onClick={() => this.addOverlay(0, "X2")}>Odd Jobs Overlay</button>
-                    <button className="buttons overlay-button" onClick={() => this.addOverlay(1, "X2")}>Newspaper Overlay</button>
-                    <button className="buttons ref-button" onClick={() => mylog("domRef:", this.state.businesses[0].domRef)}>Odd Job domRef</button>
-                    <button className="buttons ref-button" onClick={() => mylog("domRef2:", this.state.businesses[1].domRef)}>Newspaper domRef</button>
-                    <button className="buttons ref-button" onClick={() => mylog("getRect:", Business.getPosition(this.state.businesses[0].domRef))}>getRect</button> */}
+                    <button className="sidebarButtons fancyButtons  test-give-money"
+                        onClick={this.moneyCheat}>+10,000 money</button>
+                    <button className="sidebarButtons fancyButtons  announce-button" onClick={() => this.announce("great job winning!  oh boy this is just super.")}>Announce</button>
+                    <button className="sidebarButtons fancyButtons  overlay-button" onClick={() => this.addOverlay(0, "X2")}>Mental Math Overlay</button>
+                    {/* <button className="sidebarButtons fancyButtons  overlay-button" onClick={() => this.addOverlay(1, "X2")}>Newspaper Overlay</button> */}
+                    {/* <button className="sidebarButtons fancyButtons  ref-button" onClick={() => mylog("domRef:", this.state.businesses[0].domRef)}>Odd Job domRef</button> */}
+                    {/* <button className="sidebarButtons fancyButtons  ref-button" onClick={() => mylog("domRef2:", this.state.businesses[1].domRef)}>Newspaper domRef</button> */}
+                    {/* <button className="sidebarButtons fancyButtons  ref-button" onClick={() => mylog("getRect:", Business.getPosition(this.state.businesses[0].domRef))}>getRect</button>  */}
 
-                    <button className="buttons save-button" onClick={this.saveGame}>SAVE</button>
-                    <button className="buttons save-button" onClick={this.loadGame}>LOAD</button>
-                    <h3>Zoom Index: {this.zoomLevel}</h3><br />
-                    <h3>RangeCt: {this.sliderInfo.rangeSettings.rangeCt}</h3>
+                    <button className="sidebarButtons fancyButtons  save-button" onClick={this.saveGame}>SAVE</button>
+                    <button className="sidebarButtons fancyButtons  save-button" onClick={this.loadGame}>LOAD</button>
+                    {/* <h3>Zoom Index: {this.zoomLevel}</h3><br /> */}
+                    {/* <h3>RangeCt: {this.sliderInfo.rangeSettings.rangeCt}</h3> */}
 
                     <button onClick={this.openHelpModal}>Open Modal</button>
 
@@ -1007,17 +1017,28 @@ export default class Neumann extends React.Component {
 
                 <Modal
                     isOpen={this.state.helpModalIsOpen}
-                    onAfterOpen={this.afterOpenHelpModal}
+                    // onAfterOpen={this.afterOpenHelpModal}
                     onRequestClose={this.closeHelpModal}
                     contentLabel="Example Modal"
                     shouldCloseOnOverlayClick={false}
                     className="Modal"
                     overlayClassName="Modal-Overlay"
                 >
-                    <h2 ref={subtitle => this.subtitle = subtitle}>Hello</h2>
-                    <button onClick={this.closeModal}>close</button>
-                    <div>I am a modal</div>
+                    {/* <h2 ref={subtitle => this.subtitle = subtitle}>Hello</h2> */}
+                    <div className="modal-container">
+                        <div className="modalHeader">
+                            <div className="modalTitle">Help</div>
+                            <button
+                                className="modalButtons fancyButtons helpModalCloseButton"
+                                onClick={this.closeHelpModal}>
+                                CLOSE
+                            </button>
+                        </div>
+                        <div className="modalContent">
+                            {HelperConst.modalHelp()}
 
+                        </div>
+                    </div>
                 </Modal>
 
             </div>
