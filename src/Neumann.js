@@ -263,6 +263,7 @@ export default class Neumann extends React.Component {
             return;
         }
         mylog("loaded:", saveString);
+        
         const decimalKeys = [
             "money",
             "knowledge",
@@ -274,19 +275,31 @@ export default class Neumann extends React.Component {
         ];
         this.userSettings = JSON.parse(saveString, (key, value) => {
             if (decimalKeys.includes(key)) {
-                // mylog("  new decimal value for", key);
+                mylog("  new decimal value for", key);
                 return new Decimal(value);
             }
             return value;
         });
+        // mylog("userSettings type:",typeof(this.userSettings));
+        // mylog("userSettings:", this.userSettings);
+        // mylog("probe:", this.userSettings.probe);
+
+        const tempProbe = {...this.userSettings.probe};
         this.userSettings.probe = new Probe(
             this.userSettings.probe.value,
             this.userSettings.probe.speed,
             this.userSettings.probe.quality,
             this.userSettings.probe.combat,
         );
-        // FIXME: missing probe internal vars
+        // mylog("userSettings:", this.userSettings);
 
+        // mylog("saveString probe:",tempProbe);
+        this.userSettings.probe.number = tempProbe.number;
+        this.userSettings.probe.losses = tempProbe.losses;
+        this.userSettings.probe.distance = tempProbe.distance;
+        mylog("userSettings:", this.userSettings);
+
+        this.populateInitVals();
 
         mylog("userSettings:", this.userSettings);
 

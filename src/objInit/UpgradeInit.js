@@ -75,6 +75,16 @@ export default function UpgradeInit() {
             costValue: new Decimal("100"),
             rewardType: "enableFeature",
             rewardTarget: "Combat",
+        }, {
+            id: 1100,
+            name: "New Ability",
+            watchType: "businessOwned",
+            watchTarget: 0,
+            watchValue: 1,
+            costType: "money",
+            costValue: new Decimal("100"),
+            rewardType: "enableFeature",
+            rewardTarget: "Probe Autobuy",
         }
 
     ]);
