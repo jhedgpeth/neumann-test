@@ -73,8 +73,8 @@ export default class Neumann extends React.Component {
 
         // this.probe = new Probe(new Decimal(0), 0, 0, 0);
         this.zoomLevel = 0;
-        this.zoomName = HelperConst.spaceZoomLevelNames[0];
-        this.mapDistance = HelperConst.spaceZoomLevels[0];
+        this.zoomName = Space.spaceZoomLevelNames[0];
+        this.mapDistance = Space.spaceZoomLevels[0];
 
         this.sliderInfo = {
             rangeSettings: Sliders.getRangeValues(1),
@@ -126,7 +126,7 @@ export default class Neumann extends React.Component {
         this.loadGame(); // if exists
 
         mylog(HelperConst.purchaseOptsSpecial);
-        mylog(HelperConst.spaceZoomLevels.map(n => HelperConst.showInt(n)));
+        mylog(Space.spaceZoomLevels.map(n => HelperConst.showInt(n)));
         this.setState((state, props) => ({
             isLoaded: true,
         }));
@@ -201,8 +201,8 @@ export default class Neumann extends React.Component {
         this.outerEllipseMoving = false;
         this.pulseMoving = false;
         this.zoomLevel = 0;
-        this.zoomName = HelperConst.spaceZoomLevelNames[0];
-        this.mapDistance = HelperConst.spaceZoomLevels[0];
+        this.zoomName = Space.spaceZoomLevelNames[0];
+        this.mapDistance = Space.spaceZoomLevels[0];
         this.resume();
     }
 
@@ -214,8 +214,8 @@ export default class Neumann extends React.Component {
         this.userSettings = { ...NeumannInit.userSettings() };
         this.populateInitVals();
         this.zoomLevel = 0;
-        this.zoomName = HelperConst.spaceZoomLevelNames[0];
-        this.mapDistance = HelperConst.spaceZoomLevels[0];
+        this.zoomName = Space.spaceZoomLevelNames[0];
+        this.mapDistance = Space.spaceZoomLevels[0];
         this.resume();
     }
 
@@ -263,11 +263,11 @@ export default class Neumann extends React.Component {
             return;
         }
         mylog("loaded:", saveString);
-        
+
         const decimalKeys = [
             "money",
             "knowledge",
-            "value", "number", "losses", "distance",
+            "value", "number", "qualityLoss", "combatLoss", "distance",
             "num",
             "prestigeNext",
             "lifetimeEarnings", "lifetimeLearning",
@@ -284,7 +284,7 @@ export default class Neumann extends React.Component {
         // mylog("userSettings:", this.userSettings);
         // mylog("probe:", this.userSettings.probe);
 
-        const tempProbe = {...this.userSettings.probe};
+        const tempProbe = { ...this.userSettings.probe };
         this.userSettings.probe = new Probe(
             this.userSettings.probe.value,
             this.userSettings.probe.speed,
@@ -295,7 +295,8 @@ export default class Neumann extends React.Component {
 
         // mylog("saveString probe:",tempProbe);
         this.userSettings.probe.number = tempProbe.number;
-        this.userSettings.probe.losses = tempProbe.losses;
+        this.userSettings.probe.qualityLoss = tempProbe.qualityLoss;
+        this.userSettings.probe.combatLoss = tempProbe.combatLoss;
         this.userSettings.probe.distance = tempProbe.distance;
         mylog("userSettings:", this.userSettings);
 
@@ -401,10 +402,8 @@ export default class Neumann extends React.Component {
         this.userSettings.prestige.num = this.userSettings.prestige.num.plus(this.cheatPrestigeVal);
     }
     moneyCheat() {
-        mylog("CHEAT: adding 10000 money");
-        this.setState((state, props) => ({
-            money: state.money.plus(10000),
-        }));
+        mylog("CHEAT: adding 50% money");
+        this.userSettings.money = this.userSettings.money.times(1.5);
     }
 
 
@@ -461,7 +460,7 @@ export default class Neumann extends React.Component {
         // const conv = ComputeFunc.convertDistanceToSpace(this.state.probeDistance);
         // mylog("convertDistanceToSpace:",conv.idx,conv.dist.toNumber());
 
-        const conv = ComputeFunc.convertDistanceToSpace(this.userSettings.probe.distance);
+        const conv = Space.convertDistanceToSpace(this.userSettings.probe.distance);
         this.mapDistance = conv.dist;
         this.zoomLevel = conv.idx;
         this.zoomName = conv.name;
@@ -672,7 +671,7 @@ export default class Neumann extends React.Component {
     }
 
     sliderChange(value) {
-        mylog("slider change:", value);
+        // mylog("slider change:", value);
         this.sliderInfo.probeSpendPct = value;
     }
     rangeChange(value) {
@@ -686,7 +685,8 @@ export default class Neumann extends React.Component {
         // mylog("fixed range:", this.distribRange);
     }
     reportRangePcts() {
-        let pSpeedPct, pQualityPct, pCombatPct = 0;
+        let pSpeedPct = 0, pQualityPct = 0, pCombatPct = 0;
+        mylog("spd:",pSpeedPct,"qual:",pQualityPct,"comb:",pCombatPct);
         if (this.sliderInfo.rangeSettings.rangeCt === 1) {
             pSpeedPct = 100;
         } else if (this.sliderInfo.rangeSettings.rangeCt === 2) {
@@ -918,7 +918,7 @@ export default class Neumann extends React.Component {
                     <button className="sidebarButtons fancyButtons  test-give-prestige"
                         onClick={this.prestigeCheat}>+{this.cheatPrestigeVal} prestige</button>
                     <button className="sidebarButtons fancyButtons  test-give-money"
-                        onClick={this.moneyCheat}>+10,000 money</button>
+                        onClick={this.moneyCheat}>+50% money</button>
                     <button className="sidebarButtons fancyButtons  announce-button" onClick={() => this.announce("great job winning!  oh boy this is just super.")}>Announce</button>
                     <button className="sidebarButtons fancyButtons  overlay-button" onClick={() => this.addOverlay(0, "X2")}>Mental Math Overlay</button>
                     {/* <button className="sidebarButtons fancyButtons  overlay-button" onClick={() => this.addOverlay(1, "X2")}>Newspaper Overlay</button> */}

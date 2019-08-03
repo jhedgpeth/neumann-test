@@ -10,7 +10,8 @@ export default class Probe {
         this.quality = pQuality;
         this.combat = pCombat;
         this.number = new Decimal(0);
-        this.losses = new Decimal(0);
+        this.qualityLoss = new Decimal(0);
+        this.combatLoss = new Decimal(0);
         this.distance = new Decimal(0);
     }
 
@@ -18,19 +19,29 @@ export default class Probe {
         this.number = this.number.plus(num);
     }
     decrement(num) {
+        if (this.number.lt(num)) num=this.number;
         this.number = this.number.minus(num);
         this.losses = this.losses.plus(num);
     }
+
     goFarther(dist) {
         this.distance = this.distance.plus(dist);
     }
 
     getDistPerSec() {
-        return this.value.times(this.speed);
+        // return this.value.times(this.speed).ln(3);
+        if (this.distPerSec) { return this.distPerSec; }
+        const speedQ = Math.pow((1+((this.speed-5)/100)),2);
+        this.distPerSec = this.value.div("1e3").sqrt().times(speedQ).div(2);
+        return this.distPerSec;
     }
 
     getDistPerTick(timeMultiplier) {
         return this.getDistPerSec().times(timeMultiplier);
+    }
+
+    getLosses() {
+        return Decimal(0);
     }
 
     update(timeMultiplier) {

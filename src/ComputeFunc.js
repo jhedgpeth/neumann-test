@@ -1,6 +1,7 @@
 // import { Decimal } from 'decimal.js';
 import './styles/fonts.css';
 import HelperConst from './HelperConst';
+import Space from './Space';
 const Decimal = require('decimal.js');
 const mylog = HelperConst.DebugLog;
 
@@ -204,34 +205,6 @@ export default class ComputeFunc {
         console.timeEnd('prime creation');
         mylog("primes length: " + this.primes.length);
         return this.primes;
-    }
-
-    static getSpaceInfoForIndex(idx) {
-        const definedLevels = HelperConst.spaceZoomLevels.length;
-        if (idx < definedLevels) {
-            return { idx: idx, dist: HelperConst.spaceZoomLevels[idx], name: HelperConst.spaceZoomLevelNames[idx] };
-        } else {
-            const baseE9 = HelperConst.spaceZoomLevels[definedLevels - 1].log("1e9").floor().toNumber();
-            const diff = idx - definedLevels;
-            return { idx: idx, dist: new Decimal("1e9").pow(baseE9 + diff + 1), name: "Dark Unknown" };
-        }
-    }
-
-    static convertDistanceToSpace(d) {
-        const definedLevels = HelperConst.spaceZoomLevels.length;
-        for (let n = 0; n < definedLevels; n++) {
-            const dist = HelperConst.spaceZoomLevels[n];
-            if (dist.gt(d)) return { idx: n, dist: dist, name: HelperConst.spaceZoomLevelNames[n] };
-        }
-        const baseE9 = HelperConst.spaceZoomLevels[definedLevels - 1].log("1e9").floor().toNumber();
-        const dFloor = d.log("1e9").floor().toNumber();
-        const diff = dFloor - baseE9;
-        // const numE10 = definedLevels + dFloor.toNumber() - lvlE10;
-        // mylog("dFloor:",dFloor,"baseE9:",baseE9);
-        const newDist = new Decimal("1e9").pow(baseE9 + diff + 1);
-        mylog("newDist:", HelperConst.showNum(newDist));
-
-        return { idx: definedLevels + diff, dist: new Decimal("1e9").pow(baseE9 + diff + 1), name: "Dark Unknown" };
     }
 
     static convertMillis( milliseconds ) {

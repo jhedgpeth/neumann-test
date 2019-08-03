@@ -5,7 +5,7 @@ import { Stage, Layer, Circle, Ellipse, Line, Text } from 'react-konva';
 import ComputeFunc from './ComputeFunc';
 import HelperConst from './HelperConst';
 // import ComputeFunc from './ComputeFunc';
-// import Decimal from 'decimal.js';
+import Decimal from 'decimal.js';
 const mylog = HelperConst.DebugLog;
 
 export default class Space extends React.Component {
@@ -37,7 +37,7 @@ export default class Space extends React.Component {
             y: this.centerCanvas.y - 135,
         }
 
-        const conv = ComputeFunc.convertDistanceToSpace(this.props.probe.distance);
+        const conv = Space.convertDistanceToSpace(this.props.probe.distance);
         this.mapDistance = conv.dist;
         this.zoomLevel = conv.idx;
         this.zoomName = conv.name;
@@ -46,16 +46,8 @@ export default class Space extends React.Component {
             'earth': [0.4, '#1A8A09', 0.8, '#163bb5', 1, '#333'],
             'sun': [0.4, '#fadf98', 0.8, '#B1954D', 1, '#333'],
         }
-        this.planetColorStops = this.planetColors.earth;
-        if (this.zoomLevel === 0) {
-            this.planetRadius = 10;
-            this.planetColorStops = this.planetColors.earth;
-        } else if (this.zoomLevel === 1) {
-            this.planetRadius = 3;
-            this.planetColorStops = this.planetColors.sun;
-        } else {
-            this.planetRadius = 0;
-        }
+        this.setPlanetSize();
+
 
         this.zoomDuration = 0.25;
         this.zoomShown = this.zoomLevel;
@@ -66,6 +58,73 @@ export default class Space extends React.Component {
         this.starClass = "stars starpause";
 
         mylog("init mapDistance:", this.mapDistance, "zoomLevel:", this.zoomLevel, "zoomShown:", this.zoomShown, "zoomName:", this.zoomName);
+    }
+
+    static spaceZoomLevels = [
+        new Decimal("384.4e3"),  // moon
+        new Decimal("628e6"),    // Jupiter
+        new Decimal("287.46e9"), // solar system
+        new Decimal("15e12"),    // Oort Cloud
+        new Decimal("950e15"),  //  milky way (diameter)
+        new Decimal("111e18"),  // NGC 4945
+        new Decimal("440e24"),  // observable universe
+        // new Decimal("Infinity"),
+    ];
+    static spaceZoomLevelNames = [
+        "Moon",
+        "Jupiter",
+        "Solar System",
+        "Oort Cloud",
+        "Milky Way",
+        "Galaxy NGC 4945",
+        "Edge of Observable Universe",
+    ];
+
+    static getSpaceInfoForIndex(idx) {
+        const definedLevels = Space.spaceZoomLevels.length;
+        if (idx < definedLevels) {
+            return { idx: idx, dist: Space.spaceZoomLevels[idx], name: Space.spaceZoomLevelNames[idx] };
+        } else {
+            const baseE9 = Space.spaceZoomLevels[definedLevels - 1].log("1e9").floor().toNumber();
+            const diff = idx - definedLevels;
+            return { idx: idx, dist: new Decimal("1e9").pow(baseE9 + diff + 1), name: "Dark Unknown" };
+        }
+    }
+
+    static convertDistanceToSpace(d) {
+        const definedLevels = Space.spaceZoomLevels.length;
+        for (let n = 0; n < definedLevels; n++) {
+            const dist = Space.spaceZoomLevels[n];
+            if (dist.gt(d)) return { idx: n, dist: dist, name: this.spaceZoomLevelNames[n] };
+        }
+        const baseE9 = Space.spaceZoomLevels[definedLevels - 1].log("1e9").floor().toNumber();
+        const dFloor = d.log("1e9").floor().toNumber();
+        const diff = dFloor - baseE9;
+        // const numE10 = definedLevels + dFloor.toNumber() - lvlE10;
+        // mylog("dFloor:",dFloor,"baseE9:",baseE9);
+        const newDist = new Decimal("1e9").pow(baseE9 + diff + 1);
+        mylog("newDist:", HelperConst.showNum(newDist));
+
+        return { idx: definedLevels + diff, dist: new Decimal("1e9").pow(baseE9 + diff + 1), name: "Dark Unknown" };
+    }
+
+    setPlanetSize() {
+        // set planet size
+        if (this.zoomLevel === 0) {
+            // Moon
+            this.planetRadius = 10;
+            this.planetColorStops = this.planetColors.earth;
+        } else if (this.zoomLevel === 1) {
+            // Jupiter
+            this.planetRadius = 10;
+            this.planetColorStops = this.planetColors.sun;
+        } else if (this.zoomLevel === 2) {
+            // Solar System
+            this.planetRadius = 3;
+            this.planetColorStops = this.planetColors.sun;
+        } else {
+            this.planetRadius = 0;
+        }
     }
 
     resetProbeZoom() {
@@ -87,19 +146,13 @@ export default class Space extends React.Component {
             'radiusX': this.centerRadius.x,
             'radiusY': this.centerRadius.y,
         })
-        // set planet size
-        if (this.zoomLevel === 0) {
-            this.planetRadius = 10;
-            this.planetColorStops = this.planetColors.earth;
-        } else if (this.zoomLevel === 1) {
-            this.planetRadius = 3;
-            this.planetColorStops = this.planetColors.sun;
-        } else {
-            this.planetRadius = 0;
-        }
+
+        this.setPlanetSize();
+
         this.pulsePause = false;
         this.starClass = "stars starpause";
     }
+
     probeOuterZoomFinished() {
         this.outerEllipseMoving = false;
         !this.innerEllipseMoving && this.resetProbeZoom();
@@ -133,8 +186,13 @@ export default class Space extends React.Component {
 
 
     processSpaceMap() {
-
-        this.zoomLevel = ComputeFunc.convertDistanceToSpace(this.props.probe.distance).idx;
+        if (this.props.probe.distance.eq(0)) {
+            this.zoomLevel = (Space.convertDistanceToSpace(
+                this.props.probe.distance.plus(this.props.probe.getDistPerTick(this.props.timeMultiplier)))
+            ).idx;
+        } else {
+            this.zoomLevel = Space.convertDistanceToSpace(this.props.probe.distance).idx;
+        }
         // mylog("zoomLevel:",this.zoomLevel, "zoomShown:",this.zoomShown);
 
         /* set probe distance pulse */
@@ -195,16 +253,8 @@ export default class Space extends React.Component {
                 this.zoomShown -= 1;
             }
 
-            // set planet size
-            if (this.zoomLevel === 0) {
-                this.planetRadius = 10;
-                this.planetColorStops = this.planetColors.earth;
-            } else if (this.zoomLevel === 1) {
-                this.planetRadius = 3;
-                this.planetColorStops = this.planetColors.sun;
-            } else {
-                this.planetRadius = 0;
-            }
+            this.setPlanetSize();
+
 
             if (!this.outerEllipseMoving) {
                 mylog("ring anim starting");
@@ -237,7 +287,7 @@ export default class Space extends React.Component {
                 });
             }
 
-            const conv = ComputeFunc.getSpaceInfoForIndex(this.zoomShown);
+            const conv = Space.getSpaceInfoForIndex(this.zoomShown);
             this.mapDistance = conv.dist;
             this.zoomName = conv.name;
             // mylog("process mapDistance:", this.mapDistance, "zoomLevel:", this.zoomLevel, "zoomShown:", this.zoomShown, "zoomName:", this.zoomName);
@@ -355,7 +405,7 @@ export default class Space extends React.Component {
                 />
             );
         }
-        if (this.zoomShown > 1) {
+        if (this.zoomShown > 2) {
             /* reticle */
             rows.push(
                 <React.Fragment key="crossHairFragment">
@@ -404,24 +454,24 @@ export default class Space extends React.Component {
                             strokeWidth={1}
                         />
                         <Line
-                            points={[this.centerCanvas.x - this.innerRadius.x, this.centerCanvas.y + this.innerRadius.y + 30, this.centerCanvas.x - 90, this.centerCanvas.y + this.innerRadius.y + 30]}
+                            points={[this.centerCanvas.x - this.innerRadius.x, this.centerCanvas.y + this.innerRadius.y + 30, this.centerCanvas.x - 110, this.centerCanvas.y + this.innerRadius.y + 30]}
                             stroke="#d55"
                             strokeWidth={1}
                         />
                         <Text
-                            x={this.centerCanvas.x - 80}
+                            x={this.centerCanvas.x - 100}
                             y={this.centerCanvas.y + this.innerRadius.y + 24}
-                            width={160}
-                            text={"#" + this.zoomShown + ": " + HelperConst.showInt(this.mapDistance) + " km"}
+                            width={200}
+                            text={"Zoom #" + this.zoomShown + ": " + HelperConst.showInt(this.mapDistance.times(2)) + " km"}
                             fontSize={16}
                             fontFamily={'Kodchasan'}
                             align="center"
                             fill="#1A8A09"
                         />
                         <Text
-                            x={this.centerCanvas.x - 80}
+                            x={this.centerCanvas.x - 100}
                             y={this.centerCanvas.y + this.innerRadius.y + 45}
-                            width={160}
+                            width={200}
                             text={this.zoomName}
                             fontSize={16}
                             fontFamily={'Kodchasan'}
@@ -429,7 +479,7 @@ export default class Space extends React.Component {
                             fill="#1A8A09"
                         />
                         <Line
-                            points={[this.centerCanvas.x + 90, this.centerCanvas.y + this.innerRadius.y + 30, this.centerCanvas.x + this.innerRadius.x, this.centerCanvas.y + this.innerRadius.y + 30]}
+                            points={[this.centerCanvas.x + 110, this.centerCanvas.y + this.innerRadius.y + 30, this.centerCanvas.x + this.innerRadius.x, this.centerCanvas.y + this.innerRadius.y + 30]}
                             stroke="#d55"
                             strokeWidth={1}
                         />
@@ -439,7 +489,7 @@ export default class Space extends React.Component {
                             strokeWidth={1}
                         />
                         {/* <MyPortal>
-                            <button id="portal-button" disabled={true}>{HelperConst.showNum(HelperConst.spaceZoomLevels[this.zoomShown])}</button>
+                            <button id="portal-button" disabled={true}>{HelperConst.showNum(Space.spaceZoomLevels[this.zoomShown])}</button>
                         </MyPortal> */}
 
 

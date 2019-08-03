@@ -35,22 +35,22 @@ export default class HelperConst {
     // set all-business milestones for time boost, including all 100's
     static busBuyMilestones = [10, 25, 50];
 
-    // in kilometers
-    static spaceZoomLevels = [
-        new Decimal("384400"),  // moon
-        new Decimal("2.8746e11"), // solar system
-        new Decimal("9.5e17"),  //  milky way (diameter)
-        new Decimal("1.11e20"),  // NGC 4945
-        new Decimal("440e24"),  // observable universe
-        // new Decimal("Infinity"),
-    ];
-    static spaceZoomLevelNames = [
-        "Moon",
-        "Solar System",
-        "Milky Way",
-        "Galaxy NGC 4945",
-        "Edge of Observable Universe",
-    ];
+    // // in kilometers
+    // static spaceZoomLevels = [
+    //     new Decimal("384400"),  // moon
+    //     new Decimal("2.8746e11"), // solar system
+    //     new Decimal("9.5e17"),  //  milky way (diameter)
+    //     new Decimal("1.11e20"),  // NGC 4945
+    //     new Decimal("440e24"),  // observable universe
+    //     // new Decimal("Infinity"),
+    // ];
+    // static spaceZoomLevelNames = [
+    //     "Moon",
+    //     "Solar System",
+    //     "Milky Way",
+    //     "Galaxy NGC 4945",
+    //     "Edge of Observable Universe",
+    // ];
 
     static DebugLog() {
         if (HelperConst.DEBUG) {
