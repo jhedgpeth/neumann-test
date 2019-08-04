@@ -42,13 +42,6 @@ body {
     "panel-main";
 }
 
-#tabs {
-  height: 30px;
-  grid-area: tabs;
-  background-color: $c_tabsbg;
-  padding: 0;
-  // border-bottom: 2px solid $c_tabon;
-}
 
 .main-tab-panel {
   grid-area: "panel-main";
@@ -62,7 +55,15 @@ body {
 .probe-tab-panel {
   background: #000;
   grid-area: "panel-main";
-  // max-height: 600px;
+  max-width: 1024px;
+  display: grid;
+  grid-template-columns: 804px 220px;
+  grid-template-areas: "content rsidebar";
+}
+
+.settings-tab-panel {
+  background: #000;
+  grid-area: "panel-main";
   max-width: 1024px;
   display: grid;
   grid-template-columns: 804px 220px;
@@ -220,6 +221,13 @@ body {
 
 /* tabs
 -----------------------------------------------------------------------------*/
+#tabs {
+  height: 30px;
+  grid-area: tabs;
+  background-color: $c_tabsbg;
+  padding: 0;
+  // border-bottom: 2px solid $c_tabon;
+}
 
 .tab-list {
   height: 26px;
@@ -245,6 +253,12 @@ body {
   cursor: pointer;
   color: $c_maindimfg;
 }
+.tab-list-item.spacer-tab {
+  flex-grow: 1;
+  opacity: 0;
+  pointer-events: none;
+}
+
 .react-tabs__tab--selected {
   background: $c_tabon;
   color: $c_mainfg;
@@ -256,6 +270,8 @@ body {
 .react-tabs__tab-panel--selected {
   display: grid;
 }
+
+
 
 /* footer
 -----------------------------------------------------------------------------*/
@@ -1008,6 +1024,21 @@ body {
   box-shadow: 0 0 25px 1px $c_selected;
 }
 
+/* Settings content
+-----------------------------------------------------------------------------*/
+
+#settings {
+  background-color: $c_mainbg;
+  grid-area: content;
+  position: relative;
+  width: 539px;
+  /* min-height: 400px; */
+  height: 528px;
+  padding: 10px;
+  margin: 0;
+}
+
+
 /* bonuses 
 -----------------------------------------------------------------------------*/
 
@@ -1074,3 +1105,4 @@ body {
   opacity: 0;
   transition: all 0.4s linear;
 }
+

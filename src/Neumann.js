@@ -28,6 +28,7 @@ import HelperConst from './HelperConst';
 import Upgrades from './Upgrades';
 import Announce from './Announce';
 import Sliders from './Sliders';
+import Settings from './Settings';
 
 const Decimal = require('decimal.js');
 const mylog = HelperConst.DebugLog;
@@ -780,7 +781,8 @@ export default class Neumann extends React.Component {
         // if space view activated
         this.userSettings.featureEnabled[1000] && rows.push(<Tab className="tab-list-item" key="probe-tab">Space</Tab>);
 
-        rows.push(<Tab className="tab-list-item" key="settings-tab">Settings</Tab>);
+        rows.push(<Tab className="tab-list-item spacer-tab" key="spacer-tab"></Tab>);
+        rows.push(<Tab className="tab-list-item settings-tab" key="settings-tab">Settings</Tab>);
         return (
             <div id="tabs">
                 <TabList className="tab-list">
@@ -889,7 +891,15 @@ export default class Neumann extends React.Component {
 
     getSettingsTab() {
         return (
-            <TabPanel className="react-tabs__tab-panel main-tab-panel"></TabPanel>
+            <TabPanel className="react-tabs__tab-panel settings-tab-panel">
+                <div id="right-sidebar">
+                    SSSS
+                </div>
+                
+                <Settings>
+
+                </Settings>
+            </TabPanel>
         )
     }
 
@@ -1018,6 +1028,8 @@ export default class Neumann extends React.Component {
                     </TabPanel>
 
                     {this.getProbeTab()}
+
+                    <TabPanel className="react-tabs__tab-panel spacer-tab-panel"></TabPanel>
 
                     {this.getSettingsTab()}
 
