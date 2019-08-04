@@ -780,6 +780,7 @@ export default class Neumann extends React.Component {
         // if space view activated
         this.userSettings.featureEnabled[1000] && rows.push(<Tab className="tab-list-item" key="probe-tab">Space</Tab>);
 
+        // rows.push(<Tab className="tab-list-item" key="settings-tab">Settings</Tab>);
         return (
             <div id="tabs">
                 <TabList className="tab-list">

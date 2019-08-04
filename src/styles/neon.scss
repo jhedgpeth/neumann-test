@@ -12,23 +12,31 @@ $color1: $c_neongreen;
 $color2: $c_neonblue;
 .von {
   text-align: left;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: bold;
   color: #1a8a09;
-  // position: relative;
-  // margin: auto;
-  // margin: 0 10px 0 0;
 }
 .text-effect {
   overflow: hidden;
-  position: relative;
   width: 100%;
   text-align: center;
-
   // The blend modes mute the colors, so let's bump them up
   filter: contrast(110%) brightness(190%);
 }
 
+#text,
+.text-effect,
+.neon,
+.gradient {
+  height: 44px;
+  top: -10px;
+}
+
+#text {
+  position: absolute;
+    top: 0;
+    // left: -25px;
+}
 .neon {
   position: relative;
 
@@ -72,12 +80,12 @@ $color2: $c_neonblue;
 .gradient,
 .spotlight {
   position: absolute;
-  top: 0;
+  top: -10px;
   left: 0;
-  bottom: 0;
+  bottom: -10px;
   right: 0;
   // pointer-events: none;
-  z-index: 10;
+  z-index: 9;
 }
 
 // Add the colors
@@ -116,11 +124,8 @@ $color2: $c_neonblue;
 
 // Style text
 .neon {
-  //   font: 700 220px 'Lato', sans-serif;
-  // font-size: 35px;
   font: 700 40px 'Kodchasan', sans-serif;
   // text-transform: uppercase;
-  text-align: center;
   margin: 0;
 
   &:focus {
@@ -131,11 +136,10 @@ $color2: $c_neonblue;
 }
 
 // Center everything
-// body {
-//   background: black;
-//   display: flex;
-//   min-height: 100vh;
-//   justify-content: center;
-//   align-content: center;
-//   align-items: center;
-// }
+.text-effect {
+  background: black;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+}
