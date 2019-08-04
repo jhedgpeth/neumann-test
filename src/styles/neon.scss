@@ -11,26 +11,36 @@ thanks!
 $color1: $c_neongreen;
 $color2: $c_neonblue;
 .von {
+  position: absolute;
   text-align: left;
   font-size: 18px;
   font-weight: bold;
   color: #1a8a09;
+  -webkit-filter: contrast(100%) brightness(130%);
+  -moz-filter: contrast(100%) brightness(130%);
+  filter: contrast(100%) brightness(130%);
 }
 .text-effect {
+  position: relative;
+  top: +20px;
   overflow: hidden;
   width: 100%;
   text-align: center;
   // The blend modes mute the colors, so let's bump them up
+  -webkit-filter: contrast(110%) brightness(190%);
+  -moz-filter: contrast(110%) brightness(190%);
   filter: contrast(110%) brightness(190%);
+
 }
 
 #text,
 .text-effect,
 .neon,
 .gradient {
-  height: 44px;
-  top: -10px;
-  bottom: -10px;
+  height: 40px;
+  // top: -10px;
+  // bottom: -10px;
+  // outline: 1px solid red;
 }
 
 #text {
@@ -62,9 +72,11 @@ $color2: $c_neonblue;
     -webkit-filter: blur(0.02em);
 
     position: absolute;
-    top: 0;
+    top: -8px;
     left: 0;
     // pointer-events: none;
+
+    height: 40px;
   }
 
   // Set the top copy to difference. This creates the knock-out effect with a bit of glow
@@ -81,9 +93,9 @@ $color2: $c_neonblue;
 .gradient,
 .spotlight {
   position: absolute;
-  top: -10px;
+  top: 0;
   left: 0;
-  bottom: -10px;
+  bottom: 0;
   right: 0;
   // pointer-events: none;
   z-index: 9;
