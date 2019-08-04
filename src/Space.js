@@ -2,7 +2,7 @@ import React from 'react';
 // import Konva from 'konva';
 import { Stage, Layer, Circle, Ellipse, Line, Text } from 'react-konva';
 // import MyPortal from './MyPortal';
-import ComputeFunc from './ComputeFunc';
+// import ComputeFunc from './ComputeFunc';
 import HelperConst from './HelperConst';
 // import ComputeFunc from './ComputeFunc';
 import Decimal from 'decimal.js';
@@ -42,8 +42,12 @@ export default class Space extends React.Component {
         this.zoomLevel = conv.idx;
         this.zoomName = conv.name;
 
+        // this.planetColors = {
+        //     'earth': [0.4, '#1A8A09', 0.8, '#163bb5', 0.9, '#333'],
+        //     'sun': [0.4, '#fadf98', 0.8, '#B1954D', 1, '#333'],
+        // }
         this.planetColors = {
-            'earth': [0.4, '#1A8A09', 0.8, '#163bb5', 1, '#333'],
+            'earth': [0.1, '#1A8A09', 0.65, '#163bb5', 0.75, '#333'],
             'sun': [0.4, '#fadf98', 0.8, '#B1954D', 1, '#333'],
         }
         this.setPlanetSize();
@@ -321,15 +325,15 @@ export default class Space extends React.Component {
                 radius={this.planetRadius}
                 // fill="green"
                 fillRadialGradientStartPoint={{
-                    x: -10,
-                    y: -10,
+                    x: -5,
+                    y: -5,
                 }}
                 fillRadialGradientStartRadius={1}
                 fillRadialGradientEndPoint={{
-                    x: -10,
-                    y: -10,
+                    x: -5,
+                    y: -5,
                 }}
-                fillRadialGradientEndRadius={30}
+                fillRadialGradientEndRadius={this.planetRadius*2}
                 fillRadialGradientColorStops={this.planetColorStops}
                 ref={node => {
                     this.centerPlanetRef = node;
@@ -383,7 +387,7 @@ export default class Space extends React.Component {
         );
 
         if (this.zoomShown === 0) {
-            /* moon only for closest zoom */
+            /* moon for closest zoom */
             rows.push(
                 <Circle
                     key="moon"
@@ -448,16 +452,30 @@ export default class Space extends React.Component {
                     </Layer>
                     <Layer className="static-layer" hitGraphEnabled={false}>
 
+                        {/* verticals */}
                         <Line
                             points={[this.centerCanvas.x - this.innerRadius.x, this.centerCanvas.y + this.innerRadius.y + 10, this.centerCanvas.x - this.innerRadius.x, this.centerCanvas.y + this.innerRadius.y + 50]}
                             stroke="#d55"
                             strokeWidth={1}
                         />
                         <Line
+                            points={[this.centerCanvas.x + 110, this.centerCanvas.y + this.innerRadius.y + 30, this.centerCanvas.x + this.innerRadius.x, this.centerCanvas.y + this.innerRadius.y + 30]}
+                            stroke="#d55"
+                            strokeWidth={1}
+                        />
+
+                        {/* left and right */}
+                        <Line
                             points={[this.centerCanvas.x - this.innerRadius.x, this.centerCanvas.y + this.innerRadius.y + 30, this.centerCanvas.x - 110, this.centerCanvas.y + this.innerRadius.y + 30]}
                             stroke="#d55"
                             strokeWidth={1}
                         />
+                        <Line
+                            points={[this.centerCanvas.x + this.innerRadius.x, this.centerCanvas.y + this.innerRadius.y + 10, this.centerCanvas.x + this.innerRadius.x, this.centerCanvas.y + this.innerRadius.y + 50]}
+                            stroke="#d55"
+                            strokeWidth={1}
+                        />
+
                         <Text
                             x={this.centerCanvas.x - 100}
                             y={this.centerCanvas.y + this.innerRadius.y + 24}
@@ -477,16 +495,6 @@ export default class Space extends React.Component {
                             fontFamily={'Kodchasan'}
                             align="center"
                             fill="#1A8A09"
-                        />
-                        <Line
-                            points={[this.centerCanvas.x + 110, this.centerCanvas.y + this.innerRadius.y + 30, this.centerCanvas.x + this.innerRadius.x, this.centerCanvas.y + this.innerRadius.y + 30]}
-                            stroke="#d55"
-                            strokeWidth={1}
-                        />
-                        <Line
-                            points={[this.centerCanvas.x + this.innerRadius.x, this.centerCanvas.y + this.innerRadius.y + 10, this.centerCanvas.x + this.innerRadius.x, this.centerCanvas.y + this.innerRadius.y + 50]}
-                            stroke="#d55"
-                            strokeWidth={1}
                         />
                         {/* <MyPortal>
                             <button id="portal-button" disabled={true}>{HelperConst.showNum(Space.spaceZoomLevels[this.zoomShown])}</button>
