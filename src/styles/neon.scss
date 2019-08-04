@@ -30,11 +30,12 @@ $color2: $c_neonblue;
 .gradient {
   height: 44px;
   top: -10px;
+  bottom: -10px;
 }
 
 #text {
-  position: absolute;
-    top: 0;
+  // position: absolute;
+  //   top: -10px;
     // left: -25px;
 }
 .neon {
@@ -136,10 +137,10 @@ $color2: $c_neonblue;
 }
 
 // Center everything
-.text-effect {
-  background: black;
-  display: flex;
-  justify-content: center;
-  align-content: center;
-  align-items: center;
-}
+// .text-effect {
+//   background: black;
+//   display: flex;
+//   justify-content: center;
+//   align-content: center;
+//   align-items: center;
+// }

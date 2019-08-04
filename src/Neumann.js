@@ -686,7 +686,7 @@ export default class Neumann extends React.Component {
     }
     reportRangePcts() {
         let pSpeedPct = 0, pQualityPct = 0, pCombatPct = 0;
-        mylog("spd:",pSpeedPct,"qual:",pQualityPct,"comb:",pCombatPct);
+        mylog("spd:", pSpeedPct, "qual:", pQualityPct, "comb:", pCombatPct);
         if (this.sliderInfo.rangeSettings.rangeCt === 1) {
             pSpeedPct = 100;
         } else if (this.sliderInfo.rangeSettings.rangeCt === 2) {
@@ -780,7 +780,7 @@ export default class Neumann extends React.Component {
         // if space view activated
         this.userSettings.featureEnabled[1000] && rows.push(<Tab className="tab-list-item" key="probe-tab">Space</Tab>);
 
-        // rows.push(<Tab className="tab-list-item" key="settings-tab">Settings</Tab>);
+        rows.push(<Tab className="tab-list-item" key="settings-tab">Settings</Tab>);
         return (
             <div id="tabs">
                 <TabList className="tab-list">
@@ -862,6 +862,7 @@ export default class Neumann extends React.Component {
             offlinetext = <div id="probe-offline">[ OFFLINE ]</div>;
         }
 
+
         // space view
         if (this.userSettings.featureEnabled[1000]) {
             return (
@@ -884,6 +885,12 @@ export default class Neumann extends React.Component {
         } else {
             return (<div></div>);
         }
+    }
+
+    getSettingsTab() {
+        return (
+            <TabPanel className="react-tabs__tab-panel main-tab-panel"></TabPanel>
+        )
     }
 
     openHelpModal() {
@@ -1011,6 +1018,8 @@ export default class Neumann extends React.Component {
                     </TabPanel>
 
                     {this.getProbeTab()}
+
+                    {this.getSettingsTab()}
 
                 </Tabs>
 
