@@ -7,11 +7,41 @@ const MySlider = createSliderWithTooltip(Slider);
 export default class Sliders {
 
     static sliderMarks = {
-        0: '0',
-        25: '25%',
-        50: '50%',
-        75: '75%',
-        100: '100%'
+        0: { 
+            style: { 
+                'font-weight': 'bold', 
+                color: '#ddd',
+            },
+            label: '0',
+        },
+        25: { 
+            style: { 
+                'font-weight': 'bold',  
+                color: '#ddd',
+            },
+            label: '25%',
+        },
+        50: { 
+            style: { 
+                'font-weight': 'bold',  
+                color: '#ddd',
+            },
+            label: '50%',
+        },
+        75: { 
+            style: { 
+                'font-weight': 'bold',  
+                color: '#ddd',
+            },
+            label: '75%',
+        },
+        100: { 
+            style: { 
+                'font-weight': 'bold',  
+                color: '#ddd',
+            },
+            label: '100%'
+        },
     };
 
     static getRangeValues(n) {

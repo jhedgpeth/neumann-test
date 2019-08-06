@@ -49,6 +49,7 @@ export default class Space extends React.Component {
         this.planetColors = {
             'earth': [0.1, '#1A8A09', 0.65, '#163bb5', 0.75, '#333'],
             'sun': [0.4, '#fadf98', 0.8, '#B1954D', 1, '#333'],
+            'sunsmall': [0.4, '#fadf98', 1, '#B1954D'],
         }
         this.setPlanetSize();
 
@@ -64,9 +65,10 @@ export default class Space extends React.Component {
         mylog("init mapDistance:", this.mapDistance, "zoomLevel:", this.zoomLevel, "zoomShown:", this.zoomShown, "zoomName:", this.zoomName);
     }
 
+    /* view DIAMETERS */
     static spaceZoomLevels = [
-        new Decimal("384.4e3"),  // moon
-        new Decimal("628e6"),    // Jupiter
+        new Decimal("768e3"),  // moon
+        new Decimal("1.556e9"),    // Jupiter
         new Decimal("287.46e9"), // solar system
         new Decimal("15e12"),    // Oort Cloud
         new Decimal("950e15"),  //  milky way (diameter)
@@ -125,7 +127,7 @@ export default class Space extends React.Component {
         } else if (this.zoomLevel === 2) {
             // Solar System
             this.planetRadius = 3;
-            this.planetColorStops = this.planetColors.sun;
+            this.planetColorStops = this.planetColors.sunsmall;
         } else {
             this.planetRadius = 0;
         }
@@ -176,14 +178,14 @@ export default class Space extends React.Component {
             .floor()
             // .plus(this.planetRadius).plus(1)
             .toNumber();
-        if (xRadius < (this.planetRadius + 1)) xRadius = this.planetRadius + 1;
+        if (xRadius < (this.planetRadius + 2)) xRadius = this.planetRadius + 2;
 
         let yRadius = pulseFactor
             .times(this.innerRadius.y)
             .floor()
             // .plus(this.planetRadius).plus(1)
             .toNumber();
-        if (yRadius < (this.planetRadius + 1)) yRadius = this.planetRadius + 1;
+        if (yRadius < (this.planetRadius + 2)) yRadius = this.planetRadius + 2;
 
         return { x: xRadius, y: yRadius };
     }
@@ -480,9 +482,10 @@ export default class Space extends React.Component {
                             x={this.centerCanvas.x - 100}
                             y={this.centerCanvas.y + this.innerRadius.y + 24}
                             width={200}
-                            text={"Zoom #" + this.zoomShown + ": " + HelperConst.showInt(this.mapDistance.times(2)) + " km"}
+                            text={"Zoom #" + this.zoomShown + ": " + HelperConst.showInt(this.mapDistance) + " km"}
                             fontSize={16}
                             fontFamily={'Kodchasan'}
+                            fontStyle={'bold'}
                             align="center"
                             fill="#1A8A09"
                         />

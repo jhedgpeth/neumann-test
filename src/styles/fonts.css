@@ -1,29 +1,11 @@
-/* @import url("https://fonts.googleapis.com/css?family=Space+Mono:regular:bold&display=swap"); */
-/* @import url('https://fonts.googleapis.com/css?family=Jura&display=swap'); */
 @import url('https://fonts.googleapis.com/css?family=Kodchasan&display=swap');
 
 body {
   font-size: 12px;
-  /* font-family: "Space Mono", monospace; */
-  /* font-family: 'Jura', sans-serif; */
   font-family: 'Kodchasan', sans-serif;
-  /* font-weight: 600; */
 }
 
 .testbutton {
   font-family: 'Kodchasan', sans-serif;
 }
 
-.business-buy {
-  /* font-family: "Space Mono", monospace; */
-  /* font-family: 'Jura', sans-serif;
-  font-family: 'Kodchasan', sans-serif; */
-}
-
-.pause-button,
-.reset-button,
-.prestige-button {
-    /* font-family: "Space Mono", monospace; */
-    /* font-family: 'Jura', sans-serif; */
-    /* font-family: 'Kodchasan', sans-serif; */
-}

@@ -29,6 +29,7 @@ import Upgrades from './Upgrades';
 import Announce from './Announce';
 import Sliders from './Sliders';
 import Settings from './Settings';
+import Prestige from './Prestige';
 
 const Decimal = require('decimal.js');
 const mylog = HelperConst.DebugLog;
@@ -782,6 +783,9 @@ export default class Neumann extends React.Component {
         this.userSettings.featureEnabled[1000] && rows.push(<Tab className="tab-list-item" key="probe-tab">Space</Tab>);
 
         rows.push(<Tab className="tab-list-item spacer-tab" key="spacer-tab"></Tab>);
+        if (this.userSettings.prestige.num.gt(0) || this.userSettings.prestigeNext.gt(0)) {
+            rows.push(<Tab className="tab-list-item prestige-tab" key="prestige-tab">Prestige</Tab>);
+        }
         rows.push(<Tab className="tab-list-item settings-tab" key="settings-tab">Settings</Tab>);
         return (
             <div id="tabs">
@@ -802,7 +806,7 @@ export default class Neumann extends React.Component {
             probebutton = (
                 <button className="probe-purchase"
                     onClick={this.purchaseProbe}>
-                    Purchase Probe: ${HelperConst.showNum(ComputeFunc.getPct(this.userSettings.money, this.sliderInfo.probeSpendPct))}
+                    Buy Probe: {HelperConst.moneySymbolSpan()}{HelperConst.showNum(ComputeFunc.getPct(this.userSettings.money, this.sliderInfo.probeSpendPct))}
                 </button>
             );
             if (this.sliderInfo.rangeSettings.rangeCt === 1) {
@@ -875,6 +879,7 @@ export default class Neumann extends React.Component {
                         {sliderattribs}
                         {probeattribs}
                         {probebutton}
+                        <div id="previousProbe">Current Probe: {HelperConst.moneySymbolSpan()}{HelperConst.showNum(this.userSettings.probe.value)}</div>
                     </div>
 
                     <Space
@@ -893,12 +898,26 @@ export default class Neumann extends React.Component {
         return (
             <TabPanel className="react-tabs__tab-panel settings-tab-panel">
                 <div id="right-sidebar">
-                    SSSS
+                    SETTINGS
                 </div>
-                
+
                 <Settings>
 
                 </Settings>
+            </TabPanel>
+        )
+    }
+
+    getPrestigeTab() {
+        return (
+            <TabPanel className="react-tabs__tab-panel prestige-tab-panel">
+                <div id="right-sidebar">
+                    PRESTIGE
+                </div>
+
+                <Prestige>
+
+                </Prestige>
             </TabPanel>
         )
     }
@@ -1031,6 +1050,7 @@ export default class Neumann extends React.Component {
 
                     <TabPanel className="react-tabs__tab-panel spacer-tab-panel"></TabPanel>
 
+                    {this.getPrestigeTab()}
                     {this.getSettingsTab()}
 
                 </Tabs>
