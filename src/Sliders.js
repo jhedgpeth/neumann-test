@@ -9,35 +9,35 @@ export default class Sliders {
     static sliderMarks = {
         0: { 
             style: { 
-                'font-weight': 'bold', 
+                'fontWeight': 'bold', 
                 color: '#ddd',
             },
             label: '0',
         },
         25: { 
             style: { 
-                'font-weight': 'bold',  
+                'fontWeight': 'bold',  
                 color: '#ddd',
             },
             label: '25%',
         },
         50: { 
             style: { 
-                'font-weight': 'bold',  
+                'fontWeight': 'bold',  
                 color: '#ddd',
             },
             label: '50%',
         },
         75: { 
             style: { 
-                'font-weight': 'bold',  
+                'fontWeight': 'bold',  
                 color: '#ddd',
             },
             label: '75%',
         },
         100: { 
             style: { 
-                'font-weight': 'bold',  
+                'fontWeight': 'bold',  
                 color: '#ddd',
             },
             label: '100%'

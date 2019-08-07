@@ -105,6 +105,8 @@ export default class Neumann extends React.Component {
         this.rangeChange = this.rangeChange.bind(this);
         this.enableFeature = this.enableFeature.bind(this);
         this.purchaseProbe = this.purchaseProbe.bind(this);
+        this.getSettingsTab = this.getSettingsTab.bind(this);
+        this.toggleOverlay = this.toggleOverlay.bind(this);
 
         this.openHelpModal = this.openHelpModal.bind(this);
         this.closeHelpModal = this.closeHelpModal.bind(this);
@@ -169,6 +171,7 @@ export default class Neumann extends React.Component {
                 this.userSettings.upgStats[item.id] = { purchased: false, revealed: false };
         });
         this.probeDivRef = React.createRef();
+
         this.pulseRef = null;
         this.centerEllipseRef = null;
         this.innerEllipseRef = null;
@@ -779,14 +782,18 @@ export default class Neumann extends React.Component {
     getTabList() {
         let rows = [];
         rows.push(<Tab className="tab-list-item" key="business-tab">Business</Tab>);
+       
         // if space view activated
-        this.userSettings.featureEnabled[1000] && rows.push(<Tab className="tab-list-item" key="probe-tab">Space</Tab>);
+        if (this.userSettings.featureEnabled[1000])
+            rows.push(<Tab className="tab-list-item" key="probe-tab">Space</Tab>);
 
         rows.push(<Tab className="tab-list-item spacer-tab" key="spacer-tab"></Tab>);
-        if (this.userSettings.prestige.num.gt(0) || this.userSettings.prestigeNext.gt(0)) {
+
+        if (this.userSettings.prestige.num.gt(0) || this.userSettings.prestigeNext.gt(0))
             rows.push(<Tab className="tab-list-item prestige-tab" key="prestige-tab">Prestige</Tab>);
-        }
+
         rows.push(<Tab className="tab-list-item settings-tab" key="settings-tab">Settings</Tab>);
+       
         return (
             <div id="tabs">
                 <TabList className="tab-list">
@@ -798,11 +805,13 @@ export default class Neumann extends React.Component {
 
     getProbeTab() {
         let probebutton, probeattribs, sliderattribs, offlinetext;
+        let currentProbe = "";
         let sliderText = "Spend " + this.sliderInfo.probeSpendPct + "%";
 
         // probes enabled
         if (this.userSettings.featureEnabled[1001]) {
             offlinetext = "";
+            currentProbe = <div id="previousProbe">Current Probe: {HelperConst.moneySymbolSpan()}{HelperConst.showNum(this.userSettings.probe.value)}</div>
             probebutton = (
                 <button className="probe-purchase"
                     onClick={this.purchaseProbe}>
@@ -879,7 +888,7 @@ export default class Neumann extends React.Component {
                         {sliderattribs}
                         {probeattribs}
                         {probebutton}
-                        <div id="previousProbe">Current Probe: {HelperConst.moneySymbolSpan()}{HelperConst.showNum(this.userSettings.probe.value)}</div>
+                        {currentProbe}
                     </div>
 
                     <Space
@@ -894,6 +903,11 @@ export default class Neumann extends React.Component {
         }
     }
 
+    toggleOverlay(event) {
+        mylog("event:",event);
+        mylog("toggleOverlay target is:",event.target.checked);
+        this.userSettings.toggles.overlays = event.target.checked;
+    }
     getSettingsTab() {
         return (
             <TabPanel className="react-tabs__tab-panel settings-tab-panel">
@@ -901,14 +915,18 @@ export default class Neumann extends React.Component {
                     SETTINGS
                 </div>
 
-                <Settings>
+                <Settings
+                    toggles={this.userSettings.toggles}
+                    toggleOverlay={this.toggleOverlay}
+                />
 
-                </Settings>
             </TabPanel>
         )
     }
 
+
     getPrestigeTab() {
+        if (this.userSettings.prestige.num.gt(0) || this.userSettings.prestigeNext.gt(0))
         return (
             <TabPanel className="react-tabs__tab-panel prestige-tab-panel">
                 <div id="right-sidebar">

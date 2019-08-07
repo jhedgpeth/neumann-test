@@ -1,6 +1,7 @@
 @import "./colors.scss";
 // @import "./button_normalize.css";
 @import "./normalize.css";
+@import "./onoffswitch.scss";
 
 /* Layout
 -----------------------------------------------------------------------------*/
@@ -592,9 +593,9 @@ button {
   justify-self: start;
 }
 .probe-prod-span {
-  // font-size: 1em;
+  font-size: 16px;
   font-weight: bold;
-  margin: auto;
+  margin: 0;
   padding: 0 10px 0 0;
   color: $c_selected;
   width: 100%;
@@ -607,7 +608,7 @@ button {
   padding: 0 10px 0 0;
   // color: $c_selected;
   width: 100%;
-  text-align: left;
+  text-align: center;
 }
 .debugButtons {
   width: 200px;

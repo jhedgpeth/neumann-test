@@ -30,8 +30,10 @@ export default class NeumannInit extends React.Component {
             0: { owned: 1, revealed: false, timeAdj: -1, payoutAdj: 1, },
         },
         upgStats: {},
-        featureEnabled: {}
-
+        featureEnabled: {},
+        toggles: {
+            overlays: true,
+        },
 
     })
 

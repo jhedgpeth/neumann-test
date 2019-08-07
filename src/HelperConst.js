@@ -26,7 +26,25 @@ export default class HelperConst {
     static moneySymbolSpan() { return (<span className="moneySymbol">{this.moneySymbol}</span>); };
     static knowledgeSymbolSpan() { return (<span className="knowledgeSymbol">{this.knowledgeSymbol}</span>); };
     static prestigeSymbolSpan() { return (<span className="prestigeSymbol">{this.prestigeSymbol}</span>); };
-    static multiplySymbolSpan() { return (<span className="multiplySymbol">{this.multiplySymbol}</span>); }
+    static multiplySymbolSpan() { return (<span className="multiplySymbol">{this.multiplySymbol}</span>); };
+
+    /* https://proto.io/freebies/onoff/ */
+    static onoffswitch(myId, checked, onClick) {
+        if (myId)
+            return (
+                <div className="onoffswitch">
+                    <input type="checkbox" name="onoffswitch" className="onoffswitch-checkbox"
+                        id={"toggle"+myId}
+                        onChange={onClick}
+                        checked={checked}
+                    />
+                    <label className="onoffswitch-label" htmlFor={"toggle"+myId}>
+                        <span className="onoffswitch-inner"></span>
+                        <span className="onoffswitch-switch"></span>
+                    </label>
+                </div>
+            )
+    }
 
     static purchaseOpts = ["1", "10", "25", "100", "Max", "Max OCD", "Max Upg", "PrimeTime"];
     static purchaseOptsNum = this.purchaseOpts.filter(item => item.match(/\d/));
