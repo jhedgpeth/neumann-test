@@ -366,6 +366,7 @@ export default class Neumann extends React.Component {
 
     updateConcentrate() {
         let concButtonClass = this.state.concentrateClass;
+
         if (this.state.concentrate.time > 0) {
             mylog("concentrate countdown:", this.state.concentrate);
             concButtonClass = "concActive";
@@ -379,7 +380,8 @@ export default class Neumann extends React.Component {
                 concentrateClass: concButtonClass,
             }))
         }
-        if (this.state.concentrateClass === "concCooldown" && this.state.concentrate < 0) {
+
+        if (this.state.concentrateClass === "concCooldown" && this.state.concentrate.time < 0) {
             mylog("concentrate cooldown:", this.state.concentrate);
             let newVal = this.state.concentrate.time + this.timeMultiplier;
             if (newVal >= 0) {
