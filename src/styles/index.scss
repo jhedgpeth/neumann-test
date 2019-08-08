@@ -109,6 +109,11 @@ button {
   color: $c_prestigesymbol;
 }
 
+.concentrateSymbol {
+  font-size: 20px;
+  color: white;
+}
+
 .multiplySymbol {
   // font-size: .5em;
 }
@@ -1141,9 +1146,9 @@ button {
   text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
     1px 1px 0 #000;
 
-  &::before {
-    content: "👍  ";
-  }
+  // &::before {
+  //   content: "👍  ";
+  // }
 }
 
 .announce-fadeout {

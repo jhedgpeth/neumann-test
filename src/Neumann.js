@@ -581,7 +581,7 @@ export default class Neumann extends React.Component {
                 mylog(this.state.businesses[idx].name, "timeAdjusted now", this.userSettings.busStats[item.id].timeAdj);
             });
             ComputeFunc.getTotalMilestonesAttained(curIdx, newIdx).forEach((num) => {
-                this.announce("All businesses at " + num + "! Speed Doubled!");
+                this.announce(HelperConst.thumbsUpSymbol+" All businesses at " + num + "! Speed Doubled!");
             })
 
         }
@@ -597,7 +597,7 @@ export default class Neumann extends React.Component {
 
         switch (feature.id) {
             case 1000:
-                this.announce("SPAAAAACE!  The Final* Frontier!");
+                this.announce(HelperConst.thumbsUpSymbol+" SPAAAAACE!  The Final* Frontier!");
                 break;
             case 1003:  // probe quality
                 this.sliderInfo.rangeSettings = Sliders.getRangeValues(2);
@@ -1020,7 +1020,7 @@ export default class Neumann extends React.Component {
                         onClick={this.prestigeCheat}>+{this.cheatPrestigeVal} prestige</button>
                     <button className="sidebarButtons fancyButtons  test-give-money"
                         onClick={this.moneyCheat}>+50% money</button>
-                    <button className="sidebarButtons fancyButtons  announce-button" onClick={() => this.announce("great job winning!  oh boy this is just super.")}>Announce</button>
+                    <button className="sidebarButtons fancyButtons  announce-button" onClick={() => this.announce(HelperConst.thumbsUpSymbol+" great job winning!  oh boy this is just super.")}>Announce</button>
                     <button className="sidebarButtons fancyButtons  overlay-button" onClick={() => this.addOverlay(0, "X2")}>Mental Math Overlay</button>
                     {/* <button className="sidebarButtons fancyButtons  overlay-button" onClick={() => this.addOverlay(1, "X2")}>Newspaper Overlay</button> */}
                     {/* <button className="sidebarButtons fancyButtons  ref-button" onClick={() => mylog("domRef:", this.state.businesses[0].domRef)}>Odd Job domRef</button> */}
@@ -1097,8 +1097,8 @@ export default class Neumann extends React.Component {
                                 >{this.state.concentrateClass === "concCooldown"
                                     ? "Wait: " + Math.abs(Math.floor(this.state.concentrate))
                                     : this.state.concentrateClass === "concActive"
-                                        ? "😬 : " + Math.abs(Math.floor(this.state.concentrate))
-                                        : "Concentrate"}
+                                        ? HelperConst.concentrateSymbol+" : " + Math.abs(Math.floor(this.state.concentrate))
+                                        : "Concentrate 3x Speed"}
                                 </button>
                             </div>
 

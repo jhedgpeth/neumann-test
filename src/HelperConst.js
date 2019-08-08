@@ -21,12 +21,15 @@ export default class HelperConst {
     // static multiplySymbol = '\u2718';
     static multiplySymbol = '\u2a2f';
 
-    static thumbsUpSymbol = '👍';
+    static thumbsUpSymbol = '\uD83D\uDC4D\uFE0E';
+    static concentrateSymbol = '\uD83D\uDE2C\uFE0E';
 
     static moneySymbolSpan() { return (<span className="moneySymbol">{this.moneySymbol}</span>); };
     static knowledgeSymbolSpan() { return (<span className="knowledgeSymbol">{this.knowledgeSymbol}</span>); };
     static prestigeSymbolSpan() { return (<span className="prestigeSymbol">{this.prestigeSymbol}</span>); };
     static multiplySymbolSpan() { return (<span className="multiplySymbol">{this.multiplySymbol}</span>); };
+    static concentrateSymbolSpan() { return (<span className="concentrateSymbol">{this.concentrateSymbol}</span>); };
+
 
     /* https://proto.io/freebies/onoff/ */
     static onoffswitch(myId, checked, onClick) {
