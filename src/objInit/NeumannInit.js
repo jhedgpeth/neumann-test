@@ -13,7 +13,9 @@ export default class NeumannInit extends React.Component {
         announcements: [],
         modals: [],
         version: "0.0.1",
-        concentrate: 0,
+        concentrate: {
+            time: 0,
+        },
         concentrateClass: "concIdle",
     })
 
@@ -35,6 +37,9 @@ export default class NeumannInit extends React.Component {
         featureEnabled: {},
         toggles: {
             overlays: true,
+        },
+        concentrate: {
+            mult: 2,
         },
 
     })

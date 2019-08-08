@@ -366,28 +366,28 @@ export default class Neumann extends React.Component {
 
     updateConcentrate() {
         let concButtonClass = this.state.concentrateClass;
-        if (this.state.concentrate > 0) {
+        if (this.state.concentrate.time > 0) {
             mylog("concentrate countdown:", this.state.concentrate);
             concButtonClass = "concActive";
-            let newVal = this.state.concentrate - this.timeMultiplier;
+            let newVal = this.state.concentrate.time - this.timeMultiplier;
             if (newVal <= 0) {
                 newVal = -10;
                 concButtonClass = "concCooldown";
             }
             this.setState((state, props) => ({
-                concentrate: newVal,
+                concentrate: { time: newVal, mult: this.userSettings.concentrate.mult },
                 concentrateClass: concButtonClass,
             }))
         }
         if (this.state.concentrateClass === "concCooldown" && this.state.concentrate < 0) {
             mylog("concentrate cooldown:", this.state.concentrate);
-            let newVal = this.state.concentrate + this.timeMultiplier;
+            let newVal = this.state.concentrate.time + this.timeMultiplier;
             if (newVal >= 0) {
                 newVal = 0;
                 concButtonClass = "concIdle";
             }
             this.setState((state, props) => ({
-                concentrate: newVal,
+                concentrate: { time: newVal, mult: this.userSettings.concentrate.mult },
                 concentrateClass: concButtonClass,
             }))
         }
@@ -452,7 +452,7 @@ export default class Neumann extends React.Component {
             if (b.timeAdj === -1) b.timeAdj = item.timeBase;
 
             // concentrate
-            const addVal = this.state.concentrate > 0 ? 2 * this.timeMultiplier : this.timeMultiplier;
+            const addVal = this.state.concentrate.time > 0 ? this.userSettings.concentrate.mult * this.timeMultiplier : this.timeMultiplier;
 
             let newItem = { ...item };
             if (b.owned === 0) {
@@ -581,7 +581,7 @@ export default class Neumann extends React.Component {
                 mylog(this.state.businesses[idx].name, "timeAdjusted now", this.userSettings.busStats[item.id].timeAdj);
             });
             ComputeFunc.getTotalMilestonesAttained(curIdx, newIdx).forEach((num) => {
-                this.announce(HelperConst.thumbsUpSymbol+" All businesses at " + num + "! Speed Doubled!");
+                this.announce(HelperConst.thumbsUpSymbol + " All businesses at " + num + "! Speed Doubled!");
             })
 
         }
@@ -597,7 +597,7 @@ export default class Neumann extends React.Component {
 
         switch (feature.id) {
             case 1000:
-                this.announce(HelperConst.thumbsUpSymbol+" SPAAAAACE!  The Final* Frontier!");
+                this.announce(HelperConst.thumbsUpSymbol + " SPAAAAACE!  The Final* Frontier!");
                 break;
             case 1003:  // probe quality
                 this.sliderInfo.rangeSettings = Sliders.getRangeValues(2);
@@ -675,9 +675,9 @@ export default class Neumann extends React.Component {
 
     clickConcentrate() {
         mylog("clickConcentrate");
-        if (this.state.concentrate <= 0) {
+        if (this.state.concentrate.time <= 0) {
             this.setState((state, props) => ({
-                concentrate: 10,
+                concentrate: { time: 10, mult: this.userSettings.concentrate.mult }
             }));
         }
         mylog("concentrate:", this.state.concentrate);
@@ -1020,7 +1020,7 @@ export default class Neumann extends React.Component {
                         onClick={this.prestigeCheat}>+{this.cheatPrestigeVal} prestige</button>
                     <button className="sidebarButtons fancyButtons  test-give-money"
                         onClick={this.moneyCheat}>+50% money</button>
-                    <button className="sidebarButtons fancyButtons  announce-button" onClick={() => this.announce(HelperConst.thumbsUpSymbol+" great job winning!  oh boy this is just super.")}>Announce</button>
+                    <button className="sidebarButtons fancyButtons  announce-button" onClick={() => this.announce(HelperConst.thumbsUpSymbol + " great job winning!  oh boy this is just super.")}>Announce</button>
                     <button className="sidebarButtons fancyButtons  overlay-button" onClick={() => this.addOverlay(0, "X2")}>Mental Math Overlay</button>
                     {/* <button className="sidebarButtons fancyButtons  overlay-button" onClick={() => this.addOverlay(1, "X2")}>Newspaper Overlay</button> */}
                     {/* <button className="sidebarButtons fancyButtons  ref-button" onClick={() => mylog("domRef:", this.state.businesses[0].domRef)}>Odd Job domRef</button> */}
@@ -1093,12 +1093,12 @@ export default class Neumann extends React.Component {
                                     id="concentrateButton"
                                     className={this.state.concentrateClass}
                                     onClick={this.clickConcentrate}
-                                    disabled={this.state.concentrate === 0 ? false : true}
+                                    disabled={this.state.concentrate.time === 0 ? false : true}
                                 >{this.state.concentrateClass === "concCooldown"
-                                    ? "Wait: " + Math.abs(Math.floor(this.state.concentrate))
+                                    ? "Wait: " + Math.abs(Math.floor(this.state.concentrate.time))
                                     : this.state.concentrateClass === "concActive"
-                                        ? HelperConst.concentrateSymbol+" : " + Math.abs(Math.floor(this.state.concentrate))
-                                        : "Concentrate 2x Speed"}
+                                        ? HelperConst.concentrateSymbol + " : " + Math.abs(Math.floor(this.state.concentrate.time))
+                                        : "Concentrate " + this.userSettings.concentrate.mult + "x Speed"}
                                 </button>
                             </div>
 

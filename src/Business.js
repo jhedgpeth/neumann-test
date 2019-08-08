@@ -34,9 +34,9 @@ export default class Business extends React.Component {
 
     static computeEarningPerSec(item, userSettings, concentrate) {
         return this.computeNextPayoutValue(item, userSettings, 0).div(userSettings.busStats[item.id].timeAdj)
-            .times(concentrate > 0 ? 2 : 1);
+            .times(concentrate.time > 0 ? userSettings.concentrate.mult : 1);
     }
-    
+
     static computeTotalEarningPerSec(items, userSettings, concentrate) {
         let revenue = new Decimal(0);
         items.forEach((item) => {
