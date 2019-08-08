@@ -39,7 +39,7 @@ export default class NeumannInit extends React.Component {
             overlays: true,
         },
         concentrate: {
-            mult: 2,
+            mult: 2.0,
         },
 
     })

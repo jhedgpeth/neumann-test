@@ -21,6 +21,7 @@
 }
 
 #concentrateButton {
+  position: relative;
   display: block;
   width: 65%;
   // width: 135px;
@@ -32,20 +33,17 @@
   font-weight: bold;
   color: $c_mainfg;
   text-decoration: none;
-  background: linear-gradient($c_concentrate_lite, $c_concentrate);
-  // background-color: #6fad1d;
   border-radius: 35px;
+  outline: none;
+  cursor: pointer;
+
+  background: linear-gradient($c_neongreen, #000);
   border: 1px solid #579a00;
-  // font: bold 30px/70px Arial;
   box-shadow: inset 0 2px 2px $c_neongreen, inset 1px 0 3px #b2dc2d,
     inset -1px 0 3px #b2dc2d, inset 0 -2px 2px $c_concentrate,
     0 0 3px rgba(0, 0, 0, 0.24);
-  position: relative;
-  // text-shadow: 0 1px #45880d;
   text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
     1px 1px 0 #000, -3px 3px 3px #333;
-  outline: none;
-  cursor: pointer;
 
   transform: translate3d(0, 0, 0);
 
@@ -58,23 +56,16 @@
 
 #concentrateButton:hover {
   background: linear-gradient($c_neongreen, $c_concentrate);
-  // box-shadow: inset 0 1px 0 #e2f498, inset 0 2px 0 #ceec87,
-  //   inset 0 3px 0 #c3e67c, inset 0 5px 0 #bae475, inset 1px 0 3px #b2dc2d,
-  //   inset -1px 0 3px #b2dc2d, inset 0 -2px 2px #89d301,
-  //   0 0 3px rgba(0, 0, 0, 0.24);
 }
 
 #concentrateButton.concActive,
 #concentrateButton:active {
   font-size: 24px;
+  cursor: not-allowed;
 
   background: none;
-  // background: linear-gradient($c_concentrate_lite, $c_concentrate);
-  // box-shadow: inset 0 3px 7px #3c7b00;
   box-shadow: inset 3px 3px 10px $c_moneybg;
-  padding: 1px 0 0 1px;
   color: $c_neongreen;
-  cursor: not-allowed;
 
   animation: concPulse 2s ease infinite, concShake 1s linear infinite;
 
@@ -86,22 +77,21 @@
 }
 
 #concentrateButton.concCooldown {
-  background: linear-gradient(#333, $c_concentrate);
-  border: 1px solid #555;
-  // box-shadow: inset 0 3px 7px #3c7b00;
+  cursor: not-allowed;
+
+  background: none;
+  background-color: $c_concentrate_lite;
   box-shadow: inset 3px 3px 10px $c_moneybg;
-  padding: 1px 0 0 1px;
+  // padding: 1px 0 0 1px;
   color: $c_maindimfg;
-  text-shadow: -1px -1px 0 #333, 1px -1px 0 #333, -1px 1px 0 #333,
-    1px 1px 0 #333, -3px 3px 3px #333;
+  // text-shadow: -1px -1px 0 #333, 1px -1px 0 #333, -1px 1px 0 #333,
+  //   1px 1px 0 #333, -3px 3px 3px #333;
 
   -webkit-transition: all 1s ease;
   -moz-transition: all 1s ease;
   -ms-transition: all 1s ease;
   -o-transition: all 1s ease;
   transition: all 1s ease;
-
-  cursor: not-allowed;
 }
 
 @keyframes concPulse {
@@ -112,7 +102,7 @@
     background-color: $c_neongreen;
   }
   50% {
-    background-color: $c_concentrate;
+    background-color: $c_concentrate_lite;
   }
 }
 
