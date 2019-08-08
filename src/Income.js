@@ -12,7 +12,7 @@ export default class Income extends React.Component {
 
     render() {
 
-        const revenue = Business.computeTotalEarningPerSec(this.props.businesses, this.props.userSettings);
+        const revenue = Business.computeTotalEarningPerSec(this.props.businesses, this.props.userSettings, this.props.concentrate);
         // const learning = ComputeFunc.computeTotalEarningPerSec(this.props.probes, this.props.prestige);
         const learning = new Decimal(0);
 

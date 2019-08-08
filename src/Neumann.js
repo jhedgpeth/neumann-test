@@ -322,7 +322,7 @@ export default class Neumann extends React.Component {
                 duration.seconds + "s",
             );
 
-            const gained = Business.computeTotalEarningPerSec(this.state.businesses, this.userSettings)
+            const gained = Business.computeTotalEarningPerSec(this.state.businesses, this.userSettings, this.state.concentrate)
                 .times(Math.floor(deltaMillis / 1000));
             mylog("previous money:", HelperConst.showNum(this.userSettings.money));
             mylog("you gained $", HelperConst.showNum(gained));
@@ -452,7 +452,7 @@ export default class Neumann extends React.Component {
             if (b.timeAdj === -1) b.timeAdj = item.timeBase;
 
             // concentrate
-            const addVal = this.state.concentrate>0 ? 2*this.timeMultiplier : this.timeMultiplier;
+            const addVal = this.state.concentrate > 0 ? 2 * this.timeMultiplier : this.timeMultiplier;
 
             let newItem = { ...item };
             if (b.owned === 0) {
@@ -463,7 +463,7 @@ export default class Neumann extends React.Component {
                 }
             } else {
                 newItem.payout = 0;
-                newItem.timeCounter = newItem.timeCounter + this.timeMultiplier;
+                newItem.timeCounter = newItem.timeCounter + addVal;
                 if (newItem.timeCounter >= b.timeAdj) {
                     const numPayouts = Math.floor(newItem.timeCounter / b.timeAdj);
                     newItem.payout = numPayouts;
@@ -1047,6 +1047,7 @@ export default class Neumann extends React.Component {
                     <Income
                         knowledge={this.userSettings.knowledge}
                         businesses={this.state.businesses}
+                        concentrate={this.state.concentrate}
                         userSettings={this.userSettings}
                     />
 
@@ -1110,6 +1111,7 @@ export default class Neumann extends React.Component {
 
                                 <Business
                                     businesses={this.state.businesses}
+                                    concentrate={this.state.concentrate}
                                     userSettings={this.userSettings}
                                     purchaseAmt={this.purchaseAmt}
                                     onClick={this.clickBusiness}

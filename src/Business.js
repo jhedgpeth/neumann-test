@@ -31,13 +31,16 @@ export default class Business extends React.Component {
         );
         return revenue;
     }
-    static computeEarningPerSec(item, userSettings) {
-        return this.computeNextPayoutValue(item, userSettings, 0).div(userSettings.busStats[item.id].timeAdj);
+
+    static computeEarningPerSec(item, userSettings, concentrate) {
+        return this.computeNextPayoutValue(item, userSettings, 0).div(userSettings.busStats[item.id].timeAdj)
+            .times(concentrate > 0 ? 2 : 1);
     }
-    static computeTotalEarningPerSec(items, userSettings) {
+    
+    static computeTotalEarningPerSec(items, userSettings, concentrate) {
         let revenue = new Decimal(0);
         items.forEach((item) => {
-            revenue = revenue.plus(this.computeEarningPerSec(item, userSettings));
+            revenue = revenue.plus(this.computeEarningPerSec(item, userSettings, concentrate));
         });
         return revenue;
     }
@@ -148,7 +151,7 @@ export default class Business extends React.Component {
             return result;
         }, []);
 
-        const totalEarningPerSec = Business.computeTotalEarningPerSec(this.props.businesses, this.props.userSettings);
+        const totalEarningPerSec = Business.computeTotalEarningPerSec(this.props.businesses, this.props.userSettings, this.props.concentrate);
 
 
         const rows = sources.map((item) => {
@@ -176,7 +179,7 @@ export default class Business extends React.Component {
                 costClass = "cost-wrapper cannotAfford ";
             }
 
-            const myEarningPerSec = Business.computeEarningPerSec(item, this.props.userSettings);
+            const myEarningPerSec = Business.computeEarningPerSec(item, this.props.userSettings, this.props.concentrate);
             let curPayout = Business.computeNextPayoutValue(item, this.props.userSettings, 0);
             const myPayout = curPayout.gt(0) ? curPayout : nextPayout;
             const myEarningPct = ComputeFunc.getEarningPct(myEarningPerSec, totalEarningPerSec);
