@@ -1098,7 +1098,7 @@ export default class Neumann extends React.Component {
                                     ? "Wait: " + Math.abs(Math.floor(this.state.concentrate))
                                     : this.state.concentrateClass === "concActive"
                                         ? HelperConst.concentrateSymbol+" : " + Math.abs(Math.floor(this.state.concentrate))
-                                        : "Concentrate 3x Speed"}
+                                        : "Concentrate 2x Speed"}
                                 </button>
                             </div>
 
