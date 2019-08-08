@@ -13,6 +13,8 @@ export default class NeumannInit extends React.Component {
         announcements: [],
         modals: [],
         version: "0.0.1",
+        concentrate: 0,
+        concentrateClass: "concIdle",
     })
 
     static userSettings = () => ({

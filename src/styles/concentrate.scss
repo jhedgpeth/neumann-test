@@ -1,0 +1,128 @@
+// #concentrateButton {
+//   width: 135px;
+//   height: 80px;
+//   margin: 10px auto 10px auto;
+//   display: block;
+//   background: $c_concentrate;
+//   color: $c_mainfg;
+//   border: 1px solid $c_concentrate;
+//   border-radius: 50%;
+//   font-weight: bold;
+//   font-size: 18px;
+// }
+
+#concentrate-container {
+  width: 200px;
+  // position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+#concentrateButton {
+  display: block;
+  width: 65%;
+  // width: 135px;
+  height: 60px;
+  margin: 10px auto 10px auto;
+  // box-sizing: border-box;
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  color: $c_mainfg;
+  text-decoration: none;
+  background: linear-gradient($c_concentrate_lite, $c_concentrate);
+  // background-color: #6fad1d;
+  border-radius: 35px;
+  border: 1px solid #579a00;
+  // font: bold 30px/70px Arial;
+  box-shadow: inset 0 2px 2px $c_neongreen, inset 1px 0 3px #b2dc2d,
+    inset -1px 0 3px #b2dc2d, inset 0 -2px 2px $c_concentrate,
+    0 0 3px rgba(0, 0, 0, 0.24);
+  position: relative;
+  // text-shadow: 0 1px #45880d;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
+    1px 1px 0 #000, -3px 3px 3px #333;
+  outline: none;
+  cursor: pointer;
+
+  transform: translate3d(0, 0, 0);
+
+  -webkit-transition: all .2s ease;
+	-moz-transition: all .2s ease;
+	-ms-transition: all .2s ease;
+	-o-transition: all .2s ease;
+	transition: all .2s ease;
+}
+
+#concentrateButton:hover {
+  background: linear-gradient($c_neongreen, $c_concentrate);
+  // box-shadow: inset 0 1px 0 #e2f498, inset 0 2px 0 #ceec87,
+  //   inset 0 3px 0 #c3e67c, inset 0 5px 0 #bae475, inset 1px 0 3px #b2dc2d,
+  //   inset -1px 0 3px #b2dc2d, inset 0 -2px 2px #89d301,
+  //   0 0 3px rgba(0, 0, 0, 0.24);
+}
+
+#concentrateButton.concActive,
+#concentrateButton:active {
+  background: none;
+  // background: linear-gradient($c_concentrate_lite, $c_concentrate);
+  // box-shadow: inset 0 3px 7px #3c7b00;
+  box-shadow: inset 3px 3px 10px $c_moneybg;
+  padding: 1px 0 0 1px;
+  color: $c_neongreen;
+  cursor: not-allowed;
+
+  animation: 
+    concPulse 2s ease infinite,
+    concShake 1s linear infinite ;
+  
+  -webkit-transition: all 1s ease;
+	-moz-transition: all 1s ease;
+	-ms-transition: all 1s ease;
+	-o-transition: all 1s ease;
+	transition: all 1s ease;
+}
+
+#concentrateButton.concCooldown {
+  background: linear-gradient(#333, $c_concentrate);
+  border: 1px solid #555;
+  // box-shadow: inset 0 3px 7px #3c7b00;
+  box-shadow: inset 3px 3px 10px $c_moneybg;
+  padding: 1px 0 0 1px;
+  color: $c_maindimfg;
+  text-shadow: -1px -1px 0 #333, 1px -1px 0 #333, -1px 1px 0 #333,
+    1px 1px 0 #333, -3px 3px 3px #333;
+  
+
+
+  cursor: not-allowed;
+}
+
+@keyframes concPulse {
+  0%, 30%, 70%, 100% {
+    background-color: $c_neongreen;
+  }
+  50% {
+    background-color: $c_concentrate;
+  }
+}
+
+@keyframes concShake {
+  10%, 90% {
+    transform: translate3d(2px, 2px, 0);
+  }
+  
+  20%, 80% {
+    transform: translate3d(-2px, -2px, 0);
+  }
+
+  30%, 50%, 70% {
+    transform: translate3d(2px, -2px, 0);
+  }
+
+  40%, 60% {
+    transform: translate3d(-2px, 2px, 0);
+  }
+}

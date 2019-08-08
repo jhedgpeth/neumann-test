@@ -107,6 +107,8 @@ export default class Neumann extends React.Component {
         this.purchaseProbe = this.purchaseProbe.bind(this);
         this.getSettingsTab = this.getSettingsTab.bind(this);
         this.toggleOverlay = this.toggleOverlay.bind(this);
+        this.clickConcentrate = this.clickConcentrate.bind(this);
+        this.decrementConcentrate = this.updateConcentrate.bind(this);
 
         this.openHelpModal = this.openHelpModal.bind(this);
         this.closeHelpModal = this.closeHelpModal.bind(this);
@@ -362,6 +364,36 @@ export default class Neumann extends React.Component {
         }
     }
 
+    updateConcentrate() {
+        let concButtonClass = this.state.concentrateClass;
+        if (this.state.concentrate > 0) {
+            mylog("concentrate countdown:", this.state.concentrate);
+            concButtonClass = "concActive";
+            let newVal = this.state.concentrate - this.timeMultiplier;
+            if (newVal <= 0) {
+                newVal = -10;
+                concButtonClass = "concCooldown";
+            }
+            this.setState((state, props) => ({
+                concentrate: newVal,
+                concentrateClass: concButtonClass,
+            }))
+        }
+        if (this.state.concentrateClass === "concCooldown" && this.state.concentrate < 0) {
+            mylog("concentrate cooldown:", this.state.concentrate);
+            let newVal = this.state.concentrate + this.timeMultiplier;
+            if (newVal >= 0) {
+                newVal = 0;
+                concButtonClass = "concIdle";
+            }
+            this.setState((state, props) => ({
+                concentrate: newVal,
+                concentrateClass: concButtonClass,
+            }))
+        }
+
+    }
+
     updatePrestigeEarned() {
         // const newPrestigeNext = ComputeFunc.calcPrestigeEarned(this.userSettings.lifetimeEarnings);
         const newPrestigeNext = ComputeFunc.calcPrestigeEarnedFromMax(this.userSettings.curMaxMoney).minus(this.userSettings.prestige.num);
@@ -418,6 +450,9 @@ export default class Neumann extends React.Component {
             let b = this.userSettings.busStats[item.id];
             // reset if new
             if (b.timeAdj === -1) b.timeAdj = item.timeBase;
+
+            // concentrate
+            const addVal = this.state.concentrate>0 ? 2*this.timeMultiplier : this.timeMultiplier;
 
             let newItem = { ...item };
             if (b.owned === 0) {
@@ -638,6 +673,16 @@ export default class Neumann extends React.Component {
         }))
     }
 
+    clickConcentrate() {
+        mylog("clickConcentrate");
+        if (this.state.concentrate <= 0) {
+            this.setState((state, props) => ({
+                concentrate: 10,
+            }));
+        }
+        mylog("concentrate:", this.state.concentrate);
+    }
+
     genOverlayObj(text, ovType = "generic") {
         const xAdj = Math.floor((Math.random() * 40)) - 20;
         const yAdj = Math.floor((Math.random() * 20)) - 10;
@@ -729,6 +774,7 @@ export default class Neumann extends React.Component {
         this.incrementProbeDistance();
         this.incrementAnnouncementCounters();
         this.decrementSavedGameObj();
+        this.updateConcentrate();
 
         const payoutMoneyThisTick = Business.getAllPayouts(this.state.businesses, this.userSettings);
         this.userSettings.lifetimeEarnings = this.userSettings.lifetimeEarnings.plus(payoutMoneyThisTick);
@@ -782,7 +828,7 @@ export default class Neumann extends React.Component {
     getTabList() {
         let rows = [];
         rows.push(<Tab className="tab-list-item" key="business-tab">Business</Tab>);
-       
+
         // if space view activated
         if (this.userSettings.featureEnabled[1000])
             rows.push(<Tab className="tab-list-item" key="probe-tab">Space</Tab>);
@@ -793,7 +839,7 @@ export default class Neumann extends React.Component {
             rows.push(<Tab className="tab-list-item prestige-tab" key="prestige-tab">Prestige</Tab>);
 
         rows.push(<Tab className="tab-list-item settings-tab" key="settings-tab">Settings</Tab>);
-       
+
         return (
             <div id="tabs">
                 <TabList className="tab-list">
@@ -904,8 +950,8 @@ export default class Neumann extends React.Component {
     }
 
     toggleOverlay(event) {
-        mylog("event:",event);
-        mylog("toggleOverlay target is:",event.target.checked);
+        mylog("event:", event);
+        mylog("toggleOverlay target is:", event.target.checked);
         this.userSettings.toggles.overlays = event.target.checked;
     }
     getSettingsTab() {
@@ -927,17 +973,17 @@ export default class Neumann extends React.Component {
 
     getPrestigeTab() {
         if (this.userSettings.prestige.num.gt(0) || this.userSettings.prestigeNext.gt(0))
-        return (
-            <TabPanel className="react-tabs__tab-panel prestige-tab-panel">
-                <div id="right-sidebar">
-                    PRESTIGE
+            return (
+                <TabPanel className="react-tabs__tab-panel prestige-tab-panel">
+                    <div id="right-sidebar">
+                        PRESTIGE
                 </div>
 
-                <Prestige>
+                    <Prestige>
 
-                </Prestige>
-            </TabPanel>
-        )
+                    </Prestige>
+                </TabPanel>
+            )
     }
 
     openHelpModal() {
@@ -1039,7 +1085,20 @@ export default class Neumann extends React.Component {
                                         value={this.purchaseAmt}
                                         placeholder="Select an option" />
                                 </div>
+                            </div>
 
+                            <div id="concentrate-container">
+                                <button
+                                    id="concentrateButton"
+                                    className={this.state.concentrateClass}
+                                    onClick={this.clickConcentrate}
+                                    disabled={this.state.concentrate === 0 ? false : true}
+                                >{this.state.concentrateClass === "concCooldown"
+                                    ? "Wait: " + Math.abs(Math.floor(this.state.concentrate))
+                                    : this.state.concentrateClass === "concActive"
+                                        ? "😬 : " + Math.abs(Math.floor(this.state.concentrate))
+                                        : "Concentrate"}
+                                </button>
                             </div>
 
                             {debugButtons}
