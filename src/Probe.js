@@ -4,12 +4,12 @@
 const Decimal = require('decimal.js');
 
 export default class Probe {
-    constructor(value, pSpeed, pQuality, pCombat) {
+    constructor(number, value, pSpeed, pQuality, pCombat) {
         this.value = value;
         this.speed = pSpeed;
         this.quality = pQuality;
         this.combat = pCombat;
-        this.number = new Decimal(0);
+        this.number = number;  // Decimal
         this.qualityLoss = new Decimal(0);
         this.combatLoss = new Decimal(0);
         this.distance = new Decimal(0);

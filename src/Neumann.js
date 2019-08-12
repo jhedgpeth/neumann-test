@@ -295,6 +295,7 @@ export default class Neumann extends React.Component {
 
         const tempProbe = { ...this.userSettings.probe };
         this.userSettings.probe = new Probe(
+            this.userSettings.probe.number,
             this.userSettings.probe.value,
             this.userSettings.probe.speed,
             this.userSettings.probe.quality,
@@ -760,7 +761,7 @@ export default class Neumann extends React.Component {
         const pcts = this.reportRangePcts();
         mylog("probe cost:", pCost.toNumber());
         mylog("probe attrs - pSpeed:", pcts[0], "pQuality:", pcts[1], "pCombat:", pcts[2]);
-        this.userSettings.probe = new Probe(pCost, pcts[0], pcts[1], pcts[2])
+        this.userSettings.probe = new Probe(new Decimal(1), pCost, pcts[0], pcts[1], pcts[2])
 
 
     }

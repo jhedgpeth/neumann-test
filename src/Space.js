@@ -519,7 +519,7 @@ export default class Space extends React.Component {
                             x={this.probeCount.x}
                             y={this.probeCount.y}
                             width={200}
-                            text={HelperConst.showInt(this.props.probe.number) + " Probe" + (this.props.probe.number.gt(1) ? "s" : "")}
+                            text={HelperConst.showInt(this.props.probe.number) + " Probe" + (!this.props.probe.number.eq(1) ? "s" : "")}
                             fontSize={16}
                             fontFamily={'Kodchasan'}
                             align="center"
