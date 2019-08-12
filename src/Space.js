@@ -442,10 +442,43 @@ export default class Space extends React.Component {
         return rows;
     }
 
+    generateStatusText() {
+        let rows = [];
+        if (this.props.probe.qualityLoss.gt(0)) {
+            rows.push(
+                <Text
+                    x={this.probeStatus.x}
+                    y={this.probeStatus.y}
+                    width={200}
+                    text={"Probe failure" + (this.props.probe.qualityLoss.gt(1) ? "s: " : ": ") + HelperConst.showInt(this.props.probe.qualityLoss)}
+                    fontSize={16}
+                    fontFamily={'Kodchasan'}
+                    align="center"
+                    fill="gold"
+                />
+            );
+        }
+        if (this.props.probe.combatLoss.gt(0)) {
+            rows.push(
+                <Text
+                    x={this.probeStatus.x}
+                    y={this.probeStatus.y + 16}
+                    width={200}
+                    text={"Combat loss" + (this.props.probe.combatLoss.gt(1) ? "es: " : ": ") + HelperConst.showInt(this.props.probe.combatLoss)}
+                    fontSize={16}
+                    fontFamily={'Kodchasan'}
+                    align="center"
+                    fill="red"
+                />
+            );
+        }
+    }
+
 
     render() {
         this.processSpaceMap();
         const rows = this.generateSpaceRender();
+        const statusRows = this.generateStatusText();
 
         return (
             <div id="probecontent" ref={this.probeDivRef}  >
@@ -526,26 +559,7 @@ export default class Space extends React.Component {
                             fill="white"
                         />
 
-                        <Text
-                            x={this.probeStatus.x}
-                            y={this.probeStatus.y}
-                            width={200}
-                            text={"Probe failure" + (this.props.probe.qualityLoss.gt(1) ? "s: " : ": ")+HelperConst.showInt(this.props.probe.qualityLoss)}
-                            fontSize={16}
-                            fontFamily={'Kodchasan'}
-                            align="center"
-                            fill="gold"
-                        />
-                        <Text
-                            x={this.probeStatus.x}
-                            y={this.probeStatus.y+16}
-                            width={200}
-                            text={"Combat loss" + (this.props.probe.combatLoss.gt(1) ? "es: " : ": ")+HelperConst.showInt(this.props.probe.combatLoss)}
-                            fontSize={16}
-                            fontFamily={'Kodchasan'}
-                            align="center"
-                            fill="red"
-                        />
+                        {statusRows}
 
                     </Layer>
 
