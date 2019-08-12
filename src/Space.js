@@ -36,6 +36,14 @@ export default class Space extends React.Component {
             x: this.centerCanvas.x + 130,
             y: this.centerCanvas.y - 135,
         }
+        this.probeCount = {
+            x: 25,
+            y: 25,
+        }
+        this.probeStatus = {
+            x: 500,
+            y: 25,
+        }
 
         const conv = Space.convertDistanceToSpace(this.props.probe.distance);
         this.mapDistance = conv.dist;
@@ -335,7 +343,7 @@ export default class Space extends React.Component {
                     x: -5,
                     y: -5,
                 }}
-                fillRadialGradientEndRadius={this.planetRadius*2}
+                fillRadialGradientEndRadius={this.planetRadius * 2}
                 fillRadialGradientColorStops={this.planetColorStops}
                 ref={node => {
                     this.centerPlanetRef = node;
@@ -503,8 +511,44 @@ export default class Space extends React.Component {
                             <button id="portal-button" disabled={true}>{HelperConst.showNum(Space.spaceZoomLevels[this.zoomShown])}</button>
                         </MyPortal> */}
 
+                    </Layer>
+
+                    <Layer className="status-layer" hitGraphEnabled={false}>
+
+                        <Text
+                            x={this.probeCount.x}
+                            y={this.probeCount.y}
+                            width={200}
+                            text={HelperConst.showInt(this.props.probe.number) + " Probe" + (this.props.probe.number.gt(1) ? "s" : "")}
+                            fontSize={16}
+                            fontFamily={'Kodchasan'}
+                            align="center"
+                            fill="white"
+                        />
+
+                        <Text
+                            x={this.probeStatus.x}
+                            y={this.probeStatus.y}
+                            width={200}
+                            text={"Probe failure" + (this.props.probe.qualityLoss.gt(1) ? "s: " : ": ")+HelperConst.showInt(this.props.probe.qualityLoss)}
+                            fontSize={16}
+                            fontFamily={'Kodchasan'}
+                            align="center"
+                            fill="gold"
+                        />
+                        <Text
+                            x={this.probeStatus.x}
+                            y={this.probeStatus.y+16}
+                            width={200}
+                            text={"Combat loss" + (this.props.probe.combatLoss.gt(1) ? "es: " : ": ")+HelperConst.showInt(this.props.probe.combatLoss)}
+                            fontSize={16}
+                            fontFamily={'Kodchasan'}
+                            align="center"
+                            fill="red"
+                        />
 
                     </Layer>
+
                 </Stage>
 
             </div>
