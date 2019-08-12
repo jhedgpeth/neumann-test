@@ -1,0 +1,13 @@
+@import "./colors.scss";
+
+#tooltip {
+    position: absolute;
+    bottom: 10px;
+    height: 98px;
+    width: 200px;
+    outline: 1px solid $c_selected;
+}
+
+#tooltip #tooltip-text {
+    padding: 5px;
+}

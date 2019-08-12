@@ -30,6 +30,7 @@ import Announce from './Announce';
 import Sliders from './Sliders';
 import Settings from './Settings';
 import Prestige from './Prestige';
+import ToolTip from './ToolTip';
 
 const Decimal = require('decimal.js');
 const mylog = HelperConst.DebugLog;
@@ -70,7 +71,7 @@ export default class Neumann extends React.Component {
 
         this.domRefs = [];
         this.purchaseAmt = "1";
-        this.tabIndex = 0;
+        this.tabIndex = 1;
 
 
         // this.probe = new Probe(new Decimal(0), 0, 0, 0);
@@ -110,6 +111,7 @@ export default class Neumann extends React.Component {
         this.clickConcentrate = this.clickConcentrate.bind(this);
         this.decrementConcentrate = this.updateConcentrate.bind(this);
 
+        this.onMouseOver = this.onMouseOver.bind(this);
         this.openHelpModal = this.openHelpModal.bind(this);
         this.closeHelpModal = this.closeHelpModal.bind(this);
         this.afterOpenHelpModal = this.afterOpenHelpModal.bind(this);
@@ -829,7 +831,7 @@ export default class Neumann extends React.Component {
 
     getTabList() {
         let rows = [];
-        rows.push(<Tab className="tab-list-item" key="business-tab">Business</Tab>);
+        rows.push(<Tab className="tab-list-item" key="business-tab" >Business</Tab>);
 
         // if space view activated
         if (this.userSettings.featureEnabled[1000])
@@ -988,6 +990,34 @@ export default class Neumann extends React.Component {
             )
     }
 
+    onMouseOver(e) {
+        if (e.target && e.target.dataset) {
+            // mylog("target found");
+            // mylog("e:",e);
+            // mylog("related target:",e.relatedTarget);
+            if (e.target.dataset.tip) {
+                mylog("target tip:", e.target.dataset.tip);
+                let newText = String(e.target.dataset.tip);
+                this.setState((state, props) => ({
+                    tipText: newText,
+                }));
+            }
+        } else if (e.relatedTarget && e.relatedTarget.dataset) {
+            if (e.relatedTarget.dataset.tip) {
+                mylog("related target tip:", e.relatedTarget.dataset.tip);
+                let newText = String(e.relatedTarget.dataset.tip);
+                this.setState((state, props) => ({
+                    tipText: newText,
+                }));
+            }
+            // } else if (this.state.tipText) {
+            //     mylog("blanking tipText");
+            //     this.setState((state, props) => ({
+            //         tipText: "",
+            //     }));
+        }
+    }
+
     openHelpModal() {
         // this.pause();
         this.setState((state, props) => ({ helpModalIsOpen: true }));
@@ -1051,6 +1081,7 @@ export default class Neumann extends React.Component {
                         businesses={this.state.businesses}
                         concentrate={this.state.concentrate}
                         userSettings={this.userSettings}
+                        onMouseOver={this.onMouseOver}
                     />
 
                 </div>
@@ -1072,25 +1103,27 @@ export default class Neumann extends React.Component {
                                 userSettings={this.userSettings}
                                 onClick={this.clickUpgrade}
                                 enableFeature={this.enableFeature}
+                                onMouseOver={this.onMouseOver}
                             />
 
                         </div>
                         <div id="right-sidebar">
 
 
-                            <div className="purchaseAmts">
+                            <div className="purchaseAmts" onMouseOver={this.onMouseOver} data-tip="purchaseAmts">
 
-                                <div className="buy-wrapper">
+                                <div className="buy-wrapper" onMouseOver={this.onMouseOver} data-tip="purchaseAmts">
                                     <span className="buyx-prefix">Buy {HelperConst.multiplySymbol}</span>
                                     <Dropdown
                                         options={HelperConst.purchaseOpts}
                                         onChange={this.purchaseAmtDropDownHandler}
                                         value={this.purchaseAmt}
-                                        placeholder="Select an option" />
+                                        placeholder="Select an option"
+                                        onMouseOver={this.onMouseOver} />
                                 </div>
                             </div>
 
-                            <div id="concentrate-container">
+                            <div id="concentrate-container" onMouseOver={this.onMouseOver} data-tip="concentrate-container">
                                 <button
                                     id="concentrateButton"
                                     className={this.state.concentrateClass}
@@ -1099,12 +1132,17 @@ export default class Neumann extends React.Component {
                                 >{this.state.concentrateClass === "concCooldown"
                                     ? "Wait: " + Math.abs(Math.floor(this.state.concentrate.time))
                                     : this.state.concentrateClass === "concActive"
-                                        ? HelperConst.concentrateSymbol + " : " + Math.abs(Math.floor(this.state.concentrate.time))
+                                        ? HelperConst.concentrateSymbol + " : " + Math.abs(Math.ceil(this.state.concentrate.time))
                                         : "Concentrate " + this.userSettings.concentrate.mult + "x Speed"}
                                 </button>
                             </div>
 
                             {debugButtons}
+
+                            <ToolTip
+                                tipText={this.state.tipText}
+                                onMouseOver={this.onMouseOver}
+                            />
 
                         </div>
 
@@ -1118,6 +1156,7 @@ export default class Neumann extends React.Component {
                                     purchaseAmt={this.purchaseAmt}
                                     onClick={this.clickBusiness}
                                     domRefs={this.domRefs}
+                                    onMouseOver={this.onMouseOver}
                                 />
 
 

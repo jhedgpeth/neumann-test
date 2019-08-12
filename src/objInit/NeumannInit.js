@@ -17,6 +17,7 @@ export default class NeumannInit extends React.Component {
             time: 0,
         },
         concentrateClass: "concIdle",
+        tipText: "",
     })
 
     static userSettings = () => ({

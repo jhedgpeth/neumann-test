@@ -191,11 +191,11 @@ export default class Business extends React.Component {
 
             return (
                 <div key={item.id + "business"} className={"business " + bgClass} ref={this.getDomRef(n)} >
-                    <div className="overlays-wrapper">
+                    <div className="overlays-wrapper" onMouseOver={this.props.onMouseOver} data-tip={"business-buy-" + item.id}>
                         {overlayItems}
                     </div>
                     <div className={"business-buy-progress " + bgClass}>
-                        <div className={"business-buy-progress-pct " + bgClass} style={buyPctStyle}>
+                        <div className={"business-buy-progress-pct " + bgClass} style={buyPctStyle} onMouseOver={this.props.onMouseOver} data-tip={"business-buy-" + item.id}>
                             <span ></span>
                         </div>
                     </div>
@@ -208,23 +208,24 @@ export default class Business extends React.Component {
                         key={item.id + "button"}
                         className={buttonClass + bgClass}
                         onClick={() => this.props.onClick(item)}
-                        disabled={buttonDisabled}>
+                        disabled={buttonDisabled}
+                        onMouseOver={this.props.onMouseOver} data-tip={"business-buy-" + item.id} >
                         <span
-                            className="buyMultiple">{myCost.num}{HelperConst.multiplySymbolSpan()}
+                            className="buyMultiple" >{myCost.num}{HelperConst.multiplySymbolSpan()}
                         </span> {n}
                     </button>
-                    <div key={item.id + "owned"} className="business-owned">{HelperConst.showInt(b.owned)}</div>
+                    <div key={item.id + "owned"} className="business-owned" onMouseOver={this.props.onMouseOver} data-tip={"business-owned"}>{HelperConst.showInt(b.owned)}</div>
 
                     <div key={item.id + "cost-wrapper"} className={costClass}>
-                        <div key={item.id + "cost-money"} className="business-cost-money">{HelperConst.moneySymbolSpan()}{HelperConst.showNum(myCost.cost)}</div>
+                        <div key={item.id + "cost-money"} className="business-cost-money" onMouseOver={this.props.onMouseOver} data-tip={"business-cost"}>{HelperConst.moneySymbolSpan()}{HelperConst.showNum(myCost.cost)}</div>
                     </div>
 
                     <div key={item.id + "earning-wrapper"} className="earning-wrapper">
-                        <div key={item.id + "revenue-total"} className="business-revenue-total">+{HelperConst.moneySymbolSpan()}{HelperConst.showNum(myPayout)}</div>
+                        <div key={item.id + "revenue-total"} className="business-revenue-total" onMouseOver={this.props.onMouseOver} data-tip={"business-revenue"}>+{HelperConst.moneySymbolSpan()}{HelperConst.showNum(myPayout)}</div>
                     </div>
 
                     <div key={item.id + "earning-pct-wrapper"} className="earning-pct-wrapper">
-                        <div key={item.id + "earning-pct"} className="earning-pct">{myEarningPct}%</div>
+                        <div key={item.id + "earning-pct"} className="earning-pct" onMouseOver={this.props.onMouseOver} data-tip={"business-pct"}>{myEarningPct}%</div>
                     </div>
                 </div>
             );

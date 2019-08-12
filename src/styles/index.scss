@@ -3,6 +3,7 @@
 @import "./normalize.css";
 @import "./onoffswitch.scss";
 @import "./concentrate.scss";
+@import "./tooltip.scss";
 
 /* Layout
 -----------------------------------------------------------------------------*/
@@ -559,6 +560,7 @@ button {
 -----------------------------------------------------------------------------*/
 
 #right-sidebar {
+  position: relative;
   grid-area: rsidebar;
   background-color: $c_rsidebar;
   padding: 10px;
@@ -581,11 +583,14 @@ button {
 // }
 
 .buy-wrapper {
-  width: 90%;
+  width: 100%;
   display: grid;
   grid-template-columns: 40% 60%;
   grid-template-rows: 45px;
   align-items: center;
+  background: $c_featurebg;
+  padding: 5px;
+  outline: 1px solid $c_selected;
 }
 
 .buyx-prefix {
@@ -593,7 +598,8 @@ button {
   font-weight: bold;
   margin: auto;
   // padding: 0 10px 0 0;
-  color: $c_selected;
+  // color: $c_selected;
+  color: $c_mainfg;
   width: 100%;
   text-align: left;
   justify-self: start;
