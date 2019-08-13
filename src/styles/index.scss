@@ -79,6 +79,15 @@ button {
   grid-template-areas: "content rsidebar";
 }
 
+.log-tab-panel {
+  background: #000;
+  grid-area: "panel-main";
+  max-width: 1024px;
+  display: grid;
+  grid-template-columns: 804px 220px;
+  grid-template-areas: "content rsidebar";
+}
+
 .settings-tab-panel {
   background: #000;
   grid-area: "panel-main";
@@ -283,6 +292,11 @@ button {
   pointer-events: none;
 }
 
+.tab-list-item.hidden-tab {
+  opacity: 0;
+  pointer-events: none;
+}
+
 .react-tabs__tab--selected {
   background: $c_tabon;
   color: $c_mainfg;
@@ -344,7 +358,8 @@ button {
 /* left sidebar
 -----------------------------------------------------------------------------*/
 
-.left-sidebar {
+#left-sidebar {
+  position: relative;
   background-color: $c_lsidebar;
   grid-area: lsidebar;
   padding: 10px;
@@ -352,6 +367,17 @@ button {
   /* min-height: 528px; */
   display: block;
 }
+
+#right-sidebar {
+  position: relative;
+  grid-area: rsidebar;
+  background-color: $c_rsidebar;
+  padding: 10px;
+  height: 528px;
+  display: block;
+  max-width: 220px;
+}
+
 
 .ScrollbarsCustom-Content {
   width: 100%;
@@ -570,7 +596,7 @@ button {
 }
 .purchaseAmts {
   width: 200px;
-  height: 35px;
+  height: 65px;
   // max-width: 240px;
   margin: 0 0 20px 0;
   display: flex;
@@ -583,6 +609,7 @@ button {
 // }
 
 .buy-wrapper {
+
   width: 100%;
   display: grid;
   grid-template-columns: 40% 60%;
@@ -728,7 +755,7 @@ button {
 }
 
 .container {
-  margin: 5px 7px;
+  margin: 0 7px;
 }
 
 .business-container {
@@ -957,11 +984,6 @@ button {
   background: radial-gradient(circle at bottom, rgb(5, 5, 70) 0, black 100%);
   grid-area: content;
   position: relative;
-  // width: 794px;
-  // width: 100%;
-  /* min-height: 400px; */
-  // height: 538px;
-  // padding: 5px;
   width: 800px;
   height: 538px;
   margin: 5px auto 0 auto;
@@ -1075,13 +1097,24 @@ button {
   background-color: $c_mainbg;
   grid-area: content;
   position: relative;
-  width: 539px;
-  /* min-height: 400px; */
-  height: 528px;
-  padding: 10px;
-  margin: 0;
+  width: 770px;
+  height: 500px;
+  margin: auto;
+  overflow: hidden;
 }
 
+/* Logs content
+-----------------------------------------------------------------------------*/
+
+#logs {
+  background-color: $c_mainbg;
+  grid-area: content;
+  position: relative;
+  width: 770px;
+  height: 500px;
+  margin: auto;
+  overflow: hidden;
+}
 
 /* Settings content
 -----------------------------------------------------------------------------*/
@@ -1090,11 +1123,10 @@ button {
   background-color: $c_mainbg;
   grid-area: content;
   position: relative;
-  width: 539px;
-  /* min-height: 400px; */
-  height: 528px;
-  padding: 10px;
-  margin: 0;
+  width: 770px;
+  height: 500px;
+  margin: auto;
+  overflow: hidden;
 }
 
 

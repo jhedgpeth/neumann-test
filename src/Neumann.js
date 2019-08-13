@@ -29,6 +29,7 @@ import Upgrades from './Upgrades';
 import Announce from './Announce';
 import Sliders from './Sliders';
 import Settings from './Settings';
+import Logs from './Logs';
 import Prestige from './Prestige';
 import ToolTip from './ToolTip';
 
@@ -602,15 +603,26 @@ export default class Neumann extends React.Component {
 
         switch (feature.id) {
             case 1000:
-                this.announce(HelperConst.thumbsUpSymbol + " SPAAAAACE!  The Final* Frontier!");
+                this.announce(HelperConst.thumbsUpSymbol + " SPAAAAACE!  It's bigger on the outside.");
+                break;
+            case 1001:  // self-replicating (probes)
+                this.announce(HelperConst.thumbsUpSymbol + " When a boy robot likes a girl robot...  In space.");
+                break;
+            case 1002:  // nano technology
+                this.announce(HelperConst.thumbsUpSymbol + " It feels like I'm building nothing at all!");
                 break;
             case 1003:  // probe quality
                 this.userSettings.sliderInfo.rangeSettings = Sliders.getRangeValues(2);
                 this.userSettings.sliderInfo.probePcts = this.reportRangePcts();
+                this.announce(HelperConst.thumbsUpSymbol + " Hey, Stanisław!  What if we measured things first?");
                 break;
             case 1004:  // probe combat
                 this.userSettings.sliderInfo.rangeSettings = Sliders.getRangeValues(3);
                 this.userSettings.sliderInfo.probePcts = this.reportRangePcts();
+                this.announce(HelperConst.thumbsUpSymbol + " H-BOMB!  The H is for Hello.");
+                break;
+            case 1100:  // probe autobuy
+                this.announce(HelperConst.thumbsUpSymbol + " If you put the little drinky-bird over the button like so...");
                 break;
             default:
                 break;
@@ -832,17 +844,24 @@ export default class Neumann extends React.Component {
 
     getTabList() {
         let rows = [];
+        // 1 - Business
         rows.push(<Tab className="tab-list-item" key="business-tab" >Business</Tab>);
 
-        // if space view activated
+        // 2 - Space
         if (this.userSettings.featureEnabled[1000])
             rows.push(<Tab className="tab-list-item" key="probe-tab">Space</Tab>);
 
-        rows.push(<Tab className="tab-list-item spacer-tab" key="spacer-tab"></Tab>);
+        // 3 - Spacer
+        rows.push(<Tab className="tab-list-item spacer-tab" key="spacer-tab" />);
 
+        // 4 - Prestige
         if (this.userSettings.prestige.num.gt(0) || this.userSettings.prestigeNext.gt(0))
             rows.push(<Tab className="tab-list-item prestige-tab" key="prestige-tab">Prestige</Tab>);
 
+        // 5 - Logs
+        rows.push(<Tab className="tab-list-item log-tab" key="log-tab">Log</Tab>);
+
+        // 6 - Settings
         rows.push(<Tab className="tab-list-item settings-tab" key="settings-tab">Settings</Tab>);
 
         return (
@@ -854,7 +873,7 @@ export default class Neumann extends React.Component {
         )
     }
 
-    getProbeTab() {
+    getSpaceTab() {
         let probebutton, probeattribs, sliderattribs, offlinetext;
         let currentProbe = "";
         let sliderText = "Spend " + this.userSettings.sliderInfo.probeSpendPct + "%";
@@ -959,6 +978,7 @@ export default class Neumann extends React.Component {
         mylog("toggleOverlay target is:", event.target.checked);
         this.userSettings.toggles.overlays = event.target.checked;
     }
+
     getSettingsTab() {
         return (
             <TabPanel className="react-tabs__tab-panel settings-tab-panel">
@@ -975,6 +995,20 @@ export default class Neumann extends React.Component {
         )
     }
 
+    getLogTab() {
+        return (
+            <TabPanel className="react-tabs__tab-panel log-tab-panel">
+                <div id="right-sidebar">
+                    LOGS
+                </div>
+
+                <Logs
+
+                />
+
+            </TabPanel>
+        )
+    }
 
     getPrestigeTab() {
         if (this.userSettings.prestige.num.gt(0) || this.userSettings.prestigeNext.gt(0))
@@ -982,11 +1016,11 @@ export default class Neumann extends React.Component {
                 <TabPanel className="react-tabs__tab-panel prestige-tab-panel">
                     <div id="right-sidebar">
                         PRESTIGE
-                </div>
+                    </div>
 
-                    <Prestige>
+                    <Prestige
 
-                    </Prestige>
+                    />
                 </TabPanel>
             )
     }
@@ -1054,7 +1088,7 @@ export default class Neumann extends React.Component {
                     <button className="sidebarButtons fancyButtons  test-give-money"
                         onClick={this.moneyCheat}>+50% money</button>
                     <button className="sidebarButtons fancyButtons  announce-button" onClick={() => this.announce(HelperConst.thumbsUpSymbol + " great job winning!  oh boy this is just super.")}>Announce</button>
-                    <button className="sidebarButtons fancyButtons  overlay-button" onClick={() => this.addOverlay(0, "X2")}>Mental Math Overlay</button>
+                    {/* <button className="sidebarButtons fancyButtons  overlay-button" onClick={() => this.addOverlay(0, "X2")}>Mental Math Overlay</button> */}
                     {/* <button className="sidebarButtons fancyButtons  overlay-button" onClick={() => this.addOverlay(1, "X2")}>Newspaper Overlay</button> */}
                     {/* <button className="sidebarButtons fancyButtons  ref-button" onClick={() => mylog("domRef:", this.state.businesses[0].domRef)}>Odd Job domRef</button> */}
                     {/* <button className="sidebarButtons fancyButtons  ref-button" onClick={() => mylog("domRef2:", this.state.businesses[1].domRef)}>Newspaper domRef</button> */}
@@ -1096,7 +1130,7 @@ export default class Neumann extends React.Component {
 
                     <TabPanel className="react-tabs__tab-panel main-tab-panel">
 
-                        <div className="left-sidebar">
+                        <div id="left-sidebar">
 
                             <Upgrades
                                 upgrades={this.state.upgrades}
@@ -1167,11 +1201,12 @@ export default class Neumann extends React.Component {
 
                     </TabPanel>
 
-                    {this.getProbeTab()}
+                    {this.getSpaceTab()}
 
                     <TabPanel className="react-tabs__tab-panel spacer-tab-panel"></TabPanel>
 
                     {this.getPrestigeTab()}
+                    {this.getLogTab()}
                     {this.getSettingsTab()}
 
                 </Tabs>
