@@ -79,11 +79,11 @@ export default class Neumann extends React.Component {
         this.zoomName = Space.spaceZoomLevelNames[0];
         this.mapDistance = Space.spaceZoomLevels[0];
 
-        this.sliderInfo = {
-            rangeSettings: Sliders.getRangeValues(1),
-            probePcts: [50, 50, 0],
-            probeSpendPct: 25,
-        }
+        // this.userSettings.sliderInfo = {
+        //     rangeSettings: Sliders.getRangeValues(1),
+        //     probePcts: [50, 50, 0],
+        //     probeSpendPct: 25,
+        // }
 
         // this._business = React.createRef();
         this.populateBusDomRefs = this.populateInitVals.bind(this);
@@ -605,12 +605,12 @@ export default class Neumann extends React.Component {
                 this.announce(HelperConst.thumbsUpSymbol + " SPAAAAACE!  The Final* Frontier!");
                 break;
             case 1003:  // probe quality
-                this.sliderInfo.rangeSettings = Sliders.getRangeValues(2);
-                this.sliderInfo.probePcts = this.reportRangePcts();
+                this.userSettings.sliderInfo.rangeSettings = Sliders.getRangeValues(2);
+                this.userSettings.sliderInfo.probePcts = this.reportRangePcts();
                 break;
             case 1004:  // probe combat
-                this.sliderInfo.rangeSettings = Sliders.getRangeValues(3);
-                this.sliderInfo.probePcts = this.reportRangePcts();
+                this.userSettings.sliderInfo.rangeSettings = Sliders.getRangeValues(3);
+                this.userSettings.sliderInfo.probePcts = this.reportRangePcts();
                 break;
             default:
                 break;
@@ -727,37 +727,37 @@ export default class Neumann extends React.Component {
 
     sliderChange(value) {
         // mylog("slider change:", value);
-        this.sliderInfo.probeSpendPct = value;
+        this.userSettings.sliderInfo.probeSpendPct = value;
     }
     rangeChange(value) {
         // mylog("range change:", value);
-        if (this.sliderInfo.rangeSettings.rangeCt === 2) {
-            this.sliderInfo.rangeSettings.distribRange = [0, value[1], 100];
-        } else if (this.sliderInfo.rangeSettings.rangeCt === 3) {
-            this.sliderInfo.rangeSettings.distribRange = [0, value[1], value[2], 100];
+        if (this.userSettings.sliderInfo.rangeSettings.rangeCt === 2) {
+            this.userSettings.sliderInfo.rangeSettings.distribRange = [0, value[1], 100];
+        } else if (this.userSettings.sliderInfo.rangeSettings.rangeCt === 3) {
+            this.userSettings.sliderInfo.rangeSettings.distribRange = [0, value[1], value[2], 100];
         }
-        this.sliderInfo.probePcts = this.reportRangePcts();
+        this.userSettings.sliderInfo.probePcts = this.reportRangePcts();
         // mylog("fixed range:", this.distribRange);
     }
     reportRangePcts() {
         let pSpeedPct = 0, pQualityPct = 0, pCombatPct = 0;
         mylog("spd:", pSpeedPct, "qual:", pQualityPct, "comb:", pCombatPct);
-        if (this.sliderInfo.rangeSettings.rangeCt === 1) {
+        if (this.userSettings.sliderInfo.rangeSettings.rangeCt === 1) {
             pSpeedPct = 100;
-        } else if (this.sliderInfo.rangeSettings.rangeCt === 2) {
-            pSpeedPct = Math.floor(this.sliderInfo.rangeSettings.distribRange[1]);
+        } else if (this.userSettings.sliderInfo.rangeSettings.rangeCt === 2) {
+            pSpeedPct = Math.floor(this.userSettings.sliderInfo.rangeSettings.distribRange[1]);
             pQualityPct = 100 - pSpeedPct;
 
-        } else if (this.sliderInfo.rangeSettings.rangeCt === 3) {
-            pSpeedPct = Math.floor(this.sliderInfo.rangeSettings.distribRange[1]);
-            pQualityPct = Math.floor(this.sliderInfo.rangeSettings.distribRange[2] - pSpeedPct);
+        } else if (this.userSettings.sliderInfo.rangeSettings.rangeCt === 3) {
+            pSpeedPct = Math.floor(this.userSettings.sliderInfo.rangeSettings.distribRange[1]);
+            pQualityPct = Math.floor(this.userSettings.sliderInfo.rangeSettings.distribRange[2] - pSpeedPct);
             pCombatPct = 100 - (pSpeedPct + pQualityPct);
         }
         return [pSpeedPct, pQualityPct, pCombatPct];
     }
 
     purchaseProbe() {
-        const pCost = ComputeFunc.getPct(this.userSettings.money, this.sliderInfo.probeSpendPct);
+        const pCost = ComputeFunc.getPct(this.userSettings.money, this.userSettings.sliderInfo.probeSpendPct);
         const pcts = this.reportRangePcts();
         mylog("probe cost:", pCost.toNumber());
         mylog("probe attrs - pSpeed:", pcts[0], "pQuality:", pcts[1], "pCombat:", pcts[2]);
@@ -857,7 +857,7 @@ export default class Neumann extends React.Component {
     getProbeTab() {
         let probebutton, probeattribs, sliderattribs, offlinetext;
         let currentProbe = "";
-        let sliderText = "Spend " + this.sliderInfo.probeSpendPct + "%";
+        let sliderText = "Spend " + this.userSettings.sliderInfo.probeSpendPct + "%";
 
         // probes enabled
         if (this.userSettings.featureEnabled[1001]) {
@@ -866,27 +866,27 @@ export default class Neumann extends React.Component {
             probebutton = (
                 <button className="probe-purchase"
                     onClick={this.purchaseProbe}>
-                    Buy Probe: {HelperConst.moneySymbolSpan()}{HelperConst.showNum(ComputeFunc.getPct(this.userSettings.money, this.sliderInfo.probeSpendPct))}
+                    Buy Probe: {HelperConst.moneySymbolSpan()}{HelperConst.showNum(ComputeFunc.getPct(this.userSettings.money, this.userSettings.sliderInfo.probeSpendPct))}
                 </button>
             );
-            if (this.sliderInfo.rangeSettings.rangeCt === 1) {
+            if (this.userSettings.sliderInfo.rangeSettings.rangeCt === 1) {
                 probeattribs = <div className="probe-attribs"></div>
                 sliderattribs =
                     <div className="sliderattribs">
                         <span className="probe-prod-span">Probe Production</span>
                         <div className="sliderHeader">{sliderText}</div>
                         <div className="sliderContainer">
-                            {Sliders.getSlider(this.sliderInfo, this.sliderChange)}
+                            {Sliders.getSlider(this.userSettings.sliderInfo, this.sliderChange)}
                         </div>
                     </div>
-            } else if (this.sliderInfo.rangeSettings.rangeCt === 2) {
+            } else if (this.userSettings.sliderInfo.rangeSettings.rangeCt === 2) {
                 probeattribs =
                     <div className="probe-attribs">
                         <div className="probe-attrib speed-header">Speed</div>
                         <div className="probe-attrib quality-header">Quality</div>
                         <div></div>
-                        <div className="probe-attrib probe-speed">{this.sliderInfo.probePcts[0]}%</div>
-                        <div className="probe-attrib probe-quality">{this.sliderInfo.probePcts[1]}%</div>
+                        <div className="probe-attrib probe-speed">{this.userSettings.sliderInfo.probePcts[0]}%</div>
+                        <div className="probe-attrib probe-quality">{this.userSettings.sliderInfo.probePcts[1]}%</div>
                         <div></div>
                     </div>
                 sliderattribs =
@@ -894,11 +894,11 @@ export default class Neumann extends React.Component {
                         <span className="probe-prod-span">Probe Production</span>
                         <div className="sliderHeader">{sliderText}</div>
                         <div className="sliderContainer">
-                            {Sliders.getSlider(this.sliderInfo, this.sliderChange)}
+                            {Sliders.getSlider(this.userSettings.sliderInfo, this.sliderChange)}
                         </div>
                         <div className="sliderHeader">Distribute Funds</div>
                         <div className="sliderContainer">
-                            {Sliders.getRange(this.sliderInfo, this.rangeChange)}
+                            {Sliders.getRange(this.userSettings.sliderInfo, this.rangeChange)}
                         </div>
                     </div>
             } else {  // rangeCt === 3
@@ -907,20 +907,20 @@ export default class Neumann extends React.Component {
                         <div className="probe-attrib speed-header">Speed</div>
                         <div className="probe-attrib quality-header">Quality</div>
                         <div className="probe-attrib combat-header">Combat</div>
-                        <div className="probe-attrib probe-speed">{this.sliderInfo.probePcts[0]}%</div>
-                        <div className="probe-attrib probe-quality">{this.sliderInfo.probePcts[1]}%</div>
-                        <div className="probe-attrib probe-combat">{this.sliderInfo.probePcts[2]}%</div>
+                        <div className="probe-attrib probe-speed">{this.userSettings.sliderInfo.probePcts[0]}%</div>
+                        <div className="probe-attrib probe-quality">{this.userSettings.sliderInfo.probePcts[1]}%</div>
+                        <div className="probe-attrib probe-combat">{this.userSettings.sliderInfo.probePcts[2]}%</div>
                     </div>
                 sliderattribs =
                     <div className="sliderattribs">
                         <span className="probe-prod-span">Probe Production</span>
                         <div className="sliderHeader">{sliderText}</div>
                         <div className="sliderContainer">
-                            {Sliders.getSlider(this.sliderInfo, this.sliderChange)}
+                            {Sliders.getSlider(this.userSettings.sliderInfo, this.sliderChange)}
                         </div>
                         <div className="sliderHeader">Distribute Funds</div>
                         <div className="sliderContainer">
-                            {Sliders.getRange(this.sliderInfo, this.rangeChange)}
+                            {Sliders.getRange(this.userSettings.sliderInfo, this.rangeChange)}
                         </div>
                     </div>
             }
@@ -1063,7 +1063,7 @@ export default class Neumann extends React.Component {
                     <button className="sidebarButtons fancyButtons  save-button" onClick={this.saveGame}>SAVE</button>
                     <button className="sidebarButtons fancyButtons  save-button" onClick={this.loadGame}>LOAD</button>
                     {/* <h3>Zoom Index: {this.zoomLevel}</h3><br /> */}
-                    {/* <h3>RangeCt: {this.sliderInfo.rangeSettings.rangeCt}</h3> */}
+                    {/* <h3>RangeCt: {this.userSettings.sliderInfo.rangeSettings.rangeCt}</h3> */}
 
                     <button onClick={this.openHelpModal}>Open Modal</button>
 

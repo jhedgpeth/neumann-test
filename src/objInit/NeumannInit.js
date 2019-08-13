@@ -3,6 +3,7 @@ import BusinessInit from './BusinessInit';
 // import ProbeInit from './ProbeInit';
 import UpgradeInit from './UpgradeInit';
 import Probe from '../Probe';
+import Sliders from '../Sliders';
 const Decimal = require('decimal.js');
 
 export default class NeumannInit extends React.Component {
@@ -42,7 +43,11 @@ export default class NeumannInit extends React.Component {
         concentrate: {
             mult: 2.0,
         },
-
+        sliderInfo: {
+            rangeSettings: Sliders.getRangeValues(1),
+            probePcts: [50, 50, 0],
+            probeSpendPct: 25,
+        }
     })
 
 }
