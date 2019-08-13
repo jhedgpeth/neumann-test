@@ -191,7 +191,7 @@ export default class Business extends React.Component {
 
             return (
                 <div key={item.id + "business"} className={"business " + bgClass} ref={this.getDomRef(n)} >
-                    <div className="overlays-wrapper" onMouseOver={this.props.onMouseOver} data-tip={"business-buy-" + item.id}>
+                    <div className="overlays-wrapper" >
                         {overlayItems}
                     </div>
                     <div className={"business-buy-progress " + bgClass}>
@@ -199,8 +199,8 @@ export default class Business extends React.Component {
                             <span ></span>
                         </div>
                     </div>
-                    <div className={"business-earn-progress " + bgClass}>
-                        <div className={"business-earn-progress-pct " + bgClass} style={earnPctStyle}>
+                    <div className={"business-earn-progress " + bgClass} onMouseOver={this.props.onMouseOver} data-tip={"earn-progress-" + item.id}>
+                        <div className={"business-earn-progress-pct " + bgClass} style={earnPctStyle} onMouseOver={this.props.onMouseOver} data-tip={"earn-progress-" + item.id} >
                             <span ></span>
                         </div>
                     </div>
