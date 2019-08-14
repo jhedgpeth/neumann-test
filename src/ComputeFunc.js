@@ -102,6 +102,10 @@ export default class ComputeFunc {
         return Decimal.sqrt(revenue.div(Math.pow(10, 9))).times(150).floor();
     }
 
+    static calcPrestigeEarnedFromLearning(learned) {
+        return learned.log(1.18).floor();
+    }
+
     static calcPrestigeEarnedFromMax(maxEarnings) {
         return maxEarnings.div(Math.pow(10, 12)).times(8).plus(1).sqrt().minus(1).div(2);
     }

@@ -481,7 +481,7 @@ export default class Space extends React.Component {
         const statusRows = this.generateStatusText();
 
         return (
-            <div id="probecontent" ref={this.probeDivRef}  >
+            <div id="probecontent" ref={this.probeDivRef}>
                 <div className={this.starClass} />
                 <div className={this.starClass} />
                 <div className={this.starClass} />

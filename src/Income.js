@@ -5,7 +5,7 @@ import './styles/fonts.css';
 import './styles/neon.scss';
 import Business from './Business';
 // const mylog = HelperConst.DebugLog;
-const Decimal = require('decimal.js');
+// const Decimal = require('decimal.js');
 
 export default class Income extends React.Component {
 
@@ -14,7 +14,7 @@ export default class Income extends React.Component {
 
         const revenue = Business.computeTotalEarningPerSec(this.props.businesses, this.props.userSettings, this.props.concentrate);
         // const learning = ComputeFunc.computeTotalEarningPerSec(this.props.probes, this.props.prestige);
-        const learning = new Decimal(0);
+        const learning = this.props.userSettings.probe.getLearningPerSec();
 
         let rowsLeft = [];
         let rowsRight = [];
@@ -26,10 +26,10 @@ export default class Income extends React.Component {
                     <div className="prestige-header">
                         Prestige:
                     </div>
-                    <div className="prestige-units">
+                    <div className="prestige-units" onMouseOver={this.props.onMouseOver} data-tip="prestige-units">
                         {HelperConst.prestigeSymbolSpan()}{HelperConst.showInt(this.props.userSettings.prestige.num)}
                     </div>
-                    <div className="prestige-earning">
+                    <div className="prestige-earning" onMouseOver={this.props.onMouseOver} data-tip="prestige-earning">
                         (+ {HelperConst.prestigeSymbolSpan()}{HelperConst.showInt(this.props.userSettings.prestigeNext)})
                     </div>
                 </React.Fragment>
@@ -43,10 +43,10 @@ export default class Income extends React.Component {
                     <div className="learning-header">
                         Knowledge:
                     </div>
-                    <div className="learning-knowledge">
+                    <div className="learning-knowledge" onMouseOver={this.props.onMouseOver} data-tip="learning-knowledge">
                         {HelperConst.knowledgeSymbolSpan()}{HelperConst.showNum(this.props.userSettings.knowledge)}
                     </div>
-                    <div className="learning-learning">
+                    <div className="learning-learning" onMouseOver={this.props.onMouseOver} data-tip="learning-learning">
                         (+ {HelperConst.knowledgeSymbolSpan()}{HelperConst.showNum(learning)}/s)
                     </div>
                 </React.Fragment>
@@ -56,10 +56,10 @@ export default class Income extends React.Component {
                     <div className="probe-header">
                         Distance:
                     </div>
-                    <div className="probe-distance">
+                    <div className="probe-distance" onMouseOver={this.props.onMouseOver} data-tip="probe-distance">
                         {HelperConst.showNum(this.props.userSettings.probe.distance)} km
                     </div>
-                    <div className="probe-rate">
+                    <div className="probe-rate" onMouseOver={this.props.onMouseOver} data-tip="probe-rate">
                         +{HelperConst.showNum(this.props.userSettings.probe.getDistPerSec())} km/s
                     </div>
                 </React.Fragment>
@@ -75,10 +75,10 @@ export default class Income extends React.Component {
                     <div className="income-header">
                         Money:
                     </div>
-                    <div className="income-money">
+                    <div className="income-money" onMouseOver={this.props.onMouseOver} data-tip="income-money">
                         {HelperConst.moneySymbolSpan()}{HelperConst.showNum(this.props.userSettings.money)}
                     </div>
-                    <div className="income-earning">
+                    <div className="income-earning" onMouseOver={this.props.onMouseOver} data-tip="income-earning">
                         (+ {HelperConst.moneySymbolSpan()}{HelperConst.showNum(revenue)}/s)
                     </div>
 
@@ -87,12 +87,12 @@ export default class Income extends React.Component {
 
                 </div>
 
-                <div className="title-wrapper">
+                <div className="title-wrapper" onMouseOver={this.props.onMouseOver} data-tip="title-wrapper">
                     <div className="von">von</div>
-                    <div className="text-effect">
-                        <h1 className="neon" data-text="NEUMANN">NEUMANN</h1>
+                    <div className="text-effect" >
+                        <h1 className="neon" data-text="NEUMANN" >NEUMANN</h1>
                         <div className="gradient"></div>
-                        <div className="spotlight"></div>
+                        <div className="spotlight" onMouseOver={this.props.onMouseOver} data-tip="title"></div>
                     </div>
                 </div>
 

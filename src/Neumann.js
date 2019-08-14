@@ -72,7 +72,7 @@ export default class Neumann extends React.Component {
 
         this.domRefs = [];
         this.purchaseAmt = "1";
-        this.tabIndex = 1;
+        this.tabIndex = 0;
 
 
         // this.probe = new Probe(new Decimal(0), 0, 0, 0);
@@ -280,7 +280,7 @@ export default class Neumann extends React.Component {
             "value", "number", "qualityLoss", "combatLoss", "distance",
             "num",
             "prestigeNext",
-            "lifetimeEarnings", "lifetimeLearning",
+            "lifetimeEarnings", "lifetimeLearning", "lifetimeDistance",
             "curMaxMoney"
         ];
         this.userSettings = JSON.parse(saveString, (key, value) => {
@@ -401,17 +401,12 @@ export default class Neumann extends React.Component {
     }
 
     updatePrestigeEarned() {
-        // const newPrestigeNext = ComputeFunc.calcPrestigeEarned(this.userSettings.lifetimeEarnings);
-        const newPrestigeNext = ComputeFunc.calcPrestigeEarnedFromMax(this.userSettings.curMaxMoney).minus(this.userSettings.prestige.num);
+        const newPrestigeNext = ComputeFunc.calcPrestigeEarnedFromLearning(this.userSettings.knowledge)
+            .minus(this.userSettings.prestigeNext);
         if (newPrestigeNext.gt(0) && !newPrestigeNext.eq(this.userSettings.prestigeNext)) {
-            // mylog("newPrestigeNext:",newPrestigeNext.toFixed(9),"prestigeNext:",this.userSettings.prestigeNext.toFixed(9));
-            this.setState({
-                prestigeNext: newPrestigeNext,
-            })
+            mylog("newPrestigeNext:", newPrestigeNext.toFixed(9), "prestigeNext:", this.userSettings.prestigeNext.toFixed(9));
+            this.userSettings.prestigeNext = this.userSettings.prestigeNext.plus(newPrestigeNext);
         }
-        // mylog("maxMoney:",this.userSettings.curMaxMoney.toFixed());
-        // mylog("lifetime:",this.userSettings.lifetimeEarnings.toFixed(),"  newprestige:",newPrestigeNext.toFixed());
-        // mylog(Decimal.sqrt(this.userSettings.lifetimeEarnings.div(Math.pow(10, 6))).times(150));
     }
 
     prestige() {
@@ -492,19 +487,21 @@ export default class Neumann extends React.Component {
             return newItem;
         });
         if (changed) {
-            this.setState((state) => ({
+            this.setState((state, props) => ({
                 businesses: newBusinesses,
             }))
         }
     }
 
     incrementProbeDistance() {
-        this.userSettings.probe.update(this.timeMultiplier);
-        // this.setState((state, props) => ({
-        //     probeDistance: state.probeDistance.plus(this.mapDistance.times(.001))
-        // }));
-        // const conv = ComputeFunc.convertDistanceToSpace(this.state.probeDistance);
-        // mylog("convertDistanceToSpace:",conv.idx,conv.dist.toNumber());
+        const oldDist = this.userSettings.probe.distance;
+        const addDist = this.userSettings.probe.getDistPerTick(this.timeMultiplier);
+        this.userSettings.lifetimeDistance = this.userSettings.lifetimeDistance.plus(addDist);
+        this.userSettings.probe.goFarther(addDist);
+
+        const newLearning = this.userSettings.probe.getLearned(this.userSettings.probe.distance)
+            .minus(this.userSettings.probe.getLearned(oldDist));
+        this.userSettings.knowledge = this.userSettings.knowledge.plus(newLearning);
 
         const conv = Space.convertDistanceToSpace(this.userSettings.probe.distance);
         this.mapDistance = conv.dist;
@@ -881,17 +878,18 @@ export default class Neumann extends React.Component {
         // probes enabled
         if (this.userSettings.featureEnabled[1001]) {
             offlinetext = "";
-            currentProbe = <div id="previousProbe">Current Probe: {HelperConst.moneySymbolSpan()}{HelperConst.showNum(this.userSettings.probe.value)}</div>
+            currentProbe = <div id="previousProbe" onMouseOver={this.onMouseOver} data-tip="previousProbe">Current Probe: {HelperConst.moneySymbolSpan()}{HelperConst.showNum(this.userSettings.probe.value)}</div>
             probebutton = (
                 <button className="probe-purchase"
-                    onClick={this.purchaseProbe}>
+                    onClick={this.purchaseProbe}
+                    onMouseOver={this.onMouseOver} data-tip="probe-purchase">
                     Buy Probe: {HelperConst.moneySymbolSpan()}{HelperConst.showNum(ComputeFunc.getPct(this.userSettings.money, this.userSettings.sliderInfo.probeSpendPct))}
                 </button>
             );
             if (this.userSettings.sliderInfo.rangeSettings.rangeCt === 1) {
                 probeattribs = <div className="probe-attribs"></div>
                 sliderattribs =
-                    <div className="sliderattribs">
+                    <div className="sliderattribs" onMouseOver={this.onMouseOver} data-tip="sliderattribs">
                         <span className="probe-prod-span">Probe Production</span>
                         <div className="sliderHeader">{sliderText}</div>
                         <div className="sliderContainer">
@@ -899,17 +897,9 @@ export default class Neumann extends React.Component {
                         </div>
                     </div>
             } else if (this.userSettings.sliderInfo.rangeSettings.rangeCt === 2) {
-                probeattribs =
-                    <div className="probe-attribs">
-                        <div className="probe-attrib speed-header">Speed</div>
-                        <div className="probe-attrib quality-header">Quality</div>
-                        <div></div>
-                        <div className="probe-attrib probe-speed">{this.userSettings.sliderInfo.probePcts[0]}%</div>
-                        <div className="probe-attrib probe-quality">{this.userSettings.sliderInfo.probePcts[1]}%</div>
-                        <div></div>
-                    </div>
+
                 sliderattribs =
-                    <div className="sliderattribs">
+                    <div className="sliderattribs" onMouseOver={this.onMouseOver} data-tip="sliderattribs">
                         <span className="probe-prod-span">Probe Production</span>
                         <div className="sliderHeader">{sliderText}</div>
                         <div className="sliderContainer">
@@ -919,19 +909,20 @@ export default class Neumann extends React.Component {
                         <div className="sliderContainer">
                             {Sliders.getRange(this.userSettings.sliderInfo, this.rangeChange)}
                         </div>
+                    </div>
+                probeattribs =
+                    <div className="probe-attribs" onMouseOver={this.onMouseOver} data-tip="probe-attribs">
+                        <div className="probe-attrib speed-header" onMouseOver={this.onMouseOver} data-tip="probe-attribs-speed">Speed</div>
+                        <div className="probe-attrib quality-header" onMouseOver={this.onMouseOver} data-tip="probe-attribs-quality">Quality</div>
+                        <div></div>
+                        <div className="probe-attrib probe-speed" onMouseOver={this.onMouseOver} data-tip="probe-attribs-speed">{this.userSettings.sliderInfo.probePcts[0]}%</div>
+                        <div className="probe-attrib probe-quality" onMouseOver={this.onMouseOver} data-tip="probe-attribs-quality">{this.userSettings.sliderInfo.probePcts[1]}%</div>
+                        <div></div>
                     </div>
             } else {  // rangeCt === 3
-                probeattribs =
-                    <div className="probe-attribs">
-                        <div className="probe-attrib speed-header">Speed</div>
-                        <div className="probe-attrib quality-header">Quality</div>
-                        <div className="probe-attrib combat-header">Combat</div>
-                        <div className="probe-attrib probe-speed">{this.userSettings.sliderInfo.probePcts[0]}%</div>
-                        <div className="probe-attrib probe-quality">{this.userSettings.sliderInfo.probePcts[1]}%</div>
-                        <div className="probe-attrib probe-combat">{this.userSettings.sliderInfo.probePcts[2]}%</div>
-                    </div>
+
                 sliderattribs =
-                    <div className="sliderattribs">
+                    <div className="sliderattribs" onMouseOver={this.onMouseOver} data-tip="sliderattribs">
                         <span className="probe-prod-span">Probe Production</span>
                         <div className="sliderHeader">{sliderText}</div>
                         <div className="sliderContainer">
@@ -941,10 +932,19 @@ export default class Neumann extends React.Component {
                         <div className="sliderContainer">
                             {Sliders.getRange(this.userSettings.sliderInfo, this.rangeChange)}
                         </div>
+                    </div>
+                probeattribs =
+                    <div className="probe-attribs" onMouseOver={this.onMouseOver} data-tip="probe-attribs">
+                        <div className="probe-attrib speed-header" onMouseOver={this.onMouseOver} data-tip="probe-attribs-speed">Speed</div>
+                        <div className="probe-attrib quality-header" onMouseOver={this.onMouseOver} data-tip="probe-attribs-quality">Quality</div>
+                        <div className="probe-attrib combat-header" onMouseOver={this.onMouseOver} data-tip="probe-attribs-combat">Combat</div>
+                        <div className="probe-attrib probe-speed" onMouseOver={this.onMouseOver} data-tip="probe-attribs-speed">{this.userSettings.sliderInfo.probePcts[0]}%</div>
+                        <div className="probe-attrib probe-quality" onMouseOver={this.onMouseOver} data-tip="probe-attribs-quality">{this.userSettings.sliderInfo.probePcts[1]}%</div>
+                        <div className="probe-attrib probe-combat" onMouseOver={this.onMouseOver} data-tip="probe-attribs-combat">{this.userSettings.sliderInfo.probePcts[2]}%</div>
                     </div>
             }
         } else {
-            offlinetext = <div id="probe-offline">[ OFFLINE ]</div>;
+            offlinetext = <div id="probe-offline" onMouseOver={this.onMouseOver} data-tip="probe-offline">[ OFFLINE ]</div>;
         }
 
 
@@ -959,11 +959,17 @@ export default class Neumann extends React.Component {
                         {probeattribs}
                         {probebutton}
                         {currentProbe}
+                        <ToolTip
+                            tipText={this.state.tipText}
+                            userSettings={this.userSettings}
+                            onMouseOver={this.onMouseOver}
+                        />
                     </div>
 
                     <Space
                         probe={this.userSettings.probe}
                         timeMultiplier={this.timeMultiplier}
+                        onMouseOver={this.onMouseOver}
                     />
 
                 </TabPanel>
@@ -984,6 +990,12 @@ export default class Neumann extends React.Component {
             <TabPanel className="react-tabs__tab-panel settings-tab-panel">
                 <div id="right-sidebar">
                     SETTINGS
+
+                    <ToolTip
+                        tipText={this.state.tipText}
+                        userSettings={this.userSettings}
+                        onMouseOver={this.onMouseOver}
+                    />
                 </div>
 
                 <Settings
@@ -1000,6 +1012,12 @@ export default class Neumann extends React.Component {
             <TabPanel className="react-tabs__tab-panel log-tab-panel">
                 <div id="right-sidebar">
                     LOGS
+
+                    <ToolTip
+                        tipText={this.state.tipText}
+                        userSettings={this.userSettings}
+                        onMouseOver={this.onMouseOver}
+                    />
                 </div>
 
                 <Logs
@@ -1016,6 +1034,12 @@ export default class Neumann extends React.Component {
                 <TabPanel className="react-tabs__tab-panel prestige-tab-panel">
                     <div id="right-sidebar">
                         PRESTIGE
+
+                        <ToolTip
+                            tipText={this.state.tipText}
+                            userSettings={this.userSettings}
+                            onMouseOver={this.onMouseOver}
+                        />
                     </div>
 
                     <Prestige
@@ -1064,7 +1088,7 @@ export default class Neumann extends React.Component {
     }
     afterOpenHelpModal() {
         // references are now sync'd and can be accessed.
-        this.subtitle.style.color = '#f00';
+        // this.subtitle.style.color = '#f00';
     }
 
 
@@ -1176,6 +1200,7 @@ export default class Neumann extends React.Component {
 
                             <ToolTip
                                 tipText={this.state.tipText}
+                                userSettings={this.userSettings}
                                 onMouseOver={this.onMouseOver}
                             />
 
@@ -1247,7 +1272,6 @@ export default class Neumann extends React.Component {
                         </div>
                         <div className="modalContent">
                             {HelperConst.modalHelp()}
-
                         </div>
                     </div>
                 </Modal>

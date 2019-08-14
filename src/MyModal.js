@@ -25,7 +25,7 @@ export default class MyModal extends React.Component {
             >
                 {/* <h2 ref={subtitle => this.subtitle = subtitle}>{this.props.subtitle}</h2> */}
                 <button onClick={this.props.closeModal}>Close</button>
-                <div>{this.props.text}</div>
+                <div className="modal-text">{this.props.text}</div>
 
             </Modal>
         )

@@ -617,7 +617,9 @@ button {
   align-items: center;
   background: $c_featurebg;
   padding: 5px;
-  outline: 1px solid $c_selected;
+  border-radius: 5px;
+  border: 1px solid $c_selected;
+  // outline: 1px solid $c_selected;
 }
 
 .buyx-prefix {

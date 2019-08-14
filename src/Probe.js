@@ -44,8 +44,20 @@ export default class Probe {
         return Decimal(0);
     }
 
-    update(timeMultiplier) {
-        this.goFarther(this.getDistPerTick(timeMultiplier));
+    getLearned(dist) {
+        return dist.div("768e3").times(10).floor().div(10);
     }
+
+    getLearningPerSec() {
+        return this.getDistPerSec().div("768e3").times(1000).floor().div(1000);
+    }
+
+    getLearningPerTick(timeMultiplier) {
+        return this.getLearningPerSec().times(timeMultiplier);
+    }
+
+    // update(timeMultiplier) {
+    //     this.goFarther(this.getDistPerTick(timeMultiplier));
+    // }
 
 }

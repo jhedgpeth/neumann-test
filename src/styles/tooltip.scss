@@ -5,7 +5,8 @@
     bottom: 10px;
     height: 98px;
     width: 200px;
-    outline: 1px solid $c_selected;
+    border-radius: 5px;
+    border: 1px solid $c_selected;
 }
 
 #tooltip #tooltip-text {
