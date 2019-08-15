@@ -37,7 +37,7 @@ export default class Space extends React.Component {
             y: this.centerCanvas.y - 135,
         }
         this.probeCount = {
-            x: 25,
+            x: 50,
             y: 25,
         }
         this.probeStatus = {
@@ -348,6 +348,7 @@ export default class Space extends React.Component {
                 ref={node => {
                     this.centerPlanetRef = node;
                 }}
+                onMouseOver={this.props.onMouseOver} data-tip="prestige-units"
             />
         );
         rows.push(
@@ -552,10 +553,10 @@ export default class Space extends React.Component {
                             x={this.probeCount.x}
                             y={this.probeCount.y}
                             width={200}
-                            text={HelperConst.showInt(this.props.probe.number) + " Probe" + (!this.props.probe.number.eq(1) ? "s" : "")}
+                            text={" Probe" + (!this.props.probe.getLiveNumber().eq(1) ? "s: " : ": ") + HelperConst.showInt(this.props.probe.number)}
                             fontSize={16}
                             fontFamily={'Kodchasan'}
-                            align="center"
+                            align="left"
                             fill="white"
                         />
 

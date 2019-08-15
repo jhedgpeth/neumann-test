@@ -98,17 +98,17 @@ export default class ComputeFunc {
         return revenue.div(totalRevenue).times(100).toFixed(2);
     }
 
-    static calcPrestigeEarned(revenue) {
-        return Decimal.sqrt(revenue.div(Math.pow(10, 9))).times(150).floor();
-    }
+    // static calcPrestigeEarned(revenue) {
+    //     return Decimal.sqrt(revenue.div(Math.pow(10, 9))).times(150).floor();
+    // }
 
     static calcPrestigeEarnedFromLearning(learned) {
-        return learned.log(1.18).floor();
+        return learned.log(1.99).floor();
     }
 
-    static calcPrestigeEarnedFromMax(maxEarnings) {
-        return maxEarnings.div(Math.pow(10, 12)).times(8).plus(1).sqrt().minus(1).div(2);
-    }
+    // static calcPrestigeEarnedFromMax(maxEarnings) {
+    //     return maxEarnings.div(Math.pow(10, 12)).times(8).plus(1).sqrt().minus(1).div(2);
+    // }
 
     static getCost(item, busStat, purchaseAmt, resource) {
 

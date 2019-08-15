@@ -277,7 +277,7 @@ export default class Neumann extends React.Component {
         const decimalKeys = [
             "money",
             "knowledge",
-            "value", "number", "qualityLoss", "combatLoss", "distance",
+            "value", "number", "qualityLoss", "combatLoss", "distance", "distPerSec",
             "num",
             "prestigeNext",
             "lifetimeEarnings", "lifetimeLearning", "lifetimeDistance",
@@ -493,7 +493,8 @@ export default class Neumann extends React.Component {
         }
     }
 
-    incrementProbeDistance() {
+    updateProbe() {
+        // knowledge increase
         const oldDist = this.userSettings.probe.distance;
         const addDist = this.userSettings.probe.getDistPerTick(this.timeMultiplier);
         this.userSettings.lifetimeDistance = this.userSettings.lifetimeDistance.plus(addDist);
@@ -501,7 +502,12 @@ export default class Neumann extends React.Component {
 
         const newLearning = this.userSettings.probe.getLearned(this.userSettings.probe.distance)
             .minus(this.userSettings.probe.getLearned(oldDist));
-        this.userSettings.knowledge = this.userSettings.knowledge.plus(newLearning);
+        if (newLearning.gt(0)) {
+            this.userSettings.knowledge = this.userSettings.knowledge.plus(newLearning);
+        }
+
+        // probe replication
+        this.userSettings.probe.updateNumber();
 
         const conv = Space.convertDistanceToSpace(this.userSettings.probe.distance);
         this.mapDistance = conv.dist;
@@ -785,7 +791,7 @@ export default class Neumann extends React.Component {
         // mylog("dt:",dt,"this.fpsPct:",this.fpsPct);
 
         this.incrementBusinessCounters();
-        this.incrementProbeDistance();
+        this.updateProbe();
         this.incrementAnnouncementCounters();
         this.decrementSavedGameObj();
         this.updateConcentrate();

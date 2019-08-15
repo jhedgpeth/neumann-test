@@ -45,15 +45,23 @@ export default class Probe {
     }
 
     getLearned(dist) {
-        return dist.div("768e3").times(10).floor().div(10);
+        return dist.times(this.getLiveNumber().sqrt()).div("768e3").times(10).floor().div(10);
     }
 
     getLearningPerSec() {
-        return this.getDistPerSec().div("768e3").times(1000).floor().div(1000);
+        return this.getDistPerSec().times(this.getLiveNumber().sqrt()).div("768e3").times(1000).floor().div(1000);
     }
 
     getLearningPerTick(timeMultiplier) {
         return this.getLearningPerSec().times(timeMultiplier);
+    }
+
+    getLiveNumber() {
+        return this.number.minus(this.qualityLoss).minus(this.combatLoss);
+    }
+
+    updateNumber() {
+        this.number = Decimal(2).pow(this.distance.ln().minus(1.2551545012129809219e1).floor());
     }
 
     // update(timeMultiplier) {
