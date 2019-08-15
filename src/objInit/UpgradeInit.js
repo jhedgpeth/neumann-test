@@ -14,7 +14,7 @@ export default function UpgradeInit() {
             // costValue: new Decimal("50"),
             rewardType: "upgradeMult",
             rewardTarget: 0,
-            rewardValue: 2,
+            rewardValue: 10,
         }, {
             id: 1,
             name: "Strong Coffee",
@@ -24,7 +24,7 @@ export default function UpgradeInit() {
             costValue: new Decimal("75e3"),
             rewardType: "upgradeMult",
             rewardTarget: 0,
-            rewardValue: 2,
+            rewardValue: 10,
         }, {
             id: 1000,
             name: "New Technology",
