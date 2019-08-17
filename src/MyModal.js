@@ -15,18 +15,29 @@ export default class MyModal extends React.Component {
     render() {
         return (
             <Modal
-                isOpen={this.props.modalIsOpen}
-                onAfterOpen={this.props.afterOpenModal}
-                onRequestClose={this.props.closeModal}
-                contentLabel="Example Modal"
-                shouldCloseOnOverlayClick={false}
-                className="Modal"
-                overlayClassName="Modal-Overlay"
-            >
-                {/* <h2 ref={subtitle => this.subtitle = subtitle}>{this.props.subtitle}</h2> */}
-                <button onClick={this.props.closeModal}>Close</button>
-                <div className="modal-text">{this.props.text}</div>
-
+                    isOpen={this.props.isOpen}
+                    // onAfterOpen={this.afterOpenHelpModal}
+                    onRequestClose={this.props.onRequestClose}
+                    contentLabel="Example Modal"
+                    shouldCloseOnOverlayClick={false}
+                    className="Modal"
+                    overlayClassName="Modal-Overlay"
+                >
+                    {/* <h2 ref={subtitle => this.subtitle = subtitle}>Hello</h2> */}
+                    <div className="modal-container">
+                        <div className="modalHeader">
+                            <div className="modalTitle">{this.props.title}</div>
+                            <button
+                                className="modalButtons fancyButtons helpModalCloseButton"
+                                onClick={this.props.onRequestClose}>
+                                CLOSE
+                            </button>
+                        </div>
+                        <div className="modalContent">
+                            {/* {HelperConst.modalHelp()} */}
+                            {this.props.text}
+                        </div>
+                    </div>
             </Modal>
         )
     }

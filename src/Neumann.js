@@ -5,10 +5,6 @@ import update from 'immutability-helper';
 import Modal from 'react-modal';
 import Dropdown from 'react-dropdown';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
-// import Slider from 'rc-slider';
-
-// import { compress as lzStringCompress, decompress as lzStringDecompress } from 'lz-string';
-// import { compress as lzStringCompress } from 'lz-string';
 
 import './styles/fonts.css';
 import './styles/index.scss';
@@ -32,6 +28,7 @@ import Settings from './Settings';
 import Logs from './Logs';
 import Prestige from './Prestige';
 import ToolTip from './ToolTip';
+import MyModal from './MyModal';
 
 const Decimal = require('decimal.js');
 const mylog = HelperConst.DebugLog;
@@ -44,6 +41,9 @@ export default class Neumann extends React.Component {
 
         this.state = { ...NeumannInit.freshState() };
         this.state.helpModalIsOpen = false;
+        this.modalTexts = [];
+        this.modalTitle = "";
+        this.modalText = "";
 
         this.userSettings = { ...NeumannInit.userSettings() };
 
@@ -103,6 +103,7 @@ export default class Neumann extends React.Component {
         this.clickAnnouncement = this.clickAnnouncement.bind(this);
         this.purchaseAmtDropDownHandler = this.purchaseAmtDropDownHandler.bind(this);
         this.announce = this.announce.bind(this);
+        this.showModal = this.showModal.bind(this);
         this.sliderChange = this.sliderChange.bind(this);
         this.rangeChange = this.rangeChange.bind(this);
         this.enableFeature = this.enableFeature.bind(this);
@@ -326,13 +327,19 @@ export default class Neumann extends React.Component {
                 duration.seconds + "s",
             );
 
-            const gained = Business.computeTotalEarningPerSec(this.state.businesses, this.userSettings, this.state.concentrate)
+            const moneyGained = Business.computeTotalEarningPerSec(this.state.businesses, this.userSettings, this.state.concentrate)
                 .times(Math.floor(deltaMillis / 1000));
             mylog("previous money:", HelperConst.showNum(this.userSettings.money));
-            mylog("you gained $", HelperConst.showNum(gained));
-            this.userSettings.money = this.userSettings.money.plus(gained);
+            mylog("you gained $", HelperConst.showNum(moneyGained));
+            this.userSettings.money = this.userSettings.money.plus(moneyGained);
             mylog("now should have $", HelperConst.showNum(this.userSettings.money));
+            
             mylog("probe distance:", HelperConst.showNum(this.userSettings.probe.distance));
+            const probeDistGained = this.userSettings.probe.getDistPerSec().times(Math.floor(deltaMillis / 1000));
+            mylog("probe dist gained:",HelperConst.showNum(probeDistGained));
+            this.userSettings.probe.goFarther(probeDistGained);
+
+            this.showModal("Welcome Back!", HelperConst.welcomeBack(duration, moneyGained, probeDistGained));
         }
 
         // this.lastLoop = Date.now();
@@ -693,6 +700,11 @@ export default class Neumann extends React.Component {
         }))
     }
 
+    showModal(title,text) {
+        console.log("adding modal:",text);
+        this.modalTexts.push({title: title, text: text});
+    }
+
     clickConcentrate() {
         mylog("clickConcentrate");
         if (this.state.concentrate.time <= 0) {
@@ -781,69 +793,7 @@ export default class Neumann extends React.Component {
 
     }
 
-    updateGame() {
 
-        const now = Date.now();
-        const dt = now - this.lastLoop;
-        this.lastLoop = now;
-        this.timeMultiplier = dt / 1000;
-        this.fpsPct = Math.floor((100 / dt) * 100);
-        // mylog("dt:",dt,"this.fpsPct:",this.fpsPct);
-
-        this.incrementBusinessCounters();
-        this.updateProbe();
-        this.incrementAnnouncementCounters();
-        this.decrementSavedGameObj();
-        this.updateConcentrate();
-
-        const payoutMoneyThisTick = Business.getAllPayouts(this.state.businesses, this.userSettings);
-        this.userSettings.lifetimeEarnings = this.userSettings.lifetimeEarnings.plus(payoutMoneyThisTick);
-        // mylog("payoutMoneyThisTick:",payoutMoneyThisTick.toFixed());
-
-        // const payoutKnowledgeThisTick = ComputeFunc.totalPayout(this.state.probes, this.userSettings.prestige);
-        const payoutKnowledgeThisTick = new Decimal(0);
-
-        /* reveal businesses if money reached */
-        this.state.businesses.forEach(item => {
-            let b = this.userSettings.busStats[item.id];
-            if (!b.revealed) {
-                if (item.costType === "money" && item.initialVisible.lte(this.userSettings.money)) {
-                    b.revealed = true;
-                    mylog("revealed business", item.name);
-                };
-                if (item.costType === "knowledge" && item.initialVisible.lte(this.userSettings.knowledge)) {
-                    b.revealed = true;
-                    mylog("revealed business", item.name);
-                };
-            }
-        })
-        /* reveal upgrades if resource reached */
-        this.state.upgrades.forEach(item => {
-            let u = this.userSettings.upgStats[item.id];
-            if (!u.revealed) {
-                if (item.watchType === "money" && item.watchValue.lte(this.userSettings.money)) {
-                    u.revealed = true;
-                    mylog("revealed upgrade", item.name);
-                };
-                if (item.watchType === "knowledge" && item.watchValue.lte(this.userSettings.knowledge)) {
-                    u.revealed = true;
-                    mylog("revealed upgrade", item.name);
-                };
-                if (item.watchType === "businessOwned" && this.userSettings.busStats[item.watchTarget].owned >= item.watchValue) {
-                    u.revealed = true;
-                    mylog("revealed upgrade", item.name);
-                }
-            }
-        });
-
-        this.userSettings.money = this.userSettings.money.plus(payoutMoneyThisTick);
-        if (this.userSettings.money.gt(this.userSettings.curMaxMoney)) {
-            this.userSettings.curMaxMoney = this.userSettings.money;
-        }
-        this.userSettings.knowledge = this.userSettings.knowledge.plus(payoutKnowledgeThisTick);
-
-        this.setTitle();
-    }
 
     getTabList() {
         let rows = [];
@@ -1097,6 +1047,76 @@ export default class Neumann extends React.Component {
         // this.subtitle.style.color = '#f00';
     }
 
+    updateGame() {
+
+        if (this.modalTexts.length>0) {
+            const modalPop = this.modalTexts.pop();
+            this.modalTitle = modalPop.title;
+            this.modalText = modalPop.text;
+            this.openHelpModal();
+        }
+
+        const now = Date.now();
+        const dt = now - this.lastLoop;
+        this.lastLoop = now;
+        this.timeMultiplier = dt / 1000;
+        this.fpsPct = Math.floor((100 / dt) * 100);
+        // mylog("dt:",dt,"this.fpsPct:",this.fpsPct);
+
+        this.incrementBusinessCounters();
+        this.updateProbe();
+        this.incrementAnnouncementCounters();
+        this.decrementSavedGameObj();
+        this.updateConcentrate();
+
+        const payoutMoneyThisTick = Business.getAllPayouts(this.state.businesses, this.userSettings);
+        this.userSettings.lifetimeEarnings = this.userSettings.lifetimeEarnings.plus(payoutMoneyThisTick);
+        // mylog("payoutMoneyThisTick:",payoutMoneyThisTick.toFixed());
+
+        // const payoutKnowledgeThisTick = ComputeFunc.totalPayout(this.state.probes, this.userSettings.prestige);
+        const payoutKnowledgeThisTick = new Decimal(0);
+
+        /* reveal businesses if money reached */
+        this.state.businesses.forEach(item => {
+            let b = this.userSettings.busStats[item.id];
+            if (!b.revealed) {
+                if (item.costType === "money" && item.initialVisible.lte(this.userSettings.money)) {
+                    b.revealed = true;
+                    mylog("revealed business", item.name);
+                };
+                if (item.costType === "knowledge" && item.initialVisible.lte(this.userSettings.knowledge)) {
+                    b.revealed = true;
+                    mylog("revealed business", item.name);
+                };
+            }
+        })
+        /* reveal upgrades if resource reached */
+        this.state.upgrades.forEach(item => {
+            let u = this.userSettings.upgStats[item.id];
+            if (!u.revealed) {
+                if (item.watchType === "money" && item.watchValue.lte(this.userSettings.money)) {
+                    u.revealed = true;
+                    mylog("revealed upgrade", item.name);
+                };
+                if (item.watchType === "knowledge" && item.watchValue.lte(this.userSettings.knowledge)) {
+                    u.revealed = true;
+                    mylog("revealed upgrade", item.name);
+                };
+                if (item.watchType === "businessOwned" && this.userSettings.busStats[item.watchTarget].owned >= item.watchValue) {
+                    u.revealed = true;
+                    mylog("revealed upgrade", item.name);
+                }
+            }
+        });
+
+        this.userSettings.money = this.userSettings.money.plus(payoutMoneyThisTick);
+        if (this.userSettings.money.gt(this.userSettings.curMaxMoney)) {
+            this.userSettings.curMaxMoney = this.userSettings.money;
+        }
+        this.userSettings.knowledge = this.userSettings.knowledge.plus(payoutKnowledgeThisTick);
+
+        this.setTitle();
+    }
 
     render() {
         const { isLoaded } = this.state;
@@ -1257,30 +1277,12 @@ export default class Neumann extends React.Component {
                     />
                 </div>
 
-                <Modal
+                <MyModal
                     isOpen={this.state.helpModalIsOpen}
-                    // onAfterOpen={this.afterOpenHelpModal}
                     onRequestClose={this.closeHelpModal}
-                    contentLabel="Example Modal"
-                    shouldCloseOnOverlayClick={false}
-                    className="Modal"
-                    overlayClassName="Modal-Overlay"
-                >
-                    {/* <h2 ref={subtitle => this.subtitle = subtitle}>Hello</h2> */}
-                    <div className="modal-container">
-                        <div className="modalHeader">
-                            <div className="modalTitle">Help</div>
-                            <button
-                                className="modalButtons fancyButtons helpModalCloseButton"
-                                onClick={this.closeHelpModal}>
-                                CLOSE
-                            </button>
-                        </div>
-                        <div className="modalContent">
-                            {HelperConst.modalHelp()}
-                        </div>
-                    </div>
-                </Modal>
+                    title={this.modalTitle}
+                    text={this.modalText}
+                />
 
             </div>
 

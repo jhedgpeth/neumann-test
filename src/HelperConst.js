@@ -124,18 +124,22 @@ export default class HelperConst {
     }
 
     static vonNeumannWiki = <a href="https://google.com">google</a>;
+    
     static modalHelp() {
-        //         return `
-        // This is the help text.
-        // You click businesses, earn money, and see where that can take you...
-
-        // Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-        // ` ;
         return <p>
             This is the help text.<br /><br />
             You click businesses, earn money, and see where that can take you...<br /><br />
 
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
             </p>;
+    }
+
+    static welcomeBack(duration, moneyGain, probeDistGain) {
+        const { days, hours, minutes, seconds } = duration;
+        return <p>
+            You were gone for <b>{days}</b>d <b>{hours}</b>h <b>{minutes}</b>m <b>{seconds}</b>s<br />
+            You earned <b>{this.moneySymbolSpan()}{this.showNum(moneyGain)}</b><br />
+            Your probe(s) travelled <b>{this.showNum(probeDistGain)}</b> kilometers
+        </p>;
     }
 }
