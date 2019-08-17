@@ -211,7 +211,7 @@ export default class ComputeFunc {
         return this.primes;
     }
 
-    static convertMillis( milliseconds ) {
+    static convertMillis(milliseconds) {
         let day, hour, minute, seconds;
         const showWith0 = value => (value < 10 ? `0${value}` : value);
         seconds = Math.floor(milliseconds / 1000);
@@ -227,6 +227,14 @@ export default class ComputeFunc {
             minutes: showWith0(minute),
             seconds: showWith0(seconds)
         };
+    }
+
+    static randomEllipsePoint(w, h) {
+        const radians = Math.random() * (Math.PI * 2);
+        const rho = Math.random();
+        const x = Math.sqrt(rho) * Math.cos(radians) * (w / 2);
+        const y = Math.sqrt(rho) * Math.sin(radians) * (h / 2);
+        return { x: x, y: y };
     }
 
 }
