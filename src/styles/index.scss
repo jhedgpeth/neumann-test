@@ -343,6 +343,7 @@ button {
   opacity: 1;
 }
 #savegame.game-saved {
+  color: $c_mainfg;
   text-align: center;
   margin: auto;
   grid-column: 8;
@@ -355,16 +356,12 @@ button {
   opacity: 0;
 }
 #savegame.game-saved-alt {
+  color: $c_neongreen;
   text-align: center;
   margin: auto;
   grid-column: 8;
   grid-row: 1;
-  -webkit-transition: opacity 4s ease-in;
-  -moz-transition: opacity 4s ease-in;
-  -ms-transition: opacity 4s ease-in;
-  -o-transition: opacity 4s ease-in;
-  transition: opacity 4s ease-in;
-  opacity: 0;
+  opacity: 1;
 }
 
 /* left sidebar

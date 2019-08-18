@@ -58,10 +58,7 @@ export default class Neumann extends React.Component {
         this.gameSavedNotify = <div id="savegame" className="game-saved">Game Saved</div>
         this.gameSavedNotifyAlt = <div id="savegame" className="game-saved-alt">Game Saved</div>
         this.gameSavedCountdown = 4;
-        this.gameSavedObj = {
-            content: this.gameSavedHide,
-            countdown: this.gameSavedCountdown,
-        };
+        
 
         this.announceCt = 0;
         this.overlayCt = 0;
@@ -360,27 +357,37 @@ export default class Neumann extends React.Component {
         ls.set('neumann_game_save', saveStringText);
 
         let saveClass = this.gameSavedNotify;
-        if (this.gameSavedObj.content === this.gameSavedNotify) {
+        if (this.state.gameSavedObj.content === this.gameSavedNotify) {
             saveClass = this.gameSavedNotifyAlt;
-        } else if (this.gameSavedObj.content === this.gameSavedNotify) {
-            saveClass = this.gameSavedNotify;
         }
 
         // this.announce("game saved");
-        this.gameSavedObj = {
-            content: saveClass,
-            countdown: this.gameSavedCountdown,
-        };
+        this.setState((state, props) => ({
+            gameSavedObj: {
+                content: saveClass,
+                countdown: this.gameSavedCountdown,
+            }
+        }));
         // this.startSaveGameInterval();
         mylog("game saved");
     }
 
     decrementSavedGameObj() {
-        if (this.gameSavedObj.countdown > 0) {
-            this.gameSavedObj.countdown -= this.timeMultiplier;
+        if (this.state.gameSavedObj.countdown > 0) {
+            this.setState((state, props) => ({
+                gameSavedObj: {
+                    content: state.gameSavedObj.content,
+                    countdown: state.gameSavedObj.countdown-this.timeMultiplier,
+                }
+            }));
         }
-        if (this.gameSavedObj.countdown < 0) {
-            this.gameSavedObj.content = this.gameSavedHide;
+        if (this.state.gameSavedObj.countdown < 0) {
+            this.setState((state, props) => ({
+                gameSavedObj: {
+                    content: this.gameSavedHide,
+                    countdown: 0,
+                }
+            }));
         }
     }
 
@@ -1086,6 +1093,14 @@ export default class Neumann extends React.Component {
         if (this.modalTexts.length > 0 && !this.state.helpModalIsOpen) {
             this.nextModal();
         }
+        if (this.state.gameSavedObj.content === this.gameSavedNotifyAlt) {
+            this.setState((state, props) => ({
+                gameSavedObj: {
+                    content: this.gameSavedNotify,
+                    countdown: this.gameSavedCountdown,
+                }
+            }));
+        }
 
         const now = Date.now();
         const dt = now - this.lastLoop;
@@ -1297,7 +1312,7 @@ export default class Neumann extends React.Component {
 
                     <div id="version">v. 0.0.1</div>
                     <div id="fps">fps:{this.fpsPct}%</div>
-                    {this.gameSavedObj.content}
+                    {this.state.gameSavedObj.content}
 
                 </div>
 

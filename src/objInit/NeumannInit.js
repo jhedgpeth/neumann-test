@@ -19,6 +19,10 @@ export default class NeumannInit extends React.Component {
         },
         concentrateClass: "concIdle",
         tipText: "",
+        gameSavedObj: {
+            content: <div id="savegame"></div>,
+            countdown: 0,
+        }
     })
 
     static userSettings = () => ({
