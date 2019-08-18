@@ -194,7 +194,7 @@ export default class Business extends React.Component {
                     <div className="overlays-wrapper" >
                         {overlayItems}
                     </div>
-                    <div className={"business-buy-progress " + bgClass}>
+                    <div className={"business-buy-progress " + bgClass} onMouseOver={this.props.onMouseOver} data-tip={"business-buy-" + item.id}>
                         <div className={"business-buy-progress-pct " + bgClass} style={buyPctStyle} onMouseOver={this.props.onMouseOver} data-tip={"business-buy-" + item.id}>
                             <span ></span>
                         </div>

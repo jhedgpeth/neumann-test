@@ -73,9 +73,10 @@ export default class HelperConst {
     //     "Edge of Observable Universe",
     // ];
 
-    static DebugLog() {
+    static DebugLog(...myArgs) {
         if (HelperConst.DEBUG) {
             console.log.apply(console, arguments);
+            // console.table(myArgs);
         }
     }
 
@@ -124,7 +125,7 @@ export default class HelperConst {
     }
 
     static vonNeumannWiki = <a href="https://google.com">google</a>;
-    
+
     static modalHelp() {
         return <p>
             This is the help text.<br /><br />

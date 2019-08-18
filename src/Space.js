@@ -310,7 +310,66 @@ export default class Space extends React.Component {
     }
 
     generateSpaceRender() {
+        let planetName = "";
+        switch (this.zoomShown) {
+            case 0: planetName="earth"; break;
+            case 1: planetName="sun"; break;
+            case 2: planetName="sun"; break;
+            default: break;
+        }
+
+
         let rows = [];
+        rows.push(
+            <Ellipse
+                key="outerEllipse"
+                id='outerEllipse'
+                x={this.centerCanvas.x}
+                y={this.centerCanvas.y}
+                radiusX={this.outerRadius.x}
+                radiusY={this.outerRadius.y}
+                stroke="#d55"
+                dash={[5, 5]}
+                ref={node => {
+                    this.outerEllipseRef = node;
+                }}
+                listening={false}
+            />
+        );
+        rows.push(
+            <Ellipse
+                key="innerEllipse"
+                id='innerEllipse'
+                x={this.centerCanvas.x}
+                y={this.centerCanvas.y}
+                radiusX={this.innerRadius.x}
+                radiusY={this.innerRadius.y}
+                stroke="#d55"
+                dash={[5, 5]}
+                ref={node => {
+                    this.innerEllipseRef = node;
+                }}
+                listening={false}
+            />
+        );
+
+
+        rows.push(
+            <Ellipse
+                key="centerEllipse"
+                id='centerEllipse'
+                x={this.centerCanvas.x}
+                y={this.centerCanvas.y}
+                radiusX={this.centerRadius.x}
+                radiusY={this.centerRadius.y}
+                stroke="#d55"
+                dash={[5, 5]}
+                ref={node => {
+                    this.centerEllipseRef = node;
+                }}
+                onMouseOver={this.props.onMouseOver} data-tip="space-center-ellipse"
+            />
+        );
         rows.push(
             <Ellipse
                 key="pulse"
@@ -324,8 +383,10 @@ export default class Space extends React.Component {
                 ref={node => {
                     this.pulseRef = node;
                 }}
+                onMouseOver={this.props.onMouseOver} data-tip="space-pulse"
             />
         );
+
         rows.push(
             <Circle
                 key="centerPlanet"
@@ -348,52 +409,7 @@ export default class Space extends React.Component {
                 ref={node => {
                     this.centerPlanetRef = node;
                 }}
-                onMouseOver={this.props.onMouseOver} data-tip="prestige-units"
-            />
-        );
-        rows.push(
-            <Ellipse
-                key="centerEllipse"
-                id='centerEllipse'
-                x={this.centerCanvas.x}
-                y={this.centerCanvas.y}
-                radiusX={this.centerRadius.x}
-                radiusY={this.centerRadius.y}
-                stroke="#d55"
-                dash={[5, 5]}
-                ref={node => {
-                    this.centerEllipseRef = node;
-                }}
-            />
-        );
-        rows.push(
-            <Ellipse
-                key="innerEllipse"
-                id='innerEllipse'
-                x={this.centerCanvas.x}
-                y={this.centerCanvas.y}
-                radiusX={this.innerRadius.x}
-                radiusY={this.innerRadius.y}
-                stroke="#d55"
-                dash={[5, 5]}
-                ref={node => {
-                    this.innerEllipseRef = node;
-                }}
-            />
-        );
-        rows.push(
-            <Ellipse
-                key="outerEllipse"
-                id='outerEllipse'
-                x={this.centerCanvas.x}
-                y={this.centerCanvas.y}
-                radiusX={this.outerRadius.x}
-                radiusY={this.outerRadius.y}
-                stroke="#d55"
-                dash={[5, 5]}
-                ref={node => {
-                    this.outerEllipseRef = node;
-                }}
+                onMouseOver={this.props.onMouseOver} data-tip={"space-"+planetName}
             />
         );
 
@@ -417,6 +433,7 @@ export default class Space extends React.Component {
                     }}
                     fillRadialGradientEndRadius={8}
                     fillRadialGradientColorStops={[0.4, '#ddd', 0.9, '#aaa', 1, '#333']}
+                    onMouseOver={this.props.onMouseOver} data-tip="space-moon"
                 />
             );
         }
@@ -445,9 +462,11 @@ export default class Space extends React.Component {
 
     generateStatusText() {
         let rows = [];
-        if (this.props.probe.qualityLoss.gt(0)) {
+        // mylog("qualityLoss:",HelperConst.showInt(this.props.probe.qualityLoss));
+        if (this.props.userSettings.probeQualityShown || this.props.probe.qualityLoss.gt(0)) {
             rows.push(
                 <Text
+                    key={"probe-failure"}
                     x={this.probeStatus.x}
                     y={this.probeStatus.y}
                     width={200}
@@ -456,12 +475,14 @@ export default class Space extends React.Component {
                     fontFamily={'Kodchasan'}
                     align="center"
                     fill="gold"
+                    onMouseOver={this.props.onMouseOver} data-tip="space-failures"
                 />
             );
         }
-        if (this.props.probe.combatLoss.gt(0)) {
+        if (this.props.userSettings.probeCombatShown || this.props.probe.combatLoss.gt(0)) {
             rows.push(
                 <Text
+                key={"probe-combat-loss"}
                     x={this.probeStatus.x}
                     y={this.probeStatus.y + 16}
                     width={200}
@@ -470,9 +491,11 @@ export default class Space extends React.Component {
                     fontFamily={'Kodchasan'}
                     align="center"
                     fill="red"
+                    onMouseOver={this.props.onMouseOver} data-tip="space-combat-loss"
                 />
             );
         }
+        return rows;
     }
 
 
@@ -489,84 +512,88 @@ export default class Space extends React.Component {
                 <div className={this.starClass} />
                 <div className={this.starClass} />
 
-                <Stage width={794} height={538} className="dynamic-layer" >
+                <Stage width={794} height={538} className="dynamic-layer"
+                    onMouseOver={this.props.onMouseOver} data-tip={"space-stage-" + this.zoomShown} >
 
-                    <Layer hitGraphEnabled={false}>
-                        {rows}
-                    </Layer>
-                    <Layer className="static-layer" hitGraphEnabled={false}>
+                <Layer hitGraphEnabled={true}>
+                    {rows}
+                </Layer>
+                <Layer className="static-layer" hitGraphEnabled={true}>
 
-                        {/* verticals */}
-                        <Line
-                            points={[this.centerCanvas.x - this.innerRadius.x, this.centerCanvas.y + this.innerRadius.y + 10, this.centerCanvas.x - this.innerRadius.x, this.centerCanvas.y + this.innerRadius.y + 50]}
-                            stroke="#d55"
-                            strokeWidth={1}
-                        />
-                        <Line
-                            points={[this.centerCanvas.x + 110, this.centerCanvas.y + this.innerRadius.y + 30, this.centerCanvas.x + this.innerRadius.x, this.centerCanvas.y + this.innerRadius.y + 30]}
-                            stroke="#d55"
-                            strokeWidth={1}
-                        />
+                    {/* verticals */}
+                    <Line
+                        points={[this.centerCanvas.x - this.innerRadius.x, this.centerCanvas.y + this.innerRadius.y + 10, this.centerCanvas.x - this.innerRadius.x, this.centerCanvas.y + this.innerRadius.y + 50]}
+                        stroke="#d55"
+                        strokeWidth={1}
+                    />
+                    <Line
+                        points={[this.centerCanvas.x + 110, this.centerCanvas.y + this.innerRadius.y + 30, this.centerCanvas.x + this.innerRadius.x, this.centerCanvas.y + this.innerRadius.y + 30]}
+                        stroke="#d55"
+                        strokeWidth={1}
+                    />
 
-                        {/* left and right */}
-                        <Line
-                            points={[this.centerCanvas.x - this.innerRadius.x, this.centerCanvas.y + this.innerRadius.y + 30, this.centerCanvas.x - 110, this.centerCanvas.y + this.innerRadius.y + 30]}
-                            stroke="#d55"
-                            strokeWidth={1}
-                        />
-                        <Line
-                            points={[this.centerCanvas.x + this.innerRadius.x, this.centerCanvas.y + this.innerRadius.y + 10, this.centerCanvas.x + this.innerRadius.x, this.centerCanvas.y + this.innerRadius.y + 50]}
-                            stroke="#d55"
-                            strokeWidth={1}
-                        />
+                    {/* left and right */}
+                    <Line
+                        points={[this.centerCanvas.x - this.innerRadius.x, this.centerCanvas.y + this.innerRadius.y + 30, this.centerCanvas.x - 110, this.centerCanvas.y + this.innerRadius.y + 30]}
+                        stroke="#d55"
+                        strokeWidth={1}
+                    />
+                    <Line
+                        points={[this.centerCanvas.x + this.innerRadius.x, this.centerCanvas.y + this.innerRadius.y + 10, this.centerCanvas.x + this.innerRadius.x, this.centerCanvas.y + this.innerRadius.y + 50]}
+                        stroke="#d55"
+                        strokeWidth={1}
+                    />
 
-                        <Text
-                            x={this.centerCanvas.x - 100}
-                            y={this.centerCanvas.y + this.innerRadius.y + 24}
-                            width={200}
-                            text={"Zoom #" + this.zoomShown + ": " + HelperConst.showInt(this.mapDistance) + " km"}
-                            fontSize={16}
-                            fontFamily={'Kodchasan'}
-                            fontStyle={'bold'}
-                            align="center"
-                            fill="#1A8A09"
-                        />
-                        <Text
-                            x={this.centerCanvas.x - 100}
-                            y={this.centerCanvas.y + this.innerRadius.y + 45}
-                            width={200}
-                            text={this.zoomName}
-                            fontSize={16}
-                            fontFamily={'Kodchasan'}
-                            align="center"
-                            fill="#1A8A09"
-                        />
-                        {/* <MyPortal>
+                    <Text
+                        x={this.centerCanvas.x - 100}
+                        y={this.centerCanvas.y + this.innerRadius.y + 24}
+                        width={200}
+                        text={"Zoom #" + this.zoomShown + ": " + HelperConst.showInt(this.mapDistance) + " km"}
+                        fontSize={16}
+                        fontFamily={'Kodchasan'}
+                        fontStyle={'bold'}
+                        align="center"
+                        fill="#1A8A09"
+                        onMouseOver={this.props.onMouseOver} data-tip="space-zoom"
+                    />
+                    <Text
+                        x={this.centerCanvas.x - 100}
+                        y={this.centerCanvas.y + this.innerRadius.y + 45}
+                        width={200}
+                        text={this.zoomName}
+                        fontSize={16}
+                        fontFamily={'Kodchasan'}
+                        align="center"
+                        fill="#1A8A09"
+                        onMouseOver={this.props.onMouseOver} data-tip="space-name"
+                    />
+                    {/* <MyPortal>
                             <button id="portal-button" disabled={true}>{HelperConst.showNum(Space.spaceZoomLevels[this.zoomShown])}</button>
                         </MyPortal> */}
 
-                    </Layer>
+                </Layer>
 
-                    <Layer className="status-layer" hitGraphEnabled={false}>
+                <Layer className="status-layer" hitGraphEnabled={true}>
 
-                        <Text
-                            x={this.probeCount.x}
-                            y={this.probeCount.y}
-                            width={200}
-                            text={" Probe" + (!this.props.probe.getLiveNumber().eq(1) ? "s: " : ": ") + HelperConst.showInt(this.props.probe.number)}
-                            fontSize={16}
-                            fontFamily={'Kodchasan'}
-                            align="left"
-                            fill="white"
-                        />
+                    <Text
+                        x={this.probeCount.x}
+                        y={this.probeCount.y}
+                        width={200}
+                        text={" Probe" + (!this.props.probe.getLiveNumber().eq(1) ? "s: " : ": ") + HelperConst.showInt(this.props.probe.getLiveNumber())}
+                        fontSize={16}
+                        fontFamily={'Kodchasan'}
+                        align="left"
+                        fill="white"
+                        onMouseOver={this.props.onMouseOver} data-tip="space-probe-count"
+                    />
 
-                        {statusRows}
+                    {statusRows}
 
-                    </Layer>
+                </Layer>
 
                 </Stage>
 
-            </div>
+            </div >
         )
     }
 }

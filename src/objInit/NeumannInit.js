@@ -25,6 +25,8 @@ export default class NeumannInit extends React.Component {
         money: new Decimal(0),
         knowledge: new Decimal(0),
         probe: new Probe(new Decimal(0),new Decimal(0), 0, 0, 0),
+        probeQualityShown: false,
+        probeCombatShown: false,
         prestige: { num: new Decimal(0), val: 10 },
         prestigeNext: new Decimal(0),
         lifetimeEarnings: new Decimal(0),

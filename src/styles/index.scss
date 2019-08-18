@@ -347,11 +347,23 @@ button {
   margin: auto;
   grid-column: 8;
   grid-row: 1;
-  -webkit-transition: opacity 5s ease-in;
-  -moz-transition: opacity 5s ease-in;
-  -ms-transition: opacity 5s ease-in;
-  -o-transition: opacity 5s ease-in;
-  transition: opacity 5s ease-in;
+  -webkit-transition: opacity 4s ease-in;
+  -moz-transition: opacity 4s ease-in;
+  -ms-transition: opacity 4s ease-in;
+  -o-transition: opacity 4s ease-in;
+  transition: opacity 4s ease-in;
+  opacity: 0;
+}
+#savegame.game-saved-alt {
+  text-align: center;
+  margin: auto;
+  grid-column: 8;
+  grid-row: 1;
+  -webkit-transition: opacity 4s ease-in;
+  -moz-transition: opacity 4s ease-in;
+  -ms-transition: opacity 4s ease-in;
+  -o-transition: opacity 4s ease-in;
+  transition: opacity 4s ease-in;
   opacity: 0;
 }
 

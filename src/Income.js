@@ -37,7 +37,7 @@ export default class Income extends React.Component {
         }
 
         // space view activated
-        if (this.props.userSettings.featureEnabled[1000] && this.props.userSettings.probe.value.gt(0)) {
+        if (this.props.userSettings.featureEnabled[5000] && this.props.userSettings.probe.value.gt(0)) {
             rowsLeft.push(
                 <React.Fragment key="learning-header">
                     <div className="learning-header">

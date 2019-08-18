@@ -56,7 +56,8 @@ export default class Neumann extends React.Component {
 
         this.gameSavedHide = <div id="savegame"></div>;
         this.gameSavedNotify = <div id="savegame" className="game-saved">Game Saved</div>
-        this.gameSavedCountdown = 5;
+        this.gameSavedNotifyAlt = <div id="savegame" className="game-saved-alt">Game Saved</div>
+        this.gameSavedCountdown = 4;
         this.gameSavedObj = {
             content: this.gameSavedHide,
             countdown: this.gameSavedCountdown,
@@ -318,7 +319,7 @@ export default class Neumann extends React.Component {
         mylog("userSettings:", this.userSettings);
 
         const saveTime = ls.get('neumann_game_save_time');
-        if (saveTime && (Date.now() - saveTime)>30000) {
+        if (saveTime && (Date.now() - saveTime) > 30000) {
             const deltaMillis = (Date.now() - saveTime);
             const duration = ComputeFunc.convertMillis(deltaMillis);
             mylog("you were gone for",
@@ -334,10 +335,10 @@ export default class Neumann extends React.Component {
             mylog("you gained $", HelperConst.showNum(moneyGained));
             this.userSettings.money = this.userSettings.money.plus(moneyGained);
             mylog("now should have $", HelperConst.showNum(this.userSettings.money));
-            
+
             mylog("probe distance:", HelperConst.showNum(this.userSettings.probe.distance));
             const probeDistGained = this.userSettings.probe.getDistPerSec().times(Math.floor(deltaMillis / 1000));
-            mylog("probe dist gained:",HelperConst.showNum(probeDistGained));
+            mylog("probe dist gained:", HelperConst.showNum(probeDistGained));
             this.userSettings.probe.goFarther(probeDistGained);
 
             this.showModal("Welcome Back!", HelperConst.welcomeBack(duration, moneyGained, probeDistGained));
@@ -358,9 +359,16 @@ export default class Neumann extends React.Component {
         ls.set('neumann_game_save_time', Date.now());
         ls.set('neumann_game_save', saveStringText);
 
+        let saveClass = this.gameSavedNotify;
+        if (this.gameSavedObj.content === this.gameSavedNotify) {
+            saveClass = this.gameSavedNotifyAlt;
+        } else if (this.gameSavedObj.content === this.gameSavedNotify) {
+            saveClass = this.gameSavedNotify;
+        }
+
         // this.announce("game saved");
         this.gameSavedObj = {
-            content: this.gameSavedNotify,
+            content: saveClass,
             countdown: this.gameSavedCountdown,
         };
         // this.startSaveGameInterval();
@@ -380,7 +388,7 @@ export default class Neumann extends React.Component {
         let concButtonClass = this.state.concentrateClass;
 
         if (this.state.concentrate.time > 0) {
-            mylog("concentrate countdown:", this.state.concentrate);
+            // mylog("concentrate countdown:", this.state.concentrate);
             concButtonClass = "concActive";
             let newVal = this.state.concentrate.time - this.timeMultiplier;
             if (newVal <= 0) {
@@ -394,7 +402,8 @@ export default class Neumann extends React.Component {
         }
 
         if (this.state.concentrateClass === "concCooldown" && this.state.concentrate.time < 0) {
-            mylog("concentrate cooldown:", this.state.concentrate);
+            // mylog("concentrate cooldown:", this.state.concentrate);
+            // mylog("concentrate type:", typeof (this.state.concentrate));
             let newVal = this.state.concentrate.time + this.timeMultiplier;
             if (newVal >= 0) {
                 newVal = 0;
@@ -448,8 +457,8 @@ export default class Neumann extends React.Component {
         this.userSettings.prestige.num = this.userSettings.prestige.num.plus(this.cheatPrestigeVal);
     }
     moneyCheat() {
-        mylog("CHEAT: adding 50% money");
-        this.userSettings.money = this.userSettings.money.times(1.5);
+        mylog("CHEAT: adding 100% money");
+        this.userSettings.money = this.userSettings.money.times(2);
     }
 
 
@@ -502,26 +511,42 @@ export default class Neumann extends React.Component {
     }
 
     updateProbe() {
-        // knowledge increase
-        const oldDist = this.userSettings.probe.distance;
-        const addDist = this.userSettings.probe.getDistPerTick(this.timeMultiplier);
-        this.userSettings.lifetimeDistance = this.userSettings.lifetimeDistance.plus(addDist);
-        this.userSettings.probe.goFarther(addDist);
 
-        const newLearning = this.userSettings.probe.getLearned(this.userSettings.probe.distance)
-            .minus(this.userSettings.probe.getLearned(oldDist));
-        if (newLearning.gt(0)) {
-            this.userSettings.knowledge = this.userSettings.knowledge.plus(newLearning);
+
+        if (!this.userSettings.probe.finished) {
+
+            if (this.userSettings.probe.qualityLoss.gt(0) && !this.userSettings.probeQualityShown)
+                this.userSettings.probeQualityShown = true;
+            if (this.userSettings.probe.combatLoss.gt(0) && !this.userSettings.probeCombatShown)
+                this.userSettings.probeCombatShown = true;
+
+            if (this.userSettings.probe.number.gt(0) && this.userSettings.probe.getLiveNumber().lt(1)) {
+                this.announce("All probes lost!");
+                // this.userSettings.probe = new Probe(new Decimal(0), new Decimal(0), 0, 0, 0);
+                this.userSettings.probe.finished = true;
+            }
+
+            // knowledge increase
+            const oldDist = this.userSettings.probe.distance;
+            const addDist = this.userSettings.probe.getDistPerTick(this.timeMultiplier);
+            this.userSettings.lifetimeDistance = this.userSettings.lifetimeDistance.plus(addDist);
+            this.userSettings.probe.goFarther(addDist);
+
+            const newLearning = this.userSettings.probe.getLearned(this.userSettings.probe.distance)
+                .minus(this.userSettings.probe.getLearned(oldDist));
+            if (newLearning.gt(0)) {
+                this.userSettings.knowledge = this.userSettings.knowledge.plus(newLearning);
+            }
+
+            // probe replication
+            this.userSettings.probe.updateNumber();
+
+            const conv = Space.convertDistanceToSpace(this.userSettings.probe.distance);
+            this.mapDistance = conv.dist;
+            this.zoomLevel = conv.idx;
+            this.zoomName = conv.name;
+            // mylog("conv:",conv);
         }
-
-        // probe replication
-        this.userSettings.probe.updateNumber();
-
-        const conv = Space.convertDistanceToSpace(this.userSettings.probe.distance);
-        this.mapDistance = conv.dist;
-        this.zoomLevel = conv.idx;
-        this.zoomName = conv.name;
-        // mylog("conv:",conv);
     }
 
     incrementAnnouncementCounters() {
@@ -613,26 +638,26 @@ export default class Neumann extends React.Component {
         mylog("feature enabled:", feature.rewardTarget);
 
         switch (feature.id) {
-            case 1000:
+            case 5000:
                 this.announce(HelperConst.thumbsUpSymbol + " SPAAAAACE!  It's bigger on the outside.");
                 break;
-            case 1001:  // self-replicating (probes)
+            case 5001:  // self-replicating (probes)
                 this.announce(HelperConst.thumbsUpSymbol + " When a boy robot likes a girl robot...  In space.");
                 break;
-            case 1002:  // nano technology
+            case 5002:  // nano technology
                 this.announce(HelperConst.thumbsUpSymbol + " It feels like I'm building nothing at all!");
                 break;
-            case 1003:  // probe quality
+            case 5003:  // probe quality
                 this.userSettings.sliderInfo.rangeSettings = Sliders.getRangeValues(2);
                 this.userSettings.sliderInfo.probePcts = this.reportRangePcts();
                 this.announce(HelperConst.thumbsUpSymbol + " Hey, Stanisław!  What if we measured things first?");
                 break;
-            case 1004:  // probe combat
+            case 5004:  // probe combat
                 this.userSettings.sliderInfo.rangeSettings = Sliders.getRangeValues(3);
                 this.userSettings.sliderInfo.probePcts = this.reportRangePcts();
                 this.announce(HelperConst.thumbsUpSymbol + " H-BOMB!  The H is for Hello.");
                 break;
-            case 1100:  // probe autobuy
+            case 10000:  // probe autobuy
                 this.announce(HelperConst.thumbsUpSymbol + " If you put the little drinky-bird over the button like so...");
                 break;
             default:
@@ -701,9 +726,9 @@ export default class Neumann extends React.Component {
         }))
     }
 
-    showModal(title,text) {
-        console.log("adding modal:",text);
-        this.modalTexts.push({title: title, text: text});
+    showModal(title, text) {
+        console.log("adding modal:", text);
+        this.modalTexts.push({ title: title, text: text });
     }
 
     clickConcentrate() {
@@ -769,7 +794,6 @@ export default class Neumann extends React.Component {
     }
     reportRangePcts() {
         let pSpeedPct = 0, pQualityPct = 0, pCombatPct = 0;
-        mylog("spd:", pSpeedPct, "qual:", pQualityPct, "comb:", pCombatPct);
         if (this.userSettings.sliderInfo.rangeSettings.rangeCt === 1) {
             pSpeedPct = 100;
         } else if (this.userSettings.sliderInfo.rangeSettings.rangeCt === 2) {
@@ -790,8 +814,6 @@ export default class Neumann extends React.Component {
         mylog("probe cost:", pCost.toNumber());
         mylog("probe attrs - pSpeed:", pcts[0], "pQuality:", pcts[1], "pCombat:", pcts[2]);
         this.userSettings.probe = new Probe(new Decimal(1), pCost, pcts[0], pcts[1], pcts[2])
-
-
     }
 
 
@@ -802,7 +824,7 @@ export default class Neumann extends React.Component {
         rows.push(<Tab className="tab-list-item" key="business-tab" >Business</Tab>);
 
         // 2 - Space
-        if (this.userSettings.featureEnabled[1000])
+        if (this.userSettings.featureEnabled[5000])
             rows.push(<Tab className="tab-list-item" key="probe-tab">Space</Tab>);
 
         // 3 - Spacer
@@ -833,7 +855,7 @@ export default class Neumann extends React.Component {
         let sliderText = "Spend " + this.userSettings.sliderInfo.probeSpendPct + "%";
 
         // probes enabled
-        if (this.userSettings.featureEnabled[1001]) {
+        if (this.userSettings.featureEnabled[5001]) {
             offlinetext = "";
             currentProbe = <div id="previousProbe" onMouseOver={this.onMouseOver} data-tip="previousProbe">Current Probe: {HelperConst.moneySymbolSpan()}{HelperConst.showNum(this.userSettings.probe.value)}</div>
             probebutton = (
@@ -906,7 +928,7 @@ export default class Neumann extends React.Component {
 
 
         // space view
-        if (this.userSettings.featureEnabled[1000]) {
+        if (this.userSettings.featureEnabled[5000]) {
             return (
                 <TabPanel className="react-tabs__tab-panel probe-tab-panel">
 
@@ -926,6 +948,7 @@ export default class Neumann extends React.Component {
                     <Space
                         probe={this.userSettings.probe}
                         timeMultiplier={this.timeMultiplier}
+                        userSettings={this.userSettings}
                         onMouseOver={this.onMouseOver}
                     />
 
@@ -1012,12 +1035,21 @@ export default class Neumann extends React.Component {
             // mylog("e:",e);
             // mylog("related target:",e.relatedTarget);
             if (e.target.dataset.tip) {
-                mylog("target tip:", e.target.dataset.tip);
+                // mylog("target tip:", e.target.dataset.tip);
                 let newText = String(e.target.dataset.tip);
                 this.setState((state, props) => ({
                     tipText: newText,
                 }));
             }
+        } else if (e.target) {
+            /* konva & space */
+            // mylog("target:",e.target);
+            // mylog("data-tip:",e.target.attrs['data-tip']);
+            let newText = String(e.target.attrs['data-tip']);
+            this.setState((state, props) => ({
+                tipText: newText,
+            }));
+
         } else if (e.relatedTarget && e.relatedTarget.dataset) {
             if (e.relatedTarget.dataset.tip) {
                 mylog("related target tip:", e.relatedTarget.dataset.tip);
@@ -1026,11 +1058,6 @@ export default class Neumann extends React.Component {
                     tipText: newText,
                 }));
             }
-            // } else if (this.state.tipText) {
-            //     mylog("blanking tipText");
-            //     this.setState((state, props) => ({
-            //         tipText: "",
-            //     }));
         }
     }
 
@@ -1049,14 +1076,14 @@ export default class Neumann extends React.Component {
     }
     nextModal() {
         const modalPop = this.modalTexts.shift();
-            this.modalTitle = modalPop.title;
-            this.modalText = modalPop.text;
-            this.openHelpModal();
+        this.modalTitle = modalPop.title;
+        this.modalText = modalPop.text;
+        this.openHelpModal();
     }
 
     updateGame() {
 
-        if (this.modalTexts.length>0 && !this.state.helpModalIsOpen) {
+        if (this.modalTexts.length > 0 && !this.state.helpModalIsOpen) {
             this.nextModal();
         }
 
@@ -1140,7 +1167,7 @@ export default class Neumann extends React.Component {
                     <button className="sidebarButtons fancyButtons  test-give-prestige"
                         onClick={this.prestigeCheat}>+{this.cheatPrestigeVal} prestige</button>
                     <button className="sidebarButtons fancyButtons  test-give-money"
-                        onClick={this.moneyCheat}>+50% money</button>
+                        onClick={this.moneyCheat}>+100% money</button>
                     <button className="sidebarButtons fancyButtons  announce-button" onClick={() => this.announce(HelperConst.thumbsUpSymbol + " great job winning!  oh boy this is just super.")}>Announce</button>
                     {/* <button className="sidebarButtons fancyButtons  overlay-button" onClick={() => this.addOverlay(0, "X2")}>Mental Math Overlay</button> */}
                     {/* <button className="sidebarButtons fancyButtons  overlay-button" onClick={() => this.addOverlay(1, "X2")}>Newspaper Overlay</button> */}

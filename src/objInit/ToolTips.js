@@ -6,16 +6,15 @@ const tipTextLookup = {
 
     "title":
         <p>
-            Pretty, yeah?<br />
-            From: https://codepen.io/giana/
+            Pretty, yeah?
         </p>,
 
     "title-wrapper":
         <p>
             Pronunciation:<br />
             German: fun Noy-mon<br />
-            English: von Noy-mun<br/>
-            Seinfeld: NEWMAN >:(<br/>
+            English: von Noy-mun<br />
+            Seinfeld: NEWMAN >:(<br />
             Lil John: HWhat
         </p>,
 
@@ -43,6 +42,67 @@ const tipTextLookup = {
 
     "business-revenue":
         `How much you earn per countdown.`,
+
+    "income-money":
+        `The amount of money you have.`,
+
+    "income-earning":
+        `Your money income rate.`,
+
+    "learning-knowledge":
+        `The amount of knowledge attained.`,
+
+    "learning-learning":
+        `Your knowledge learning rate.`,
+
+    "prestige-units":
+        `Your current enabled prestige points.`,
+
+    "prestige-earning":
+        `The number of points you will attain on your next prestige.`,
+
+    "probe-distance":
+        `Total distance traveled by your current probe.`,
+
+    "probe-rate":
+        `Velocity of current probe.`,
+
+    "space-probe-count":
+        `The number of probes current active, after replication and losses.`,
+
+    "space-combat-loss":
+        `The number of probes lost to combat.`,
+
+    "space-failures":
+        `The number of probes lost due to systems failure.`,
+
+    "space-zoom":
+        `The current represented scale.`,
+
+    "space-name":
+        `The name of the current view`,
+
+    "space-earth":
+        `A massive looming object is causing tidal stress fractures across the globe!`,
+
+    "space-moon":
+        `Our moon (if you live on Earth)`,
+
+    "space-sun":
+        `The sun.  So hot right now.`,
+
+    "space-stage-0":
+        `Moon view`,
+
+    "space-stage-1":
+        `Jupiter view`,
+
+    "space-stage-2":
+        <p>
+            Did the dev just skip some planets?<br /><br />
+            You bet Uranus, I did.
+        </p>,
+
 
 }
 
@@ -76,6 +136,28 @@ export default function ToolTips(key, userSettings) {
             p = userSettings.busStats[id].payoutAdj;
             mylog("earnprogress id:", id, "timeAdj:", t, "payoutAdj:", p);
             return businessInfo`${t} ${p}`;
+        case "space-stage-0":
+            if (tipTextLookup[key]) {
+                return tipTextLookup[key];
+            }
+            break;
+        case "space-stage-1":
+            if (tipTextLookup[key]) {
+                return tipTextLookup[key];
+            }
+            break;
+        case "space-stage-2":
+            if (tipTextLookup[key]) {
+                return tipTextLookup[key];
+            }
+            break;
+        case "space-stage-3":
+            if (tipTextLookup[key]) {
+                return tipTextLookup[key];
+            }
+            break;
+        case (key.match(/^space-stage-/) || {}).input:
+            return tipTextLookup['space'];
         default:
             if (tipTextLookup[key]) {
                 return tipTextLookup[key];

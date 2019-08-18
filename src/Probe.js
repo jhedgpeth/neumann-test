@@ -1,6 +1,6 @@
+import HelperConst from './HelperConst';
 
-// import HelperConst from './HelperConst';
-// const mylog = HelperConst.DebugLog;
+const mylog = HelperConst.DebugLog;
 const Decimal = require('decimal.js');
 
 export default class Probe {
@@ -13,15 +13,11 @@ export default class Probe {
         this.qualityLoss = new Decimal(0);
         this.combatLoss = new Decimal(0);
         this.distance = new Decimal(0);
+        this.finished = false;
     }
 
     increment(num) {
         this.number = this.number.plus(num);
-    }
-    decrement(num) {
-        if (this.number.lt(num)) num=this.number;
-        this.number = this.number.minus(num);
-        this.losses = this.losses.plus(num);
     }
 
     goFarther(dist) {
@@ -31,7 +27,7 @@ export default class Probe {
     getDistPerSec() {
         // return this.value.times(this.speed).ln(3);
         if (this.distPerSec) { return this.distPerSec; }
-        const speedQ = Math.pow((1+((this.speed-5)/100)),2);
+        const speedQ = Math.pow((1 + ((this.speed - 5) / 100)), 2);
         this.distPerSec = this.value.div("1e3").sqrt().times(speedQ).div(2);
         return this.distPerSec;
     }
@@ -57,11 +53,21 @@ export default class Probe {
     }
 
     getLiveNumber() {
-        return this.number.minus(this.qualityLoss).minus(this.combatLoss);
+        // if (this.number.gt(0)) {
+        //     mylog("number:", HelperConst.showNum(this.number), "qual:", HelperConst.showNum(this.qualityLoss.floor()), "combat:", HelperConst.showNum(this.combatLoss));
+        //     mylog("livenumber:", HelperConst.showNum(this.number.minus(this.qualityLoss.floor()).minus(this.combatLoss.floor())));
+        // }
+        return this.number.minus(this.qualityLoss.floor()).minus(this.combatLoss.floor());
     }
 
     updateNumber() {
-        this.number = Decimal(2).pow(this.distance.ln().minus(1.2551545012129809219e1).floor());
+        if (this.number.gt(0)) {
+            if (this.distance.gt("768e3")) {
+                this.number = Decimal(2).pow(this.distance.ln().minus(1.2551545012129809219e1).floor());
+            }
+            this.qualityLoss = this.qualityLoss.plus(0.005);
+            mylog("qualityLoss:", HelperConst.showNum(this.qualityLoss));
+        }
     }
 
     // update(timeMultiplier) {
