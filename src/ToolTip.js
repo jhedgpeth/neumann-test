@@ -8,7 +8,7 @@ export default class ToolTip extends React.Component {
     render() {
         return (
             <div id="tooltip" onMouseOver={this.props.onMouseOver} data-tip="tooltip">
-                <div id="tooltip-text">{ToolTips(this.props.tipText)}</div>
+                <div id="tooltip-text">{ToolTips(this.props.tipText, this.props.userSettings)}</div>
             </div>
         )
     }

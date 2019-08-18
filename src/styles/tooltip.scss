@@ -1,14 +1,18 @@
 @import "./colors.scss";
 
 #tooltip {
-    position: absolute;
-    bottom: 10px;
-    height: 98px;
-    width: 200px;
-    border-radius: 5px;
-    border: 1px solid $c_selected;
+  position: absolute;
+  bottom: 10px;
+  height: 98px;
+  width: 200px;
+  border-radius: 5px;
+  border: 1px solid $c_selected;
+}
+
+#tooltip p {
+  margin: 0;
 }
 
 #tooltip #tooltip-text {
-    padding: 5px;
+  padding: 5px;
 }

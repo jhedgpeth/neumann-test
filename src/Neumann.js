@@ -104,6 +104,7 @@ export default class Neumann extends React.Component {
         this.purchaseAmtDropDownHandler = this.purchaseAmtDropDownHandler.bind(this);
         this.announce = this.announce.bind(this);
         this.showModal = this.showModal.bind(this);
+        this.nextModal = this.nextModal.bind(this);
         this.sliderChange = this.sliderChange.bind(this);
         this.rangeChange = this.rangeChange.bind(this);
         this.enableFeature = this.enableFeature.bind(this);
@@ -317,7 +318,7 @@ export default class Neumann extends React.Component {
         mylog("userSettings:", this.userSettings);
 
         const saveTime = ls.get('neumann_game_save_time');
-        if (saveTime) {
+        if (saveTime && (Date.now() - saveTime)>30000) {
             const deltaMillis = (Date.now() - saveTime);
             const duration = ComputeFunc.convertMillis(deltaMillis);
             mylog("you were gone for",
@@ -1046,14 +1047,17 @@ export default class Neumann extends React.Component {
         // references are now sync'd and can be accessed.
         // this.subtitle.style.color = '#f00';
     }
-
-    updateGame() {
-
-        if (this.modalTexts.length>0) {
-            const modalPop = this.modalTexts.pop();
+    nextModal() {
+        const modalPop = this.modalTexts.shift();
             this.modalTitle = modalPop.title;
             this.modalText = modalPop.text;
             this.openHelpModal();
+    }
+
+    updateGame() {
+
+        if (this.modalTexts.length>0 && !this.state.helpModalIsOpen) {
+            this.nextModal();
         }
 
         const now = Date.now();
@@ -1280,8 +1284,10 @@ export default class Neumann extends React.Component {
                 <MyModal
                     isOpen={this.state.helpModalIsOpen}
                     onRequestClose={this.closeHelpModal}
+                    onRequestNext={this.nextModal}
                     title={this.modalTitle}
                     text={this.modalText}
+                    remaining={this.modalTexts.length}
                 />
 
             </div>

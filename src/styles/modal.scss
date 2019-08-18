@@ -25,7 +25,8 @@
   right: 0;
   bottom: 0;
   // background-color: rgba(255, 255, 255, 0.2);
-  background-color: rgba(200, 255, 200, 0.2);
+  // background-color: rgba(200, 255, 200, 0.2);
+  background: linear-gradient(rgba(150, 255, 150, 0.4), rgba(150, 150, 255, 0.4));
   z-index: 10;
 }
 
@@ -76,6 +77,28 @@
 
   text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
     1px 1px 0 #000;
+}
+.helpModalNextButton {
+  grid-column: 2;
+  justify-self: center;
+  align-self: center;
+  // display: block;
+  width: 100%;
+  font-size: 1.1em;
+  // height: 100%;
+  color: $c_mainfg;
+  text-decoration: none;
+  border-radius: 5px;
+  border: 1px solid $c_selected;
+  // position: relative;
+  margin: 4px;
+
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
+    1px 1px 0 #000;
+
+    &::after {
+        content: " ⯈";
+      }
 }
 
 .modalContent {
