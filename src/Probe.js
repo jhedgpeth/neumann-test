@@ -4,7 +4,7 @@ const mylog = HelperConst.DebugLog;
 const Decimal = require('decimal.js');
 
 export default class Probe {
-    constructor(number, value, pSpeed, pQuality, pCombat) {
+    constructor(number, value, pSpeed, pQuality, pCombat, finished = true) {
         this.value = value;
         this.speed = pSpeed;
         this.quality = pQuality;
@@ -13,7 +13,9 @@ export default class Probe {
         this.qualityLoss = new Decimal(0);
         this.combatLoss = new Decimal(0);
         this.distance = new Decimal(0);
-        this.finished = false;
+        this.finished = finished;
+
+        mylog("new probe. number:",HelperConst.showInt(this.number),"  finished?",this.finished);
     }
 
     increment(num) {
@@ -25,6 +27,8 @@ export default class Probe {
     }
 
     getDistPerSec() {
+        if (this.finished) return Decimal(0);
+
         // return this.value.times(this.speed).ln(3);
         if (this.distPerSec) { return this.distPerSec; }
         const speedQ = Math.pow((1 + ((this.speed - 5) / 100)), 2);
@@ -45,6 +49,8 @@ export default class Probe {
     }
 
     getLearningPerSec() {
+        if (this.finished) return Decimal(0);
+        
         return this.getDistPerSec().times(this.getLiveNumber().sqrt()).div("768e3").times(1000).floor().div(1000);
     }
 
@@ -65,8 +71,10 @@ export default class Probe {
             if (this.distance.gt("768e3")) {
                 this.number = Decimal(2).pow(this.distance.ln().minus(1.2551545012129809219e1).floor());
             }
+
+            // TODO: fix this
             this.qualityLoss = this.qualityLoss.plus(0.005);
-            mylog("qualityLoss:", HelperConst.showNum(this.qualityLoss));
+            // mylog("qualityLoss:", HelperConst.showNum(this.qualityLoss));
         }
     }
 

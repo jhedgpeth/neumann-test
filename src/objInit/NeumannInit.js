@@ -28,7 +28,7 @@ export default class NeumannInit extends React.Component {
     static userSettings = () => ({
         money: new Decimal(0),
         knowledge: new Decimal(0),
-        probe: new Probe(new Decimal(0),new Decimal(0), 0, 0, 0),
+        probe: new Probe(new Decimal(0),new Decimal(0), 0, 0, 0, true),
         probeQualityShown: false,
         probeCombatShown: false,
         prestige: { num: new Decimal(0), val: 10 },
