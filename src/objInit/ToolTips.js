@@ -19,7 +19,10 @@ const tipTextLookup = {
         </p>,
 
     "tooltip":
-        `This window shows tooltip text.`,
+        `This window shows tooltip text ...like this.`,
+
+    "right-sidebar":
+        ` `,
 
     "concentrate-container":
         `Press this button to get a temporary speed boost for your businesses.`,
@@ -67,6 +70,18 @@ const tipTextLookup = {
     "probe-rate":
         `Velocity of current probe.`,
 
+    "probe-buy":
+        `Buy a probe and launch it into SPACE!`,
+
+    "probe-replace":
+        `Buy a new probe - DESTROYS current probe!`,
+
+    "previousProbe":
+        `Money spent on previous probe.`,
+
+    "sliderattribs":
+        `Choose how much of your current money you want to spend on probes.`,
+
     "space-probe-count":
         `The number of probes current active, after replication and losses.`,
 
@@ -83,7 +98,7 @@ const tipTextLookup = {
         `The name of the current view`,
 
     "space-earth":
-        `A massive looming object is causing tidal stress fractures across the globe!`,
+        `You are here-ish.`,
 
     "space-moon":
         `Our moon (if you live on Earth)`,
@@ -92,17 +107,25 @@ const tipTextLookup = {
         `The sun.  So hot right now.`,
 
     "space-stage-0":
-        `Moon view`,
+        `Space`,
 
     "space-stage-1":
-        `Jupiter view`,
+        `Space`,
 
     "space-stage-2":
         <p>
             Did the dev just skip some planets?<br /><br />
-            You bet Uranus, I did.
+            You bet Uranus, he did.
         </p>,
 
+    "space-stage-3":
+        `You're really out there now.`,
+
+    "space-stage":
+        `This is super spacey.  Carl Sagan Cosmos spacey.`,
+
+    "space-pulse":
+        `This represents the area examined by your probes.`,
 
 }
 
@@ -134,7 +157,7 @@ export default function ToolTips(key, userSettings) {
             id = key.match(/^earn-progress-(\d+)/)[1];
             t = userSettings.busStats[id].timeAdj;
             p = userSettings.busStats[id].payoutAdj;
-            mylog("earnprogress id:", id, "timeAdj:", t, "payoutAdj:", p);
+            // mylog("earnprogress id:", id, "timeAdj:", t, "payoutAdj:", p);
             return businessInfo`${t} ${p}`;
         case "space-stage-0":
             if (tipTextLookup[key]) {
@@ -157,7 +180,7 @@ export default function ToolTips(key, userSettings) {
             }
             break;
         case (key.match(/^space-stage-/) || {}).input:
-            return tipTextLookup['space'];
+            return tipTextLookup["space-stage"];
         default:
             if (tipTextLookup[key]) {
                 return tipTextLookup[key];

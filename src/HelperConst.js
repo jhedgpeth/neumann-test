@@ -76,7 +76,6 @@ export default class HelperConst {
     static DebugLog(...myArgs) {
         if (HelperConst.DEBUG) {
             console.log.apply(console, arguments);
-            // console.table(myArgs);
         }
     }
 
@@ -137,10 +136,18 @@ export default class HelperConst {
 
     static welcomeBack(duration, moneyGain, probeDistGain) {
         const { days, hours, minutes, seconds } = duration;
+        let moneyInfo = "";
+        if(moneyGain.gt(0)) {
+            moneyInfo = <span>You earned <b>{this.moneySymbolSpan()}{this.showNum(moneyGain)}</b><br /></span>
+        }
+        let probeInfo = "";
+        if (probeDistGain.gt(0)) {
+            probeInfo=<span>Your probe(s) travelled <b>{this.showNum(probeDistGain)}</b> kilometers</span>;
+        }
         return <p>
             You were gone for <b>{days}</b>d <b>{hours}</b>h <b>{minutes}</b>m <b>{seconds}</b>s<br />
-            You earned <b>{this.moneySymbolSpan()}{this.showNum(moneyGain)}</b><br />
-            Your probe(s) travelled <b>{this.showNum(probeDistGain)}</b> kilometers
+            {moneyInfo}
+            {probeInfo}
         </p>;
     }
 }
