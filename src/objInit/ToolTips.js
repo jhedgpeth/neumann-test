@@ -121,8 +121,11 @@ const tipTextLookup = {
     "space-stage-3":
         `You're really out there now.`,
 
+    "space-stage-4":
+        `This is super spacey.  Carl Sagan Cosmos spacey.  Way beyond Kevin levels.`,
+
     "space-stage":
-        `This is super spacey.  Carl Sagan Cosmos spacey.`,
+        `Inky blackness all around.`,
 
     "space-pulse":
         `This represents the area examined by your probes.`,
@@ -180,6 +183,9 @@ export default function ToolTips(key, userSettings) {
             }
             break;
         case (key.match(/^space-stage-/) || {}).input:
+            if (tipTextLookup[key]) {
+                return tipTextLookup[key];
+            }
             return tipTextLookup["space-stage"];
         default:
             if (tipTextLookup[key]) {
