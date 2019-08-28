@@ -9,10 +9,14 @@ export default class Settings extends React.Component {
         return (
             <div id="settings">
                 <div className="toggleHolder">
-                    <div className="toggleLabel">Overlays</div>
+                    <div className="toggleLabel">Vibrant Visuals</div>
                     {HelperConst.onoffswitch("overlays", this.props.toggles.overlays, this.props.toggleOverlay)}
                 </div>
 
+                <div className="toggleHolder">
+                    <div className="toggleLabel">Serious Sound</div>
+                    {HelperConst.onoffswitch("sound", this.props.toggles.sound, this.props.toggleSound)}
+                </div>
 
                 
             </div>

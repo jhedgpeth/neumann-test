@@ -5,6 +5,7 @@ import update from 'immutability-helper';
 import Modal from 'react-modal';
 import Dropdown from 'react-dropdown';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+// import UIfx from 'uifx';
 
 import './styles/fonts.css';
 import './styles/index.scss';
@@ -29,6 +30,7 @@ import Logs from './Logs';
 import Prestige from './Prestige';
 import ToolTip from './ToolTip';
 import MyModal from './MyModal';
+import Sounds from './Sounds';
 
 const Decimal = require('decimal.js');
 const mylog = HelperConst.DebugLog;
@@ -109,6 +111,7 @@ export default class Neumann extends React.Component {
         this.purchaseProbe = this.purchaseProbe.bind(this);
         this.getSettingsTab = this.getSettingsTab.bind(this);
         this.toggleOverlay = this.toggleOverlay.bind(this);
+        this.toggleSound = this.toggleSound.bind(this);
         this.clickConcentrate = this.clickConcentrate.bind(this);
         this.decrementConcentrate = this.updateConcentrate.bind(this);
 
@@ -161,6 +164,12 @@ export default class Neumann extends React.Component {
         document.title = "NEUMANN $"
             + HelperConst.showNum(this.userSettings.money)
             + " " + this.state.version;
+    }
+
+    playSound(snd) {
+        if (this.userSettings.toggles.sound) {
+            Sounds.playSound(snd);
+        }
     }
 
     populateInitVals() {
@@ -296,7 +305,7 @@ export default class Neumann extends React.Component {
         // mylog("probe:", this.userSettings.probe);
 
         const tempProbe = { ...this.userSettings.probe };
-        mylog("building probe from save.  finished:",this.userSettings.probe.finished);
+        mylog("building probe from save.  finished:", this.userSettings.probe.finished);
         this.userSettings.probe = new Probe(
             this.userSettings.probe.number,
             this.userSettings.probe.value,
@@ -541,6 +550,7 @@ export default class Neumann extends React.Component {
 
             if (!this.userSettings.probe.finished && this.userSettings.probe.getLiveNumber().lt(1)) {
                 this.announce("All probes lost!");
+                this.playSound("probefail");
                 this.userSettings.probe.finished = true;
             }
 
@@ -593,9 +603,11 @@ export default class Neumann extends React.Component {
 
     clickBusiness(bus) {
         mylog("business click ", bus.name);
+        this.playSound("busbuy");
         const busCost = ComputeFunc.getCost(bus, this.userSettings.busStats[bus.id], this.purchaseAmt, this.userSettings.money);
         this.userSettings.money = this.userSettings.money.minus(busCost.cost);
         let b = this.userSettings.busStats[bus.id];
+
 
         // add overlays
         let newBusinesses = this.state.businesses.map(item => {
@@ -608,17 +620,29 @@ export default class Neumann extends React.Component {
                 ownedMilestones.forEach((milestone) => {
                     busMult *= 2;
                 });
-                (busMult > 1) && bonusArr.push(this.genOverlayObj("X" + busMult, "ownedBonus"));
-                newItem.overlays = this.genOverlayArr(item.overlays, "+" + busCost.num).concat(bonusArr);
-                mylog("adding", busCost.num, "to", newItem.name);
 
+                if (busMult > 1) {
+                    this.playSound("busmult");
+                    if (this.userSettings.toggles.overlays) {
+                        bonusArr.push(this.genOverlayObj("X" + busMult, "ownedBonus"));
+                    }
+                }
+                if (this.userSettings.toggles.overlays) {
+                    newItem.overlays = this.genOverlayArr(item.overlays, "+" + busCost.num).concat(bonusArr);
+                }
+                mylog("adding", busCost.num, "to", newItem.name);
             }
             return newItem;
         });
-        /* for overlays */
-        this.setState((state, props) => ({
-            businesses: newBusinesses,
-        }));
+
+        if (this.userSettings.toggles.overlays) {
+            /* for overlays */
+            this.setState((state, props) => ({
+                businesses: newBusinesses,
+            }));
+        }
+
+
         b.owned += busCost.num;
         mylog(bus.name, "owned set to", b.owned);
 
@@ -651,6 +675,7 @@ export default class Neumann extends React.Component {
 
     enableFeature(feature) {
         mylog("feature click ", feature.name);
+        this.playSound("powerup");
         this.userSettings.upgStats[feature.id].purchased = true;
         this.userSettings.featureEnabled[feature.id] = true;
         mylog("feature enabled:", feature.rewardTarget);
@@ -686,6 +711,7 @@ export default class Neumann extends React.Component {
 
     clickUpgrade(upg) {
         mylog("upgrade click ", upg.name);
+        this.playSound("powerup");
         this.userSettings.upgStats[upg.id].purchased = true;
 
         switch (upg.costType) {
@@ -779,6 +805,7 @@ export default class Neumann extends React.Component {
     }
 
     addOverlay(busIdx, text, ovType = "generic") {
+        if (!this.userSettings.toggles.overlays) return;
         const bus = this.state.businesses[busIdx];
         mylog("addOverlay click ", text, bus.name);
         this.setState((state, props) => ({
@@ -793,7 +820,10 @@ export default class Neumann extends React.Component {
     }
 
     changeTabs(idx) {
-        this.tabIndex = idx;
+        if (idx !== this.tabIndex) {
+            this.playSound("tabswitch");
+            this.tabIndex = idx;
+        }
     }
 
     sliderChange(value) {
@@ -831,7 +861,8 @@ export default class Neumann extends React.Component {
         const pcts = this.reportRangePcts();
         mylog("probe cost:", pCost.toNumber());
         mylog("probe attrs - pSpeed:", pcts[0], "pQuality:", pcts[1], "pCombat:", pcts[2]);
-        this.userSettings.probe = new Probe(new Decimal(1), pCost, pcts[0], pcts[1], pcts[2], false)
+        this.userSettings.probe = new Probe(new Decimal(1), pCost, pcts[0], pcts[1], pcts[2], false);
+        this.playSound("probelaunch");
     }
 
 
@@ -980,9 +1011,19 @@ export default class Neumann extends React.Component {
     }
 
     toggleOverlay(event) {
-        mylog("event:", event);
-        mylog("toggleOverlay target is:", event.target.checked);
+        // mylog("event:", event);
+        // mylog("toggleOverlay target is:", event.target.checked);
+        this.playSound("toggle");
         this.userSettings.toggles.overlays = event.target.checked;
+    }
+
+    toggleSound(event) {
+        // mylog("event:", event);
+        // mylog("toggleSound target is:", event.target.checked);
+        this.userSettings.toggles.sound = event.target.checked;
+        if (this.userSettings.toggles.sound) { this.playSound("toggle"); }
+        // mylog("sound toggled:",this.userSettings.toggles.sound);
+
     }
 
     getSettingsTab() {
@@ -1001,6 +1042,7 @@ export default class Neumann extends React.Component {
                 <Settings
                     toggles={this.userSettings.toggles}
                     toggleOverlay={this.toggleOverlay}
+                    toggleSound={this.toggleSound}
                 />
 
             </TabPanel>

@@ -46,6 +46,7 @@ export default class NeumannInit extends React.Component {
         featureEnabled: {},
         toggles: {
             overlays: true,
+            sound: true,
         },
         concentrate: {
             mult: 2.0,

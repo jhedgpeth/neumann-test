@@ -1126,12 +1126,25 @@ button {
   background-color: $c_mainbg;
   grid-area: content;
   position: relative;
-  width: 770px;
+  width: 700px;
   height: 500px;
   margin: auto;
   overflow: hidden;
+  display: grid;
+  grid-auto-columns: 100px;
+  grid-auto-rows: 70px;
+  justify-items: center;
+  align-items: center;
 }
 
+.toggleHolder {
+  margin: auto;
+}
+
+.toggleLabel {
+  font-weight: bold;
+  text-align: center;
+}
 
 /* bonuses 
 -----------------------------------------------------------------------------*/

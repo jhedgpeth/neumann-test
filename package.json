@@ -5,22 +5,23 @@
   "dependencies": {
     "decimal.js": "^10.2.0",
     "immutability-helper": "^3.0.1",
-    "konva": "^3.4.0",
+    "konva": "^3.4.1",
     "node-sass": "^4.12.0",
     "rc-slider": "^8.6.13",
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6",
+    "react": "^16.9.0",
+    "react-dom": "^16.9.0",
     "react-dropdown": "^1.6.4",
-    "react-konva": "^16.8.7-3",
-    "react-modal": "^3.9.1",
+    "react-konva": "^16.8.7-4",
+    "react-modal": "^3.10.1",
     "react-motion": "^0.5.2",
     "react-portal": "^4.2.0",
     "react-scripts": "3.0.1",
-    "react-scrollbars-custom": "^4.0.12",
+    "react-scrollbars-custom": "^4.0.18",
     "react-tabs": "^3.0.0",
     "secure-ls": "^1.2.5",
     "swarm-numberformat": "^0.4.0",
-    "typescript": "^3.5.3"
+    "typescript": "^3.6.2",
+    "uifx": "^2.0.3"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -47,7 +48,7 @@
     ]
   },
   "devDependencies": {
-    "gh-pages": "^2.0.1"
+    "gh-pages": "^2.1.1"
   },
   "homepage": "https://jhedgpeth.github.io/neumann-test"
 }
