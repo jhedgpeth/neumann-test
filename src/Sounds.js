@@ -5,6 +5,8 @@ import snd_busbuy from './sounds/tink.mp3';
 import snd_busmult from './sounds/powerup.mp3';
 import snd_tabswitch from './sounds/blipple.mp3';
 import snd_toggle from './sounds/thump.mp3';
+import snd_concentrate from './sounds/concentrate.mp3';
+import snd_unconcentrate from './sounds/unconcentrate.mp3';
 import snd_probelaunch from './sounds/probe_launch.mp3';
 import snd_probefail from './sounds/probe_fail.mp3';
 
@@ -50,6 +52,20 @@ let sndlist = {
     ),
     toggle: new UIfx(
         snd_toggle,
+      {
+        volume: 0.1, // number between 0.0 ~ 1.0
+        throttleMs: 100
+      }
+    ),
+    concentrate: new UIfx(
+        snd_concentrate,
+      {
+        volume: 0.1, // number between 0.0 ~ 1.0
+        throttleMs: 100
+      }
+    ),
+    unconcentrate: new UIfx(
+        snd_unconcentrate,
       {
         volume: 0.1, // number between 0.0 ~ 1.0
         throttleMs: 100

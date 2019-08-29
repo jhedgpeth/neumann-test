@@ -1,12 +1,12 @@
 import React from 'react';
-import HelperConst from '../HelperConst';
-const mylog = HelperConst.DebugLog;
+// import HelperConst from '../HelperConst';
+// const mylog = HelperConst.DebugLog;
 
 const tipTextLookup = {
 
     "title":
         <p>
-            Pretty, yeah?
+            shiny
         </p>,
 
     "title-wrapper":
@@ -20,6 +20,9 @@ const tipTextLookup = {
 
     "tooltip":
         `This window shows tooltip text ...like this.`,
+
+    "content":
+        ` `,
 
     "right-sidebar":
         ` `,
@@ -65,7 +68,7 @@ const tipTextLookup = {
         `The number of points you will attain on your next prestige.`,
 
     "probe-distance":
-        `Total distance traveled by your current probe.`,
+        `Total distance traveled by your current/previous probe.`,
 
     "probe-rate":
         `Velocity of current probe.`,
@@ -83,7 +86,7 @@ const tipTextLookup = {
         `Choose how much of your current money you want to spend on probes.`,
 
     "space-probe-count":
-        `The number of probes current active, after replication and losses.`,
+        `The number of probes currently active, after replication and losses.`,
 
     "space-combat-loss":
         `The number of probes lost to combat.`,

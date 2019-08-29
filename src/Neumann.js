@@ -422,6 +422,7 @@ export default class Neumann extends React.Component {
             if (newVal <= 0) {
                 newVal = -10;
                 concButtonClass = "concCooldown";
+                this.playSound("unconcentrate");
             }
             this.setState((state, props) => ({
                 concentrate: { time: newVal, mult: this.userSettings.concentrate.mult },
@@ -777,6 +778,7 @@ export default class Neumann extends React.Component {
 
     clickConcentrate() {
         mylog("clickConcentrate");
+        this.playSound("concentrate");
         if (this.state.concentrate.time <= 0) {
             this.setState((state, props) => ({
                 concentrate: { time: 10, mult: this.userSettings.concentrate.mult }
@@ -1333,7 +1335,7 @@ export default class Neumann extends React.Component {
 
                         </div>
 
-                        <div id="content">
+                        <div id="content" onMouseOver={this.onMouseOver} data-tip="content">
                             <div className="container">
 
                                 <Business
