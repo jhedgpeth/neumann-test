@@ -7,7 +7,7 @@
     "immutability-helper": "^3.0.1",
     "konva": "^3.4.1",
     "node-sass": "^4.12.0",
-    "rc-slider": "^8.6.13",
+    "rc-slider": "^8.7.1",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
     "react-dropdown": "^1.6.4",
@@ -16,11 +16,11 @@
     "react-motion": "^0.5.2",
     "react-portal": "^4.2.0",
     "react-scripts": "3.0.1",
-    "react-scrollbars-custom": "^4.0.18",
+    "react-scrollbars-custom": "^4.0.20",
     "react-tabs": "^3.0.0",
     "secure-ls": "^1.2.5",
     "swarm-numberformat": "^0.4.0",
-    "typescript": "^3.6.2",
+    "typescript": "^3.6.3",
     "uifx": "^2.0.3"
   },
   "scripts": {
