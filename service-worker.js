@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/neumann-test/precache-manifest.17a311e1c24de9365d0967ff2c3af7f3.js"
+  "/neumann-test/precache-manifest.09f276f7c5ce4b87b9dcf9aa2e62f284.js"
 );
 
 self.addEventListener('message', (event) => {
