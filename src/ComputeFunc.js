@@ -131,7 +131,8 @@ export default class ComputeFunc {
         return {
             num: parseInt(numBuy, 10),
             cost: item.costBase.times(
-                Math.pow(item.costCoef, busStat.owned) * (Math.pow(item.costCoef, numBuy) - 1)
+                Math.pow(item.costCoef, busStat.owned) * 
+                (Math.pow(item.costCoef, numBuy) - 1)
             ).div(item.costCoef - 1),
         }
     }

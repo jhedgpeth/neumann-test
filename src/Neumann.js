@@ -186,6 +186,9 @@ export default class Neumann extends React.Component {
         });
         this.probeDivRef = React.createRef();
 
+        // test auto upgrades
+        Upgrades.newAutoUpgrades(this.state.businesses, this.state.upgrades, this.userSettings);
+
         this.pulseRef = null;
         this.centerEllipseRef = null;
         this.innerEllipseRef = null;

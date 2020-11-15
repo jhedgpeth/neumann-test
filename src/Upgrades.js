@@ -3,6 +3,7 @@ import HelperConst from './HelperConst';
 import ComputeFunc from './ComputeFunc';
 import './styles/fonts.css';
 import ScrollBar from 'react-scrollbars-custom';
+// import Decimal from 'decimal.js';
 const mylog = HelperConst.DebugLog;
 
 export default class Upgrades extends React.Component {
@@ -13,6 +14,38 @@ export default class Upgrades extends React.Component {
 
     componentWillUnmount() {
         mylog("upgrades willunmount");
+    }
+
+    static autoUpgradeCost(base, coef, idx) {
+        mylog("autoupgradecost: base:", HelperConst.showNum(base), "coef:", coef, "idx:", idx);
+        const myCoef = coef * 1.5;
+        const cost = base.times(
+            (Math.pow(myCoef, idx + 10) - 1) / (myCoef - 1)
+        );
+        mylog("autoupgradecost: $", HelperConst.showNum(cost));
+        return cost;
+    }
+
+    static autoUpgradeId(busNum, idx) {
+        return HelperConst.autoUpgradeBase + (busNum * 1000) + idx;
+    }
+
+    static newAutoUpgrades(businesses, upgrades, userSettings) {
+        mylog("starting newAutoUpgrades generation");
+        Object.keys(userSettings.busStats).forEach(item => {
+            const bus = businesses[item];
+            let ct = 1;
+            mylog("checking upgrade #",ct,"for",item);
+            let cost = this.autoUpgradeCost(bus.costBase, bus.costCoef, ct);
+
+            while (userSettings.money.times(1.7).gt(cost)) {
+                // TODO: test if already created in upgrades
+                
+                mylog("creating upgrade #", ct, "for", item);
+
+                cost = this.autoUpgradeCost(bus.costBase, bus.costCoef, ++ct);
+            }
+        })
     }
 
     render() {

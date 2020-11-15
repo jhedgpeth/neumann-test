@@ -30,6 +30,7 @@ export default class HelperConst {
     static multiplySymbolSpan() { return (<span className="multiplySymbol">{this.multiplySymbol}</span>); };
     static concentrateSymbolSpan() { return (<span className="concentrateSymbol">{this.concentrateSymbol}</span>); };
 
+    static autoUpgradeBase = 100000;
 
     /* https://proto.io/freebies/onoff/ */
     static onoffswitch(myId, checked, onClick) {
